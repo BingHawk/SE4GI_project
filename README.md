@@ -31,13 +31,16 @@ N.B. for Mac/Linux users -> source activate se4g #if this does not work, have a 
 you can alternatively activate the Anaconda Prompt from the Anaconda Navigator
 
 C - this will install almost all the geo libraries you will need (see: https://anaconda.org)
+
     conda install -c conda-forge geopandas
     conda update --all
 
 D - let's add the interpreter platforms to "se4g" environment (Spyder and Jupyter Lab)
+
     conda install -c conda-forge spyder jupyterlab
 
 E - some other libraries that can be used
+
     conda install -c conda-forge geopy descartes seaborn contextily requests folium flask bokeh git geoalchemy2 
     conda install -c jmcmurray json
     conda install -c anaconda psycopg2
