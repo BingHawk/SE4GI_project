@@ -27,7 +27,7 @@ B - activate the environment called "se4g"
     conda activate se4g
 
 N.B. for Mac/Linux users -> source activate se4g #if this does not work, have a look 
-[here] (https://stackoverflow.com/questions/60050929/how-to-open-conda-shell-in-mac)
+[here](https://stackoverflow.com/questions/60050929/how-to-open-conda-shell-in-mac)
 you can alternatively activate the Anaconda Prompt from the Anaconda Navigator
 
 C - this will install almost all the geo libraries you will need (see: https://anaconda.org)
