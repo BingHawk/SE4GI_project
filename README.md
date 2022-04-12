@@ -1,5 +1,7 @@
 # SE4GI_project
  Repo for project in POLIMI course 
+ 
+ Documents can be found on the [google drive here](https://drive.google.com/drive/u/0/folders/1-qme17xkIi_KhyNxs10YBTd-44utuKoX)
 
 # Dependancies: 
 * Flask
