@@ -17,6 +17,7 @@
 * jmcmurray json
 * anaconda psycopg2
 
+
 __for atlantis poc:__
 * flask_migrate
 * decouple
