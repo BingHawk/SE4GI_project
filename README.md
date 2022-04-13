@@ -17,8 +17,13 @@
 * jmcmurray json
 * anaconda psycopg2
 
-__for leaflet poc:__
-* overpy
+__for atlantis poc:__
+* flask_migrate
+* decouple
+
+Note that these need to be installed though pip:
+    pip install flask_migrate
+    pip install python-decouple
 
 ## Instalation guide
 

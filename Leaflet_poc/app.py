@@ -1,48 +1,36 @@
 from flask import Flask, request, render_template
-from backend import get_shops
+from backend import get_locations
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 
 
-@app.route('/', methods=["GET", "POST"])
+@app.route('/', methods=["GET"])
 def main():
-    if request.method == "POST":
-        # Get shops data from OpenStreetMap
-        shops = get_shops(request.form["lat"], request.form["lon"])
+    # Get shops data from OpenStreetMap
+    locations = get_locations()
 
-        # Initialize variables
-        id_counter = 0
-        markers = ''
-        for node in shops.nodes:
+    # Initialize variables
+    markers = ''
+    for location in locations:
+        try:
+            # Create the marker each location
+            id = 'location'+str(location['id'])
 
-            # Create unique ID for each marker
-            idd = 'shop' + str(id_counter)
-            id_counter += 1
+            markers += "var {id} = L.marker([{lat}, {long}]);\
+                {id}.addTo(map);".format(id=id, lat=location['coordinates']['latitude'],\
+                                                             long=location['coordinates']['longitude'])
+        except KeyError:
+            continue
+    # Render the page with the map
+    print(markers)
+    return render_template('results.html', markers=markers, lat=45.4, lon=9.18, zoom=8)
 
-            # Check if shops have name and website in OSM
-            try:
-                shop_brand = node.tags['brand']
-            except:
-                shop_brand = 'null'
-
-            try:
-                shop_website = node.tags['website']
-            except:
-                shop_website = 'null'
-
-            # Create the marker and its pop-up for each shop
+    """
             markers += "var {idd} = L.marker([{latitude}, {longitude}]);\
-                        {idd}.addTo(map).bindPopup('{brand}<br>{website}');".format(idd=idd, latitude=node.lat,\
-                                                                                     longitude=node.lon,
-                                                                                     brand=shop_brand,\
-                                                                                     website=shop_website)
-
-        # Render the page with the map
-        return render_template('results.html', markers=markers, lat=request.form["lat"], lon=request.form["lon"])
-
-
-    else:
-        # Render the input form
-        return render_template('input.html')
+                {idd}.addTo(map).bindPopup('{brand}<br>{website}');".format(idd=idd, latitude=node.lat,\
+                                                                             longitude=node.lon,
+                                                                             brand=shop_brand,\
+                                                                             website=shop_website)
+"""
