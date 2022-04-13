@@ -17,6 +17,9 @@
 * jmcmurray json
 * anaconda psycopg2
 
+__for leaflet poc:__
+* overpy
+
 ## Instalation guide
 
 A - this creates an empty environment called "se4g" (If you have it from the course, it is the same)
