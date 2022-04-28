@@ -15,7 +15,18 @@ def get_locations():
     # Get the stations
     r = requests.get(italyEndpoint)
 
-    response = {'locations': r.json()['results']}
+   
+
+    locations = []
+    print(r.json()['results'][0])
+    for result in r.json()['results']:
+        try:
+            location = {'id': result['id'], 'coordinates': result['coordinates'] }
+        except KeyError:
+            continue
+        locations.append(location)
+    
+    response = {'locations': locations}
 
     return response
 
