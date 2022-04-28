@@ -4,7 +4,8 @@
 
 ```bash
 # install dependencies
-$ npm install
+$ npm install --save leaflet
+$ npm install --save vue2-leaflet
 
 # serve with hot reload at localhost:3000
 $ npm run dev
