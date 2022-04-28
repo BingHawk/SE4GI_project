@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_cors import CORS
+from matplotlib.font_manager import json_dump
 import requests
+import json
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -26,7 +28,7 @@ def get_locations():
             continue
         locations.append(location)
     
-    response = {'locations': locations}
+    response = json.dumps({'locations': locations})
 
     return response
 
