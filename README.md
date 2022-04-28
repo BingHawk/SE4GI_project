@@ -23,6 +23,7 @@ __for atlantis poc:__
 * decouple
 
 Note that these need to be installed though pip:
+
     pip install flask_migrate
     pip install python-decouple
 
