@@ -1,7 +1,7 @@
 <template>
   <div id="map-wrap" style="height: 100vh">
     <no-ssr>
-      <l-map :zoom="8" :center="[45.4, 9.18]">
+      <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
         <marker-icon
           v-for="location in locations"
           :key="location.id"
@@ -29,17 +29,15 @@ export default {
   },
   data() {
     return {
-      places: [
-        { id: 1, coordinates: [45.4, 9.18] },
-        { id: 2, coordinates: [45.5, 9.28] },
-      ],
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     }
   },
   props: {
     locations: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
 
   head() {
