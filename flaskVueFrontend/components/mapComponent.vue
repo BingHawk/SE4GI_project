@@ -8,11 +8,6 @@
           :lat-lng="location.coordinates"
         >
         </L-marker>
-        <!-- <marker-icon
-          v-for="location in locations"
-          :key="location.id"
-          :location="location"
-        ></marker-icon> -->
         <l-tile-layer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         ></l-tile-layer>
@@ -23,7 +18,6 @@
 
 <script>
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
-// import MarkerIcon from './MarkerIcon.vue'
 import 'leaflet/dist/leaflet.css'
 import { Icon } from 'leaflet'
 
@@ -41,7 +35,6 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
-    // MarkerIcon,
   },
   props: {
     locations: {
