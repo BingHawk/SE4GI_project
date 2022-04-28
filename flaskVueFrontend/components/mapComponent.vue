@@ -5,7 +5,7 @@
         <marker-icon
           v-for="location in locations"
           :key="location.id"
-          :marker="location"
+          :location="location"
         ></marker-icon>
         <l-tile-layer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -29,12 +29,19 @@ export default {
   },
   data() {
     return {
-      locations: [
+      places: [
         { id: 1, coordinates: [45.4, 9.18] },
         { id: 2, coordinates: [45.5, 9.28] },
       ],
     }
   },
+  props: {
+    locations: {
+      type: Array,
+      required: true
+    }
+  },
+
   head() {
     return {
       link: [
