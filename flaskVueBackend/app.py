@@ -23,7 +23,7 @@ def get_locations():
     print(r.json()['results'][0])
     for result in r.json()['results']:
         try:
-            location = {'id': result['id'], 'coordinates': result['coordinates'] }
+            location = {'id': result['id'], 'coordinates': {'lat': result['coordinates']['latitude'], 'lng': result['coordinates']['longitude']} }
         except KeyError:
             continue
         locations.append(location)
