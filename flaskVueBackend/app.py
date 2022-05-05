@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from matplotlib.font_manager import json_dump
 import requests
 import json
 
@@ -16,8 +15,6 @@ def get_locations():
     
     # Get the stations
     r = requests.get(italyEndpoint)
-
-   
 
     locations = []
     print(r.json()['results'][0])
