@@ -30,7 +30,7 @@ C - this will install almost all the geo libraries you will need (see: https://a
     conda install -c conda-forge geopandas
     conda update --all
 
-D - let's add the interpreter platforms to "se4g" environment (Spyder and Jupyter Lab)
+D - (Not necessary - VS Code is better!) let's add the interpreter platforms to "se4g" environment (Spyder and Jupyter Lab)
 
     conda install -c conda-forge spyder jupyterlab
 
@@ -53,7 +53,7 @@ Once npm is installed, navigate to the /flaskVueFrontend folder and run
 
     npm install
 
-this will install all dependancies listed in the project. See below. 
+this will install all dependancies listed in the project. See below for list of dependancies. 
 
 ## Full list of dependancies:
 
