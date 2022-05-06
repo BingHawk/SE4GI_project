@@ -47,7 +47,8 @@ then, the aditional modules specific to our project are needed:
 ### Node
 
 Begin by checking if you have npm (node package manager - like conda for JS) installed and install it if not. Instructions can be found
-[here](https://docs.npmjs.com/cli/v7/configuring-npm/install)
+[here](https://docs.npmjs.com/cli/v7/configuring-npm/install). Below instalation process works for node v.16 but not for version v.17. 
+Curently looking for a fix so it works with both!
 
 Once npm is installed, navigate to the /flaskVueFrontend folder and run
 
