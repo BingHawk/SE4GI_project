@@ -56,6 +56,15 @@ Once npm is installed, navigate to the /flaskVueFrontend folder and run
 
 this will install all dependancies listed in the project. See below for list of dependancies. 
 
+For template, download the template and run 
+
+    npm install
+
+if this gives an error with something called "gyp":
+
+    conda deactivate se4g
+    conda install python 2.7
+
 ## Full list of dependancies:
 
 ### Python:
