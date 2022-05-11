@@ -47,29 +47,32 @@ then, the aditional modules specific to our project are needed:
 ### Node
 
 Begin by checking if you have npm (node package manager - like conda for JS) installed and install it if not. Instructions can be found
-[here](https://docs.npmjs.com/cli/v7/configuring-npm/install). Below instalation process works for node v.16.15 which is the Long term stable release
-Does not for version v.17 and later.
+[here](https://docs.npmjs.com/cli/v7/configuring-npm/install). Below instalation process works for node v.16.15 which is the Long term stable release.
 
-Once npm is installed, navigate to the /flaskVueFrontend folder and run
+Then, make sure you have installed "n", which is a Node Version Manager. It will be used to switch node versions.
+You will also need yarn, which does the same as npm, but works with the template.
 
-    npm install
+Run these commands in the terminal
 
-this will install all dependancies listed in the project. See below for list of dependancies. 
+    //Check if n is installed:
+    n --verison
+    //Install n:
+    sudo npm install -g n
+    //install yarn:
+    sudo npm install -g yarn
 
-For template, download the template and run 
+Once n and yarn is installed, navigate to the /flaskVueFrontend folder and run
 
-    npm install
+    //Change node version to 12.13
+    n 12.13
+    yarn install
 
-if this gives an error with something called "gyp", install python 2.7 available [here](https://www.python.org/download/releases/2.7/)
+this will install all dependancies listed in the project. See below for list of dependancies.
+Run the project by typing:
 
-If you still have an error, uppdate this module seperatly:
+    yarn dev
 
-    npm install node-sass@latest
-    //Run npm install again
-    npm install
-    //Uppgrade one dependancy
-    npm install vue-server-renderer@2.6.14
-
+This should rin the project at [localhost:3000](http://localhost:3000)
 
 ## Full list of dependancies:
 
@@ -92,15 +95,14 @@ If you still have an error, uppdate this module seperatly:
 ### Node:
 
 full list of dependancies can be found in this file:
-    
+
     /flaskVueFrontend/package.json
     {"name": "flaskVueFrontend",
     ...
     "dependancies":
-    //Dependancies listed here 
+    //Dependancies listed here
     ...
     }
-
 
 # Some notes just for fun:
 
