@@ -60,10 +60,16 @@ For template, download the template and run
 
     npm install
 
-if this gives an error with something called "gyp":
+if this gives an error with something called "gyp", install python 2.7 available [here](https://www.python.org/download/releases/2.7/)
 
-    conda deactivate se4g
-    conda install python 2.7
+If you still have an error, uppdate this module seperatly:
+
+    npm install node-sass@latest
+    //Run npm install again
+    npm install
+    //Uppgrade one dependancy
+    npm install vue-server-renderer@2.6.14
+
 
 ## Full list of dependancies:
 
