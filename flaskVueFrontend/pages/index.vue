@@ -15,7 +15,7 @@ export default {
   },
   async asyncData({ $axios }) {
     console.log("asyncData running")
-    const { data } = await $axios.get('/locations')
+    const { data } = await $axios.get('api/locations')
     console.log(data)
     return { data }
   },
