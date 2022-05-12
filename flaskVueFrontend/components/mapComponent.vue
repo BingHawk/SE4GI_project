@@ -1,4 +1,43 @@
 <template>
+  <div id="mapContainer" class="basemap"></div>
+</template>
+
+<script>
+import mapboxgl from "mapbox-gl";
+
+export default {
+  name: "BaseMap",
+  data() {
+    return {
+      accessToken: "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
+      map: {}
+    };
+  },
+  mounted() {
+    this.createMap()
+  },
+  methods: {
+    createMap(){
+      mapboxgl.accessToken = this.accessToken;
+
+      this.map =  new mapboxgl.Map({
+        container: "mapContainer",
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [9.18,45.4],
+        zoom: 8,
+      })
+  }
+  }
+};
+</script>
+<style scoped>
+.map {
+  height: 100%;
+  width: 100%;
+  background-color: red;
+}
+</style>
+<!-- <template>
   <div id="map-wrap" style="height: 100vh">
     <no-ssr>
       <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
@@ -68,4 +107,4 @@ export default {
   width: 100%;
   background-color: red;
 }
-</style>
+</style> -->

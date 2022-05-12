@@ -6,7 +6,8 @@ import json
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/api/locations', methods=["GET"])
 def get_locations():

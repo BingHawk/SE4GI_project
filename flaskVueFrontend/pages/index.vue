@@ -1,23 +1,17 @@
 <template>
   <div class="window">
-    <h1>This is the map:</h1>
-    <map-component :locations="data.locations"></map-component>
-    <div class="map"></div>
+    <h1>Welcome!</h1>
+    <button v-on:click="goToMap">Go to Map</button>
   </div>
 </template>
 
 <script>
-import MapComponent from '../components/mapComponent.vue'
 export default {
-  name: 'MapPage',
-  components: {
-    MapComponent,
-  },
-  async asyncData({ $axios }) {
-    console.log("asyncData running")
-    const { data } = await $axios.get('api/locations')
-    console.log(data)
-    return { data }
+  name: 'MainPage',
+  methods: {
+    goToMap() {
+      this.$router.push('/mapPage')
+    },
   },
 }
 </script>
