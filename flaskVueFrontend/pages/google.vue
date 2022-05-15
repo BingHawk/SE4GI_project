@@ -2,9 +2,9 @@
 <div class="row">
     <div class="col-md-12">
        <card type="plain">
-        <h4 slot="header" class="card-title">Leaflet Map</h4>
+        <h4 slot="header" class="card-title">MapBox Map</h4>
         <div id="regularMap" class="map"> 
-          <map-component ></map-component> <!-- :locations="data.locations" -->
+          <map-component :locations="data.locations"></map-component> <!-- :locations="data.locations" -->
           
         </div>
       </card>
@@ -19,12 +19,12 @@ export default {
   components: {
     MapComponent,
   },
-  // async asyncData({ $axios }) {
-  //   console.log("asyncData running")
-  //   const { data } = await $axios.get('/locations')
-  //   console.log(data)
-  //   return { data }
-  // },
+  async asyncData({ $axios }) {
+    console.log("asyncData running")
+    const { data } = await $axios.get('api/locations')
+    console.log(data)
+    return { data }
+  },
 }
 </script>
 

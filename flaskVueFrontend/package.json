@@ -11,8 +11,8 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.0.0-beta.16",
-    "axios": "^0.27.2",
     "bootstrap": "4.3.1",
     "chart.js": "^2.7.1",
     "d3": "^5.7.0",
@@ -20,7 +20,7 @@
     "es6-promise": "^4.1.1",
     "fuse.js": "^3.2.0",
     "google-maps": "^3.2.1",
-    "leaflet": "^1.8.0",
+    "mapbox-gl": "^2.8.2",
     "nuxt": "^2.9.1",
     "nuxt-i18n": "^6.1.0",
     "perfect-scrollbar": "^1.3.0",
@@ -28,7 +28,6 @@
     "tween.js": "^16.6.0",
     "vue-chartjs": "^3.4.0",
     "vue-i18n": "^8.0.0",
-    "vue2-leaflet": "^2.7.1",
     "vue2-transitions": "^0.2.3"
   },
   "devDependencies": {
