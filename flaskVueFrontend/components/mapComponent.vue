@@ -31,8 +31,12 @@ export default {
 };
 </script>
 <style scoped>
-.map {
-  height: 100%;
+#map{
+   width:100%;
+   height:100%;
+}
+.basemap {
+  height: 100vh;
   width: 100%;
   background-color: red;
 }

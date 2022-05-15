@@ -1,6 +1,5 @@
 <template>
   <div class="window">
-    <h1>This is the map:</h1>
     <map-component :locations="data.locations"></map-component>
     <div class="map"></div>
   </div>
