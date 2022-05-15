@@ -22,6 +22,9 @@ export default {
   async asyncData({ $axios }) {
     console.log("asyncData running")
     const { data } = await $axios.get('api/locations')
+    // for(location in data.locations){
+    //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
+    // }
     console.log(data)
     return { data }
   },

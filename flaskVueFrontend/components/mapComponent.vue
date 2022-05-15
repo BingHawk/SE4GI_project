@@ -1,33 +1,54 @@
 <template>
-  <div id="mapContainer" class="basemap"></div>
+  <MglMap
+    :accessToken="accessToken"
+    :mapStyle="mapStyle"
+    :center="center"
+    :zoom="zoom"
+  >
+    <MglMarker 
+      v-for = "location in locations"
+      :key = "location.id"
+      :coordinates="location.coordinates">
+    </MglMarker>
+  </MglMap>
 </template>
 
 <script>
-import mapboxgl from "mapbox-gl";
+import Mapbox from "mapbox-gl";
+import { MglMap, MglMarker } from "vue-mapbox";
 
 export default {
   name: "BaseMap",
+  components: {
+    MglMap,
+    MglMarker,
+  },
+  props: {
+    locations: {
+      type: Array,
+      required: true,
+    },
+  },
+  head: {
+    link: [
+      {
+        rel: "stylesheet",
+        href: "https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css",
+      },
+    ],
+  },
   data() {
     return {
-      accessToken: "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
-      map: {}
+      accessToken:
+        "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
+      mapStyle: "mapbox://styles/mapbox/streets-v11",
+      center: [9.18, 45.4],
+      zoom: 8,
     };
   },
-  mounted() {
-    this.createMap()
+  created() {
+    this.mapbox = Mapbox;
   },
-  methods: {
-    createMap(){
-      mapboxgl.accessToken = this.accessToken;
-
-      this.map =  new mapboxgl.Map({
-        container: "mapContainer",
-        style: "mapbox://styles/mapbox/streets-v11",
-        center: [9.18,45.4],
-        zoom: 8,
-      })
-  }
-  }
 };
 </script>
 <style lang="scss">
@@ -347,4 +368,3 @@ export default {
   }
 }
 </style> -->
-
