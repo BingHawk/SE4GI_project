@@ -5,7 +5,7 @@ Repo for project in POLIMI course
 Documents can be found on the [google drive here](https://drive.google.com/drive/u/0/folders/1-qme17xkIi_KhyNxs10YBTd-44utuKoX)
 
 # Dependancies:
- 
+
 ## Instalation guide
 
 ### Python:
@@ -30,7 +30,7 @@ C - this will install almost all the geo libraries you will need (see: https://a
     conda install -c conda-forge geopandas
     conda update --all
 
-D - (Not necessary - VS Code is better!) let's add the interpreter platforms to "se4g" environment (Spyder and Jupyter Lab)
+D - let's add the interpreter platforms to "se4g" environment (Spyder and Jupyter Lab)
 
     conda install -c conda-forge spyder jupyterlab
 
@@ -47,32 +47,13 @@ then, the aditional modules specific to our project are needed:
 ### Node
 
 Begin by checking if you have npm (node package manager - like conda for JS) installed and install it if not. Instructions can be found
-[here](https://docs.npmjs.com/cli/v7/configuring-npm/install). Below instalation process works for node v.16.15 which is the Long term stable release.
+[here](https://docs.npmjs.com/cli/v7/configuring-npm/install)
 
-Then, make sure you have installed "n", which is a Node Version Manager. It will be used to switch node versions.
-You will also need yarn, which does the same as npm, but works with the template.
+Once npm is installed, navigate to the /flaskVueFrontend folder and run
 
-Run these commands in the terminal
+    npm install
 
-    //Check if n is installed:
-    n --verison
-    //Install n:
-    sudo npm install -g n
-    //install yarn:
-    sudo npm install -g yarn
-
-Once n and yarn is installed, navigate to the /flaskVueFrontend folder and run
-
-    //Change node version to 12.13
-    n 12.13
-    yarn install
-
-this will install all dependancies listed in the project. See below for list of dependancies.
-Run the project by typing:
-
-    yarn dev
-
-This should rin the project at [localhost:3000](http://localhost:3000)
+this will install all dependancies listed in the project. See below. 
 
 ## Full list of dependancies:
 
@@ -95,14 +76,15 @@ This should rin the project at [localhost:3000](http://localhost:3000)
 ### Node:
 
 full list of dependancies can be found in this file:
-
+    
     /flaskVueFrontend/package.json
     {"name": "flaskVueFrontend",
     ...
     "dependancies":
-    //Dependancies listed here
+    //Dependancies listed here 
     ...
     }
+
 
 # Some notes just for fun:
 
