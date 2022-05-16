@@ -1,27 +1,95 @@
 <template>
-  <MglMap
-    :accessToken="accessToken"
-    :mapStyle="mapStyle"
-    :center="center"
-    :zoom="zoom"
-  >
-    <MglMarker 
-      v-for = "location in locations"
-      :key = "location.id"
-      :coordinates="location.coordinates">
-    </MglMarker>
-  </MglMap>
+<div class="row">
+    <div class="col-md-12">
+       <card type="plain">
+        <h4 slot="header" class="card-title">MapBox Map</h4>
+        <div id="regularMap" class="map"> 
+          <map-component :locations="data.locations"></map-component> <!-- :locations="data.locations" -->
+          
+        </div>
+      </card>
+    </div>
+  </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker } from "vue-mapbox";
+import MapComponent from '../components/mapComponent.vue'
+export default {
+  name: 'MapPage',
+  components: {
+    MapComponent,
+  },
+  async asyncData({ $axios }) {
+    console.log("asyncData running")
+    const { data } = await $axios.get('api/locations')
+    // for(location in data.locations){
+    //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
+    // }
+    console.log(data)
+    return { data }
+  },
+}
+</script>
+
+<!-- <template>
+<div class="row">
+    <div class="col-md-12">
+      <card type="plain">
+        <h4 slot="header" class="card-title">Leaflet Map</h4>
+        <div id="regularMap" class="map">
+          <no-ssr>
+      <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
+        <L-marker
+          v-for="location in locations"
+          :key="location.id"
+          :lat-lng="location.coordinates"
+        >
+        </L-marker>
+        <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        ></l-tile-layer>
+      </l-map>
+    </no-ssr>
+        </div>
+      </card>
+    </div>
+  </div> -->
+  <!-- <div id="map-wrap" style="height: 100vh">
+    <no-ssr>
+      <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
+        <L-marker
+          v-for="location in locations"
+          :key="location.id"
+          :lat-lng="location.coordinates"
+        >
+        </L-marker>
+        <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        ></l-tile-layer>
+      </l-map>
+    </no-ssr>
+  </div> -->
+<!-- </template>
+
+<script>
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet'
+import 'leaflet/dist/leaflet.css'
+import { Icon } from 'leaflet'
+
+delete Icon.Default.prototype._getIconUrl
+
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+})
 
 export default {
-  name: "BaseMap",
+  name: 'MapComponent',
   components: {
-    MglMap,
-    MglMarker,
+    LMap,
+    LTileLayer,
+    LMarker,
   },
   props: {
     locations: {
@@ -29,27 +97,24 @@ export default {
       required: true,
     },
   },
-  head: {
-    link: [
-      {
-        rel: "stylesheet",
-        href: "https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css",
-      },
-    ],
-  },
   data() {
     return {
-      accessToken:
-        "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
-      mapStyle: "mapbox://styles/mapbox/streets-v11",
-      center: [9.18, 45.4],
-      zoom: 8,
-    };
+      attribution:
+        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    }
   },
-  created() {
-    this.mapbox = Mapbox;
+
+  head() {
+    return {
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css',
+        },
+      ],
+    }
   },
-};
+}
 </script>
 <style lang="scss">
 .card-map {
@@ -59,7 +124,7 @@ export default {
     width: 100%;
   }
 }
-</style>
+</style> -->
 
 <!-- <style scoped>
 .map {
@@ -368,3 +433,4 @@ export default {
   }
 }
 </style> -->
+
