@@ -22,4 +22,5 @@ active. Run:
 
     flask run
 
-The application should be running on localhost port 5000
+The application should be running on localhost port 5000. Check the output of the endpoint by navigating
+to http://localhost:5000/api/locations in your browser. 
