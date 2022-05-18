@@ -94,7 +94,7 @@ axios: {
   ** Build configuration
   */
   build: {
-    transpile: [/^element-ui/],
+    transpile: [global.HTMLElement = typeof window === 'undefined' ? Object : window.HTMLElement],
     /*
     ** You can extend webpack config here
     */
