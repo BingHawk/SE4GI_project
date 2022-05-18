@@ -64,7 +64,7 @@ Run these commands in the terminal
 Once n and yarn is installed, navigate to the /flaskVueFrontend folder and run
 
     //Change node version to 12.13
-    n 12.13
+    sudo n 12.13
     yarn install
 
 this will install all dependancies listed in the project. See below for list of dependancies.
