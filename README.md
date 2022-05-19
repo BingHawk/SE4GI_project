@@ -73,18 +73,35 @@ this will install all dependancies listed in the project. See below.
 - anaconda psycopg2
 - flask-cors
 
-### Node:
+### Node
 
-full list of dependancies can be found in this file:
-    
-    /flaskVueFrontend/package.json
-    {"name": "flaskVueFrontend",
-    ...
-    "dependancies":
-    //Dependancies listed here 
-    ...
-    }
+Begin by checking if you have npm (node package manager - like conda for JS) installed and install it if not. Instructions can be found
+[here](https://docs.npmjs.com/cli/v7/configuring-npm/install). Below instalation process works for node v.16.15 which is the Long term stable release.
 
+Then, make sure you have installed "n", which is a Node Version Manager. It will be used to switch node versions.
+You will also need yarn, which does the same as npm, but works with the template.
+
+Run these commands in the terminal
+
+    //Check if n is installed:
+    n --verison
+    //Install n:
+    sudo npm install -g n
+    //install yarn:
+    sudo npm install -g yarn
+
+Once n and yarn is installed, navigate to the /flaskVueFrontend folder and run
+
+    //Change node version to 12.13
+    sudo n 12.13
+    yarn install
+
+this will install all dependancies listed in the project. See below for list of dependancies.
+Run the project by typing:
+
+    yarn dev
+
+This should rin the project at [localhost:3000](http://localhost:3000)
 
 # Some notes just for fun:
 
