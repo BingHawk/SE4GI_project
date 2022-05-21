@@ -28,6 +28,20 @@ def get_locations():
     response = json.dumps({'locations': locations})
 
     return response
+#EndPoint for the cities
+@app.route('/api/cities')
+def get_cityName():
+    r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
+    citiesname=[]
+    for result in r.json()['results']:
+        try:
+            cityname = result['city']
+        except KeyError:
+            continue
+        citiesname.append(cityname)
+    response = json.dumps({'cities': citiesname})
+    return response
 
 if __name__ == "__main__":
+    app.run(debug=True,  use_reloader=False)
     print(get_locations())

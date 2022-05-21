@@ -28,6 +28,9 @@ export default {
       type: Array,
       required: true,
     },
+    cities:{
+      
+    }
   },
   head: {
     link: [
