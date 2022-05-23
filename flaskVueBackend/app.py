@@ -10,10 +10,7 @@ def initialize():
     app.config["DEBUG"] = True
     app.config["APPLICATION_ROOT"] = "/"
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-    # print(get_locations())
 
-    global citiesname
-    citiesname = get_cityNames()
 
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
@@ -36,7 +33,7 @@ def get_locations():
 
     return response
 
-@app.route('/api/cities')
+@app.route('/api/cities') # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
     response, cityDict = get_cityNames()
     return response
