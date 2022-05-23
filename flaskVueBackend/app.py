@@ -12,7 +12,8 @@ def initialize():
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     # print(get_locations())
 
-    cities = get_cityNames()
+    global citiesname
+    citiesname = get_cityNames()
 
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
@@ -36,22 +37,34 @@ def get_locations():
     return response
 
 @app.route('/api/cities')
+def serve_cityNames():
+    response, cityDict = get_cityNames()
+    return response
+
 def get_cityNames():
 
     r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
 
     citiesname=[]
+    cityDict = {} # Maps recapitalized city names to their original caputalization. 
     # print(r.json()['results'][0])
     # return r.json()
     for result in r.json()['results']:
         try:
             if result['city'] != "unused": #Filtering out the "unused" value that exist in the API. 
-                cityname = result['city']
+                cityname = result['city'].title() #Forcing one capitalization policy
+                if cityname in cityDict.keys(): # Filling the cityDict with lists, as there are sometimes two endpint entries per city. 
+                    cityDict[cityname].append(result['city'])
+                else: 
+                    cityDict[cityname] = [result['city']]
+                # print(result['city'])
         except KeyError:
             continue
-        citiesname.append(cityname)
+        if cityname not in citiesname: #Avoiding adding duplicates
+            citiesname.append(cityname)
+
     response = json.dumps({'cities': citiesname})
-    return response
+    return response, cityDict
 
 if __name__ == "__main__":
     initialize()
