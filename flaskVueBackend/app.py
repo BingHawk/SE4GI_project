@@ -4,9 +4,15 @@ import requests
 import json
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
-app.config["APPLICATION_ROOT"] = "/"
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+def initialize():
+    #Run this when the app starts.
+    app.config["DEBUG"] = True
+    app.config["APPLICATION_ROOT"] = "/"
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # print(get_locations())
+
+    cities = get_cityNames()
 
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
@@ -29,5 +35,23 @@ def get_locations():
 
     return response
 
+@app.route('/api/cities')
+def get_cityNames():
+
+    r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
+
+    citiesname=[]
+    # print(r.json()['results'][0])
+    # return r.json()
+    for result in r.json()['results']:
+        try:
+            if result['city'] != "unused": #Filtering out the "unused" value that exist in the API. 
+                cityname = result['city']
+        except KeyError:
+            continue
+        citiesname.append(cityname)
+    response = json.dumps({'cities': citiesname})
+    return response
+
 if __name__ == "__main__":
-    print(get_locations())
+    initialize()
