@@ -5,6 +5,11 @@
     :center="center"
     :zoom="zoom"
   >
+  <!-- <MglGeocoderControl
+      :accessToken="accessToken"
+      :input.sync="defaultInput"
+      @results="handleSearch"    
+    /> -->
     <MglMarker 
       v-for = "location in locations"
       :key = "location.id"
@@ -15,19 +20,25 @@
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker } from "vue-mapbox";
+import { MglMap, MglMarker,MglNavigationControl, MglGeolocateControl } from "vue-mapbox";
+import MglGeocoderControl from 'vue-mapbox-geocoder'
+
 
 export default {
   name: "BaseMap",
   components: {
     MglMap,
     MglMarker,
+    MglGeocoderControl,
   },
   props: {
     locations: {
       type: Array,
       required: true,
     },
+    cities:{
+
+    }
   },
   head: {
     link: [
@@ -42,9 +53,14 @@ export default {
       accessToken:
         "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
-      center: [9.18, 45.4],
-      zoom: 8,
+      center: [9.5, 44],
+      zoom: 4,
     };
+  },
+  methods: {
+    handleSearch(event) {
+      console.log(event)
+    }
   },
   created() {
     this.mapbox = Mapbox;
