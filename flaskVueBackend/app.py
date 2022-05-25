@@ -10,51 +10,51 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 # schema for result of get_locations:
-    """
-    {locations: [
+"""
+{locations: [
+    {
+    "cityName": "city1",
+    "Coordinates": [lng, lat],
+    "particles": [
         {
-        "cityName": "city1",
-        "Coordinates": [lng, lat],
-        "particles": [
-            {
-            "particleName", "particle1",
-            "value": value,
-            "unit": unit
-            "lastupdate": DateTime,
-            },
-            {
-            "particleName", particle2,
-            "value": value,
-            "unit": unit
-            "lastupdate": DateTime,
-            },
-            ...
-            ]
+        "particleName", "particle1",
+        "value": value,
+        "unit": unit
+        "lastupdate": DateTime,
         },
         {
-        "cityName": "city1",
-        "Coordinates": [lng, lat],
-        "particles": [
-            {
-            "particleName", "particle1",
-            "value": value,
-            "unit": unit
-            "lastupdate": DateTime,
-            },
-            {
-            "particleName", particle2,
-            "value": value,
-            "unit": unit
-            "lastupdate": DateTime,
-            },
-            ...
-            ]
+        "particleName", particle2,
+        "value": value,
+        "unit": unit
+        "lastupdate": DateTime,
         },
         ...
         ]
-    }
+    },
+    {
+    "cityName": "city1",
+    "Coordinates": [lng, lat],
+    "particles": [
+        {
+        "particleName", "particle1",
+        "value": value,
+        "unit": unit
+        "lastupdate": DateTime,
+        },
+        {
+        "particleName", particle2,
+        "value": value,
+        "unit": unit
+        "lastupdate": DateTime,
+        },
+        ...
+        ]
+    },
+    ...
+    ]
+}
 
-    """
+"""
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
     # the endpoint of meassuring stations in italy
