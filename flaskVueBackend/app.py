@@ -8,6 +8,53 @@ app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+
+# schema for result of get_locations:
+    """
+    {locations: [
+        {
+        "cityName": "city1",
+        "Coordinates": [lng, lat],
+        "particles": [
+            {
+            "particleName", "particle1",
+            "value": value,
+            "unit": unit
+            "lastupdate": DateTime,
+            },
+            {
+            "particleName", particle2,
+            "value": value,
+            "unit": unit
+            "lastupdate": DateTime,
+            },
+            ...
+            ]
+        },
+        {
+        "cityName": "city1",
+        "Coordinates": [lng, lat],
+        "particles": [
+            {
+            "particleName", "particle1",
+            "value": value,
+            "unit": unit
+            "lastupdate": DateTime,
+            },
+            {
+            "particleName", particle2,
+            "value": value,
+            "unit": unit
+            "lastupdate": DateTime,
+            },
+            ...
+            ]
+        },
+        ...
+        ]
+    }
+
+    """
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
     # the endpoint of meassuring stations in italy
@@ -15,12 +62,23 @@ def get_locations():
     
     # Get the stations
     r = requests.get(italyEndpoint)
-
     locations = []
-    print(r.json()['results'][0])
     for result in r.json()['results']:
         try:
-            location = {'id': result['id'], 'coordinates': {'lat': result['coordinates']['latitude'], 'lng': result['coordinates']['longitude']} }
+            location = {
+                'id': result['id'],
+                'cityName': result['name'], # Not correct, this is the name of the station. 
+                'coordinates': [result['coordinates']['latitude'],result['coordinates']['longitude']],
+                'particles': []
+                }
+            for parameter in result['parameters']:
+                particle = {
+                    'particleName': parameter['displayName'],
+                    'value': parameter['lastValue'],
+                    'unit': parameter['unit'],
+                    'lastUpdate': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
+                }
+                location['particles'].append(particle)
         except KeyError:
             continue
         locations.append(location)
