@@ -5,11 +5,11 @@
     :center="center"
     :zoom="zoom"
   >
-  <!-- <MglGeocoderControl
+  <MglGeocoderControl
       :accessToken="accessToken"
       :input.sync="defaultInput"
       @results="handleSearch"    
-    /> -->
+    />
     <MglMarker 
       v-for = "location in locations"
       :key = "location.id"
