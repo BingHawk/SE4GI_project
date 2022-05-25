@@ -1,11 +1,11 @@
 <template>
-<div class="row">
+  <div class="row">
     <div class="col-md-12">
-       <card type="plain">
+      <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
-        <div id="regularMap" class="map"> 
-          <map-component :locations="data.locations"></map-component> <!-- :locations="data.locations" -->
-          
+        <div id="regularMap" class="map">
+          <map-component :locations="data.locations"></map-component>
+          <!-- :locations="data.locations" -->
         </div>
       </card>
     </div>
@@ -13,22 +13,22 @@
 </template>
 
 <script>
-import MapComponent from '../components/mapComponent.vue'
+import MapComponent from "../components/mapComponent.vue";
 export default {
-  name: 'MapPage',
+  name: "MapPage",
   components: {
     MapComponent,
   },
   async asyncData({ $axios }) {
-    console.log("asyncData running")
-    const { data } = await $axios.get('api/locations')
+    console.log("asyncData running");
+    const { data } = await $axios.get("api/locations");
     // for(location in data.locations){
     //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
     // }
-    console.log(data)
-    return { data }
+    console.log(data);
+    return { data };
   },
-}
+};
 </script>
 
 <!-- <template>
@@ -54,7 +54,7 @@ export default {
       </card>
     </div>
   </div> -->
-  <!-- <div id="map-wrap" style="height: 100vh">
+<!-- <div id="map-wrap" style="height: 100vh">
     <no-ssr>
       <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
         <L-marker
@@ -433,4 +433,3 @@ export default {
   }
 }
 </style> -->
-
