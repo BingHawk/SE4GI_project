@@ -68,7 +68,7 @@ def get_locations():
             location = {
                 'id': result['id'],
                 'cityName': result['name'], # Not correct, this is the name of the station. 
-                'coordinates': [result['coordinates']['latitude'],result['coordinates']['longitude']],
+                'coordinates': [result['coordinates']['longitude'],result['coordinates']['latitude']],
                 'particles': []
                 }
             for parameter in result['parameters']:
