@@ -4,12 +4,9 @@ import requests
 import json
 
 app = Flask(__name__)
-
-def initialize():
-    #Run this when the app starts.
-    app.config["DEBUG"] = True
-    app.config["APPLICATION_ROOT"] = "/"
-    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+app.config["DEBUG"] = True
+app.config["APPLICATION_ROOT"] = "/"
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @app.route('/api/locations', methods=["GET"])
@@ -63,5 +60,4 @@ def get_cityNames():
     response = json.dumps({'cities': citiesname})
     return response, cityDict
 
-if __name__ == "__main__":
-    initialize()
+# if __name__ == "__main__":
