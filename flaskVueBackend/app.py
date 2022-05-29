@@ -1,7 +1,9 @@
+from asyncio import create_task
 from flask import Flask
 from flask_cors import CORS
 import requests
 import json
+import psycopg2
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -28,6 +30,31 @@ def get_locations():
     response = json.dumps({'locations': locations})
 
     return response
+
+#create the database table
+def addCitiesToDatabase(cities):
+    conn = psycopg2.connect(
+   database="SE4G", user='postgres', password='123456', host='localhost', port= '5433'
+)
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor()
+
+    #Doping EMPLOYEE table if already exists.
+    cursor.execute("DROP TABLE IF EXISTS CITY")
+
+    #Creating table as per requirement
+    createTable ='''CREATE TABLE CITY(
+    CITY_NAME CHAR(20) NOT NULL,
+    NORTH FLOAT,
+    EAST FLOAT
+    )'''
+    cursor.execute(createTable)
+    #print("Table created successfully........")
+    conn.commit()
+    #Closing the connection
+    conn.close()
+    
+    
 #EndPoint for the cities
 @app.route('/api/cities')
 def get_cityName():
@@ -40,6 +67,7 @@ def get_cityName():
             continue
         citiesname.append(cityname)
     response = json.dumps({'cities': citiesname})
+    addCitiesToDatabase(citiesname)
     return response
 
 if __name__ == "__main__":
