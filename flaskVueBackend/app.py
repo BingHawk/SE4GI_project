@@ -3,11 +3,19 @@ from flask_cors import CORS
 import requests
 import json
 
+from osm import Osm
+
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+@app.before_first_request
+def create_tables():
+    global cityResponse
+    cityResponse, cityDict = get_cityNames()
+    cityCoords = Osm.getCities(filter = list(cityDict.keys()))
+    
 
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
@@ -33,8 +41,8 @@ def get_locations():
 #EndPoint for the cities
 @app.route('/api/cities') # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
-    response, cityDict = get_cityNames()
-    return response
+    # response, cityDict = get_cityNames()
+    return cityResponse
 
 def get_cityNames():
 
@@ -57,10 +65,11 @@ def get_cityNames():
             continue
         if cityname not in citiesname: #Avoiding adding duplicates
             citiesname.append(cityname)
-
+    print(citiesname)
     response = json.dumps({'cities': citiesname})
     return response, cityDict
 
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
+    get_cityNames()
     # print(get_locations())
