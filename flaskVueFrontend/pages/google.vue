@@ -4,7 +4,39 @@
       <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
         <div id="regularMap" class="map">
-          <map-component :locations="data.locations"></map-component>
+         
+              <div
+                class="btn-group btn-group-toggle"
+              >
+              <select
+              class="custom-select  m-1 text-white w-100"
+              name="Cities"
+              id="idCitiesDDL"
+              data-toggle="tooltip"
+              title="Your destination city"
+              style="
+                background-image: linear-gradient(
+                    45deg,
+                    transparent 50%,
+                    white 50%
+                  ),
+                  linear-gradient(135deg, white 50%, transparent 50%),
+                  linear-gradient(to right, #242424, #242424);
+                background-position: calc(100% - 20px) calc(1em + 2px),
+                  calc(100% - 15px) calc(1em + 2px), 100% 0;
+                background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+                background-repeat: no-repeat;
+                background-color:#41B883;
+              "
+            >
+              <option v-for="selectValue in selectValues"  :value="selectValue" v-bind:key="option" >{{ selectValue }}</option>
+            </select>
+              </div>
+              
+          <map-component
+            :locations="data.locations"
+            :cities="city.cities"
+          ></map-component>
           <!-- :locations="data.locations" -->
         </div>
       </card>
@@ -21,12 +53,27 @@ export default {
   },
   async asyncData({ $axios }) {
     console.log("asyncData running");
-    const { data } = await $axios.get("api/locations");
-    // for(location in data.locations){
-    //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
-    // }
-    console.log(data);
-    return { data };
+    // const { data } = await $axios.get('api/locations')
+    // // for(location in data.locations){
+    // //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
+    // // }
+    // console.log(data)
+    // return { data }
+    // async asyncData ({ $axios }) {
+    const [locations, cities] = await Promise.all([
+      $axios.get("/api/locations"),
+      $axios.get("/api/cities"),
+    ]);
+    // console.log(data)
+    console.log(locations);
+    console.log(cities);
+
+    return {
+      data: locations.data,
+      city: cities.data,
+      selectValues: cities.data.cities,
+    };
+    // },
   },
 };
 </script>
