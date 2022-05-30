@@ -19,14 +19,6 @@ class Osm:
     out;
     '''
 
-    @staticmethod
-    def __unionTags(cities):
-        outString = '('
-        for city in cities:
-            outString += '''node["place"]["name"="{}"](area.a);'''.format(city)
-        outString += ')'
-        return outString
-
     @classmethod
     def getCities(cls, filter = None): 
         query = '''
