@@ -31,10 +31,12 @@ class Osm:
                 (._;>;);
                 out;
                 '''
-
-        print(query)
+        
+        print("querying OSM")
         res = cls.API.query(query)
+        print("query complete")
 
+        
         cities = []
         for node in res.nodes:
             if filter is None or node.tags['name'].title() in filter:
