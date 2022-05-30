@@ -5,11 +5,11 @@
     :center="center"
     :zoom="zoom"
   >
-  <MglGeocoderControl
+  <!-- <MglGeocoderControl
       :accessToken="accessToken"
       :input.sync="defaultInput"
       @results="handleSearch"    
-    />
+    /> -->
     <MglMarker 
       v-for = "location in locations"
       :key = "location.id"
@@ -20,8 +20,8 @@
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker,MglNavigationControl, MglGeolocateControl } from "vue-mapbox";
-import MglGeocoderControl from 'vue-mapbox-geocoder'
+import { MglMap, MglMarker } from "vue-mapbox";
+//import MglGeocoderControl from 'vue-mapbox-geocoder'
 
 
 export default {
@@ -29,7 +29,7 @@ export default {
   components: {
     MglMap,
     MglMarker,
-    MglGeocoderControl,
+    //MglGeocoderControl,
   },
   props: {
     locations: {

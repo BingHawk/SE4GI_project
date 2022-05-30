@@ -15,25 +15,34 @@
                 :class="isRTL ? 'float-left' : 'float-right'"
                 data-toggle="buttons"
               >
-                <label
-                  v-for="(option, index) in bigLineChartCategories"
-                  :key="option.name"
-                  class="btn btn-sm btn-primary btn-simple"
-                  :class="{ active: bigLineChart.activeIndex === index }"
-                  :id="index"
+                <select
+                  class="custom-select m-1  text-white w-100"
+                  name="Cities"
+                  id="idCitiesDDL"
+                  data-toggle="tooltip"
+                  title="Your destination city"
+                  style="
+                background-image: linear-gradient(
+                    45deg,
+                    transparent 50%,
+                    white 50%
+                  ),
+                  linear-gradient(135deg, white 50%, transparent 50%),
+                  linear-gradient(to right, #242424, #242424);
+                background-position: calc(100% - 20px) calc(1em + 2px),
+                  calc(100% - 15px) calc(1em + 2px), 100% 0;
+                background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+                background-repeat: no-repeat;
+                background-color: #41B883;
+              "
                 >
-                  <input
-                    type="radio"
-                    @click="initBigChart(index)"
-                    name="options"
-                    autocomplete="off"
-                    :checked="bigLineChart.activeIndex === index"
-                  />
-                  <span class="d-none d-sm-block">{{ option.name }}</span>
-                  <span class="d-block d-sm-none">
-                    <i :class="option.icon"></i>
-                  </span>
-                </label>
+                  <option
+                    v-for="selectValue in selectValues"
+                    :value="selectValue"
+                    v-bind:key="option"
+                    >{{ selectValue }}</option
+                  >
+                </select>
               </div>
             </div>
           </div>
@@ -52,9 +61,8 @@
       </card>
     </div>
 
-
     <!-- Small charts -->
-    <div class="col-lg-4" :class="{ 'text-right': isRTL }">
+    <!-- <div class="col-lg-4" :class="{ 'text-right': isRTL }">
       <card type="chart">
         <template slot="header">
           <h5 class="card-category">Total Shipments</h5>
@@ -167,23 +175,36 @@
           ></el-table-column>
         </el-table>
       </card>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
-import LineChart from '@/components/Charts/LineChart';
-import BarChart from '@/components/Charts/BarChart';
-import * as chartConfigs from '@/components/Charts/config';
-import TaskList from '@/components/Dashboard/TaskList';
-import config from '@/config';
-import { Table, TableColumn } from 'element-ui';
+import LineChart from "@/components/Charts/LineChart";
+import BarChart from "@/components/Charts/BarChart";
+import * as chartConfigs from "@/components/Charts/config";
+import TaskList from "@/components/Dashboard/TaskList";
+import config from "@/config";
+import { Table, TableColumn } from "element-ui";
 
 let bigChartData = [
   [100, 70, 90, 70, 85, 60, 75, 60, 90, 80, 110, 100],
   [80, 120, 105, 110, 95, 105, 90, 100, 80, 95, 70, 120],
-  [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130]
-]
-let bigChartLabels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+  [60, 80, 65, 130, 80, 105, 90, 130, 70, 115, 60, 130],
+];
+let bigChartLabels = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+];
 let bigChartDatasetOptions = {
   fill: true,
   borderColor: config.colors.primary,
@@ -191,184 +212,204 @@ let bigChartDatasetOptions = {
   borderDash: [],
   borderDashOffset: 0.0,
   pointBackgroundColor: config.colors.primary,
-  pointBorderColor: 'rgba(255,255,255,0)',
+  pointBorderColor: "rgba(255,255,255,0)",
   pointHoverBackgroundColor: config.colors.primary,
   pointBorderWidth: 20,
   pointHoverRadius: 4,
   pointHoverBorderWidth: 15,
   pointRadius: 4,
-}
+};
 
 export default {
-  name: 'dashboard',
+  name: "dashboard",
   components: {
     LineChart,
     BarChart,
     TaskList,
     [Table.name]: Table,
-    [TableColumn.name]: TableColumn
+    [TableColumn.name]: TableColumn,
   },
-  data () {
+  ///query the cities and visualize it on map as single items then add each to a DDL///
+  async asyncData({ $axios }) {
+    //console.log("asyncData running");
+    const [cities] = await Promise.all([$axios.get("/api/cities")]);
+    console.log(cities);
+
     return {
+      selectValues: cities.data.cities,
+    };
+  },
+  creatCitiesDDL() {},
+  data() {
+    return {
+      //selectValues: cities= asyncData(),
       tableData: [
         {
           id: 1,
-          name: 'Dakota Rice',
-          salary: '$36.738',
-          country: 'Niger',
-          city: 'Oud-Turnhout'
+          name: "Dakota Rice",
+          salary: "$36.738",
+          country: "Niger",
+          city: "Oud-Turnhout",
         },
         {
           id: 2,
-          name: 'Minerva Hooper',
-          salary: '$23,789',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas'
+          name: "Minerva Hooper",
+          salary: "$23,789",
+          country: "Curaçao",
+          city: "Sinaai-Waas",
         },
         {
           id: 3,
-          name: 'Sage Rodriguez',
-          salary: '$56,142',
-          country: 'Netherlands',
-          city: 'Baileux'
+          name: "Sage Rodriguez",
+          salary: "$56,142",
+          country: "Netherlands",
+          city: "Baileux",
         },
         {
           id: 4,
-          name: 'Philip Chaney',
-          salary: '$38,735',
-          country: 'Korea, South',
-          city: 'Overland Park'
+          name: "Philip Chaney",
+          salary: "$38,735",
+          country: "Korea, South",
+          city: "Overland Park",
         },
         {
           id: 5,
-          name: 'Doris Greene',
-          salary: '$63,542',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kärnten'
-        }
+          name: "Doris Greene",
+          salary: "$63,542",
+          country: "Malawi",
+          city: "Feldkirchen in Kärnten",
+        },
       ],
       bigLineChart: {
         activeIndex: 0,
         chartData: {
-          datasets: [{
-            ...bigChartDatasetOptions,
-            data: bigChartData[0]
-          }],
-          labels: bigChartLabels
+          datasets: [
+            {
+              ...bigChartDatasetOptions,
+              data: bigChartData[0],
+            },
+          ],
+          labels: bigChartLabels,
         },
         extraOptions: chartConfigs.purpleChartOptions,
         gradientColors: config.colors.primaryGradient,
         gradientStops: [1, 0.4, 0],
-        categories: []
+        categories: [],
       },
       purpleLineChart: {
         extraOptions: chartConfigs.purpleChartOptions,
         chartData: {
-          labels: ['JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+          labels: ["JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
           datasets: [
             {
-              label: 'Data',
+              label: "Data",
               fill: true,
               borderColor: config.colors.primary,
               borderWidth: 2,
               borderDash: [],
               borderDashOffset: 0.0,
               pointBackgroundColor: config.colors.primary,
-              pointBorderColor: 'rgba(255,255,255,0)',
+              pointBorderColor: "rgba(255,255,255,0)",
               pointHoverBackgroundColor: config.colors.primary,
               pointBorderWidth: 20,
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: [80, 100, 70, 80, 120, 80]
-            }
-          ]
+              data: [80, 100, 70, 80, 120, 80],
+            },
+          ],
         },
         gradientColors: config.colors.primaryGradient,
-        gradientStops: [1, 0.2, 0]
+        gradientStops: [1, 0.2, 0],
       },
       greenLineChart: {
         extraOptions: chartConfigs.greenChartOptions,
         chartData: {
-          labels: ['JUL', 'AUG', 'SEP', 'OCT', 'NOV'],
+          labels: ["JUL", "AUG", "SEP", "OCT", "NOV"],
           datasets: [
             {
-              label: 'My First dataset',
+              label: "My First dataset",
               fill: true,
               borderColor: config.colors.danger,
               borderWidth: 2,
               borderDash: [],
               borderDashOffset: 0.0,
               pointBackgroundColor: config.colors.danger,
-              pointBorderColor: 'rgba(255,255,255,0)',
+              pointBorderColor: "rgba(255,255,255,0)",
               pointHoverBackgroundColor: config.colors.danger,
               pointBorderWidth: 20,
               pointHoverRadius: 4,
               pointHoverBorderWidth: 15,
               pointRadius: 4,
-              data: [90, 27, 60, 12, 80]
-            }
-          ]
+              data: [90, 27, 60, 12, 80],
+            },
+          ],
         },
         gradientColors: [
-          'rgba(66,134,121,0.15)',
-          'rgba(66,134,121,0.0)',
-          'rgba(66,134,121,0)'
+          "rgba(66,134,121,0.15)",
+          "rgba(66,134,121,0.0)",
+          "rgba(66,134,121,0)",
         ],
-        gradientStops: [1, 0.4, 0]
+        gradientStops: [1, 0.4, 0],
       },
       blueBarChart: {
         extraOptions: chartConfigs.barChartOptions,
         chartData: {
-          labels: ['USA', 'GER', 'AUS', 'UK', 'RO', 'BR'],
+          labels: ["USA", "GER", "AUS", "UK", "RO", "BR"],
           datasets: [
             {
-              label: 'Countries',
+              label: "Countries",
               fill: true,
               borderColor: config.colors.info,
               borderWidth: 2,
               borderDash: [],
               borderDashOffset: 0.0,
-              data: [53, 20, 10, 80, 100, 45]
-            }
-          ]
+              data: [53, 20, 10, 80, 100, 45],
+            },
+          ],
         },
         gradientColors: config.colors.primaryGradient,
-        gradientStops: [1, 0.4, 0]
-      }
+        gradientStops: [1, 0.4, 0],
+      },
     };
   },
   computed: {
-    enableRTL () {
+    enableRTL() {
       return this.$route.query.enableRTL;
     },
-    isRTL () {
+    isRTL() {
       return this.$rtl.isRTL;
     },
-    bigLineChartCategories () {
-      return [{ name: 'Accounts', icon: 'tim-icons icon-single-02' }, {
-        name: 'Purchases',
-        icon: 'tim-icons icon-gift-2'
-      }, { name: 'Sessions', icon: 'tim-icons icon-tap-02' }];
-    }
+    bigLineChartCategories() {
+      return [
+        { name: "Accounts", icon: "tim-icons icon-single-02" },
+        {
+          name: "Purchases",
+          icon: "tim-icons icon-gift-2",
+        },
+        { name: "Sessions", icon: "tim-icons icon-tap-02" },
+      ];
+    },
   },
   methods: {
-    initBigChart (index) {
+    initBigChart(index) {
       let chartData = {
-        datasets: [{
-          ...bigChartDatasetOptions,
-          data: bigChartData[index]
-        }],
-        labels: bigChartLabels
+        datasets: [
+          {
+            ...bigChartDatasetOptions,
+            data: bigChartData[index],
+          },
+        ],
+        labels: bigChartLabels,
       };
       this.$refs.bigChart.updateGradients(chartData);
       this.bigLineChart.chartData = chartData;
       this.bigLineChart.activeIndex = index;
-    }
+    },
   },
-  mounted () {
+  mounted() {
     this.initBigChart(0);
-  }
-}
+  },
+};
 </script>
 <style></style>
