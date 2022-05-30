@@ -1,20 +1,21 @@
 from flask import Flask
 from flask_cors import CORS
+import psycopg2
 import requests
 import json
-
-from osm import Osm
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+
 @app.before_first_request
-def create_tables():
-    global cityResponse
+def initAPI():
+    global cityResponse, cityDict
     cityResponse, cityDict = get_cityNames()
-    cityCoords = Osm.getCities(filter = list(cityDict.keys()))
+
+
     
 
 @app.route('/api/locations', methods=["GET"])
