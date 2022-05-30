@@ -1,5 +1,13 @@
 import psycopg2
 
+# Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
+
+# Import to other files and initialize by typing: 
+# from initDB import Pg
+# Pg = Pg(user = "my username", password = "my password", port = "my port")
+# if no keywords are inputed, default MYUSER, MYPWRD and MYPORT below will be used. 
+
+
 class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
@@ -40,9 +48,17 @@ class Pg:
         return "DROP TABLE IF EXISTS {}".format(table)
 
     #create the database table
-    def __init__(self):
+    def __init__(self, user = None, password = None, port = None):
+
+        if user is None: 
+            user = self.MYUSER
+        if password is None: 
+            password = self.MYPWRD
+        if port is None: 
+            port = self.MYPORT
+
         conn = psycopg2.connect(
-    database="SE4G", user= self.MYUSER, password= self.MYPWRD, host='localhost', port= self.MYPORT
+    database="SE4G", user = user, password= password, host='localhost', port= port
     )
         # Creating a cursor object using the cursor() method
         cursor = conn.cursor()
