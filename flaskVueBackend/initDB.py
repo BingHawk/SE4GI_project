@@ -15,9 +15,6 @@ class Pg:
     MYPWRD = '123456'
     MYPORT = '5433'
 
-    # list of the table names
-    tables = ["city","users","contacts"]
-
     # Dictionary of the create statements for each table.
     #   There has to be one key equal to every item int tables. 
     #   The name of the created table must be the same as the name of the table in the tables list 
@@ -70,7 +67,7 @@ class Pg:
         cursor = conn.cursor()
 
         # Creates all the tables in the list of tables. 
-        for table in self.tables:
+        for table in self.create.keys():
             #Doping table if already exists.
             cursor.execute(self._drop(table))
 
