@@ -1,4 +1,3 @@
-from asyncio import create_task
 from flask import Flask
 from flask_cors import CORS
 import requests
