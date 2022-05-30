@@ -1,4 +1,5 @@
 import psycopg2
+from osm import Osm
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
 
@@ -21,7 +22,7 @@ class Pg:
     create = {
         "city": '''CREATE TABLE city(
             city_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-            city_name CHAR(20) NOT NULL,
+            city_name VARCHAR NOT NULL,
             longitude FLOAT,
             latitude FLOAT
         )''',
@@ -39,12 +40,6 @@ class Pg:
             email VARCHAR
         )'''
     }
-
-    createTable ='''CREATE TABLE CITY(
-    CITY_NAME CHAR(20) NOT NULL,
-    NORTH FLOAT,
-    EAST FLOAT
-    )'''
 
     # helper function to clean up.
     def _drop(self, table):
@@ -74,6 +69,20 @@ class Pg:
             cursor.execute(self.create[table])
             print("Table created successfully........")
             conn.commit()
+
+        # Getting the coordinates for cities
+        cityCoords = Osm.getCities()
+
+        # Adding the city data
+        for city in cityCoords:
+            city['name'] = city['name'].replace("'", "''") #using double tics to escape from postgres reserved character '. 
+            sql = '''
+            INSERT INTO city (city_name, longitude, latitude)
+            VALUES('{}', {}, {});
+            '''.format(city['name'], city['coordinates'][0], city['coordinates'][1])
+            cursor.execute(sql)
+        conn.commit()
+
         # Closing the connection
         conn.close()
 
