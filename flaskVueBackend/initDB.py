@@ -1,10 +1,14 @@
 import psycopg2
 
+MYUSER = 'postgres'
+MYPWRD = ''
+MYPORT = '5432'
+
 
 #create the database table
-def addCitiesToDatabase(cities):
+def initCities():
     conn = psycopg2.connect(
-   database="SE4G", user='postgres', password='123456', host='localhost', port= '5433'
+   database="SE4G", user= MYUSER, password= MYPWRD, host='localhost', port= MYPORT
 )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor()
@@ -23,3 +27,6 @@ def addCitiesToDatabase(cities):
     conn.commit()
     #Closing the connection
     conn.close()
+
+if __name__ == "__main__":
+    initCities()
