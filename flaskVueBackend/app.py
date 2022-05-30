@@ -1,3 +1,4 @@
+from asyncio import create_task
 from flask import Flask
 from flask_cors import CORS
 import requests
@@ -29,7 +30,8 @@ def get_locations():
     response = json.dumps({'locations': locations})
 
     return response
-
+    
+#EndPoint for the cities
 @app.route('/api/cities') # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
     response, cityDict = get_cityNames()
@@ -60,4 +62,6 @@ def get_cityNames():
     response = json.dumps({'cities': citiesname})
     return response, cityDict
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
+    app.run(debug=True,  use_reloader=False)
+    print(get_locations())

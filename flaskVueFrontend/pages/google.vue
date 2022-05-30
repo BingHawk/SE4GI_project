@@ -4,7 +4,10 @@
       <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
         <div id="regularMap" class="map">
-          <map-component :locations="data.locations"></map-component>
+          <map-component
+            :locations="data.locations"
+            :cities="city.cities"
+          ></map-component>
           <!-- :locations="data.locations" -->
         </div>
       </card>
@@ -21,12 +24,26 @@ export default {
   },
   async asyncData({ $axios }) {
     console.log("asyncData running");
-    const { data } = await $axios.get("api/locations");
-    // for(location in data.locations){
-    //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
-    // }
-    console.log(data);
-    return { data };
+    // const { data } = await $axios.get('api/locations')
+    // // for(location in data.locations){
+    // //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
+    // // }
+    // console.log(data)
+    // return { data }
+    // async asyncData ({ $axios }) {
+    const [locations, cities] = await Promise.all([
+      $axios.get("/api/locations"),
+      $axios.get("/api/cities"),
+    ]);
+    // console.log(data)
+    console.log(locations);
+    console.log(cities);
+
+    return {
+      data: locations.data,
+      city: cities.data,
+    };
+    // },
   },
 };
 </script>
