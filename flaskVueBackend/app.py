@@ -22,7 +22,7 @@ def get_locations():
     print(r.json()['results'][0])
     for result in r.json()['results']:
         try:
-            location = {'id': result['id'], 'coordinates': {'lat': result['coordinates']['latitude'], 'lng': result['coordinates']['longitude']} }
+            location = {'id': result['id'], 'coordinates': [result['coordinates']['longitude'], result['coordinates']['latitude']]}
         except KeyError:
             continue
         locations.append(location)
@@ -64,4 +64,4 @@ def get_cityNames():
 
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
-    print(get_locations())
+    # print(get_locations())
