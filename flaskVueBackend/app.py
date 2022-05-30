@@ -9,6 +9,7 @@ app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
     # the endpoint of meassuring stations in italy

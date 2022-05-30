@@ -45,7 +45,7 @@ export default {
     };
     // },
   },
-}
+};
 </script>
 
 <!-- <template>
@@ -71,7 +71,7 @@ export default {
       </card>
     </div>
   </div> -->
-  <!-- <div id="map-wrap" style="height: 100vh">
+<!-- <div id="map-wrap" style="height: 100vh">
     <no-ssr>
       <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
         <L-marker
@@ -450,4 +450,3 @@ export default {
   }
 }
 </style> -->
-

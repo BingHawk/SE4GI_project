@@ -69,8 +69,8 @@ this will install all dependancies listed in the project. See below.
 - contextily
 - folium
 - geoalchemy2
-- jmcmurray json
-- anaconda psycopg2
+- json
+- psycopg2
 - flask-cors
 
 ### Node
