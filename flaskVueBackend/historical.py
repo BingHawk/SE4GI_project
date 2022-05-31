@@ -14,19 +14,97 @@ import datetime as dt
 cities = ['Roma', 'Milano', 'Firenze']
 
 def getMonthData(city):
+    t = dt.datetime.now()
+    startDay = t.replace(second = 0, minute = 0) # Today the starting day of query
+    endDay = startDay - dt.timedelta(days = 30) #iterate untill d0 == stoptime
+
+    res, paramUnits = queryByDay(startDay, endDay, city)
+
+    # Desired JSON scheme
+    #  {
+    # "time_month": {
+    #     particle1: {
+    #         "data": [day1, day2, ... day30],
+    #         "unit":unit
+    #         },
+    #     particle2: {
+    #         "data": [day1, day2, ... day30],
+    #         "unit": unit
+    #         }
+    # }
+    time_month = {}
+    for param in paramUnits.keys():
+        time_month[param] = {"data": [], "unit": paramUnits[param]}
+
+        currentDay = endDay.replace(hour=0,minute=0,microsecond=0)
+        while currentDay != startDay.replace(hour=0,minute=0,microsecond=0):
+            currentDay = currentDay + dt.timedelta(days = 1)
+            try:
+                avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
+                time_month[param]['data'].append(avg)
+            except KeyError:
+                print("missing day: {} or parameter: {}".format(currentDay, param))
+                time_month[param]['data'].append(None)
+    
+    return time_month
+
+def getYearData(city):
+    t = dt.datetime.now()
+    startDay = t.replace(second = 0, minute = 0) # Today the starting day of query
+    endDay = startDay - dt.timedelta(days = 365) #iterate untill d0 == stoptime
+
+    res, paramUnits = queryByDay(startDay, endDay, city)
+
+    # Desired JSON scheme
+    #     {
+    # "time_year": {
+    #     particle1: {
+    #         "data": [week1, week2, ... week52],
+    #         "unit":unit
+    #         },
+    #     particle2: {
+    #         "data": [week1, week2, ... week52],
+    #         "unit": unit
+    #         }
+    # }
+    time_year = {}
+    for param in paramUnits.keys():
+        time_year[param] = {"data": [], "unit": paramUnits[param]}
+
+        currentDay = endDay.replace(hour=0,minute=0,microsecond=0)
+        while currentDay != startDay.replace(hour=0,minute=0,microsecond=0):
+            currentDay = currentDay + dt.timedelta(days = 1)
+            try:
+                avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
+                time_year[param]['data'].append(avg)
+            except KeyError:
+                print("missing day: {} or parameter: {}".format(currentDay, param))
+                time_year[param]['data'].append(None)
+    
+    return time_year
+
+
+
+
+
+    
+
+
+    return res
+
+def queryByDay(startDay, endDay, city):
     inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
     outFormat = "%Y-%m-%dT%H:%M:%S+02:00" # Format recieved from openAQ 
-    t = dt.datetime.now()
-    d0 = t.replace(second = 0, minute = 0) # Today the starting day of query
+
+    d0 = startDay
     d1 = d0 - dt.timedelta(days = 1) # The day before 
-    stopTime = d0 - dt.timedelta(days = 30) #iterate untill d0 == stoptime
-    limit = 1000 # Number of results accepted per query
-    maxlimit = 5000 # The max limit the program is allowed to raise to. 
+    limit = 1000 # Number of results accepted per query. Fewer means better preformance but risk of missing data. 
+    maxlimit = 5000 # The max limit the program is allowed to raise to. 5000 always works, 10'000 sometimes fails
 
     iter = 0
     paramUnits= {}
     res = {}
-    while d0 != stopTime: # Looping until every day of the month is done
+    while d0 != endDay: # Looping until every day of the month is done
         page = 1
         while True: #Looping though paginations
             d0String = d0.strftime(inFormat)+"%2B00%3A00"
@@ -36,6 +114,8 @@ def getMonthData(city):
 
             r = requests.get(url)
             resJson = r.json()
+
+            # informing about limit issues if present.
             if resJson['meta']['found'] > limit and limit < maxlimit:
                 print("WARNING: The limit is lower than number of results, some results are lost")
                 print("\tLimit: {}, Number of results: {}".format(limit, resJson['meta']['found']))
@@ -46,6 +126,8 @@ def getMonthData(city):
                     print("\tRasing limit to {}".format(maxlimit))
                     print("\tCannot raise limit more, at maxlimit")
                     limit = maxlimit
+
+            # When an empty page is recieved, goes on to next day. 
             if not resJson['results']:
                 break
 
@@ -89,7 +171,7 @@ def getMonthData(city):
             print("Error: Infinite loop.")
             break
         
-    return res
+    return res, paramUnits
 
 
 res = getMonthData('Firenze')
