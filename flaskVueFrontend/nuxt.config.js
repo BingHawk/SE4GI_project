@@ -98,7 +98,10 @@ export default {
    ** Build configuration
    */
   build: {
-    transpile: [/^vue2-google-maps($|\/)/],
+    transpile: [
+      (global.HTMLElement =
+        typeof window === "undefined" ? Object : window.HTMLElement),
+    ],
     /*
      ** You can extend webpack config here
      */
