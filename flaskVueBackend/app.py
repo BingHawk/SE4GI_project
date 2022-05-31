@@ -74,6 +74,7 @@ def getCityCoords():
 print("starting setup")
 
 cityResponse, cityDict = get_cityNames()
+cityCoords = getCityCoords()
 
 print("setup complete")
 
