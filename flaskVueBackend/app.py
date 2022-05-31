@@ -62,6 +62,34 @@ def get_cityNames():
     response = json.dumps({'cities': citiesname})
     return response, cityDict
 
+# It is working finally!
+@app.route('/api/cities/<cityname>', methods=["GET"])
+def get_cities(cityname):
+    cityEndpoint =f"https://api.openaq.org/v2/locations?limit=15&page=1&offset=0&sort=desc&radius=1000&country_id=IT&city={cityname}&order_by=lastUpdated&dumpRaw=false"
+    # Get the stations
+    cities=[]
+    # nested=[]
+    r = requests.get(cityEndpoint)
+    # Bad idea
+    index=0
+    d = {}
+    for result in r.json()['results']:
+        cityName = result['city']   
+        id=result['id']
+        lastUpdate=result['lastUpdated']
+        output=[]
+        i=1
+        for value in result['parameters']:
+            parameters = {'particleName': value['parameter'],  'unit': value['unit'] , 'value': value['lastValue']}
+            # parameters = {f'parameters {i}': {'value': value['lastValue'], 'particleName': value['parameter'],'lastUpdate': value['lastUpdated'],'unit': value['unit'] }}
+            # for item in value:
+            output.append(parameters)
+            i+=1
+        city={'id':id,'city':cityName , 'lastUpdate':lastUpdate,'Measurements':output }
+        cities.append(city)
+    response = json.dumps({'cities': cities})
+    return response  
+
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
     print(get_locations())
