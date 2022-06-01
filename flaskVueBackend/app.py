@@ -6,8 +6,8 @@ import json
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = '123456'
-MYPORT = '5433'
+MYPWRD = 'blod'
+MYPORT = '5432'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -101,8 +101,9 @@ def get_locations():
 
     return response
 
+# Returns latest value for every city.
+@app.route('/api/latest', methods=["GET"])
 def get_latest():
-    
     #endpoint for latest values of meassuring stations in italy
     latestEndpoint = 'https://api.openaq.org/v2/latest?limit=1000&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
     
