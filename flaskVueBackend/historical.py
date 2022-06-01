@@ -1,3 +1,4 @@
+from decimal import DivisionByZero
 import requests
 import datetime as dt
 
@@ -51,7 +52,7 @@ def getMonthData(city):
 def getYearData(city):
     t = dt.datetime.now()
     startDay = t.replace(second = 0, minute = 0) # Today the starting day of query
-    endDay = startDay - dt.timedelta(days = 365) #iterate untill d0 == stoptime
+    endDay = startDay - dt.timedelta(days = 365) # The day that is furthest back. 
 
     res, paramUnits = queryByDay(startDay, endDay, city)
 
@@ -72,29 +73,54 @@ def getYearData(city):
         time_year[param] = {"data": [], "unit": paramUnits[param]}
 
         currentDay = endDay.replace(hour=0,minute=0,microsecond=0)
+        currentWeek = currentDay.isocalendar().week
+        weekSum = 0
+        weekN = 0
         while currentDay != startDay.replace(hour=0,minute=0,microsecond=0):
             currentDay = currentDay + dt.timedelta(days = 1)
-            try:
-                avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
-                time_year[param]['data'].append(avg)
-            except KeyError:
-                print("missing day: {} or parameter: {}".format(currentDay, param))
-                time_year[param]['data'].append(None)
-    
+            lastWeek = currentWeek
+            currentWeek = currentDay.isocalendar().week
+            if lastWeek == currentWeek:
+                # still in same week, just add upp the numbers
+                try:
+                    weekSum += res[currentDay][param]['sum']
+                    weekN += res[currentDay][param]['n']
+                except KeyError:
+                    print("missing day: {} or parameter: {}".format(currentDay, param))
+                    continue
+                pass
+            else: 
+                # new week has started, add last weeks average to data
+                try: 
+                    avg = weekSum / weekN
+                    time_year[param]['data'].append(avg)
+                except ZeroDivisionError:
+                    #No meassurements in this week.
+                    time_year[param]['data'].append(None)
+                try:
+                    # Reset week counts
+                    weekSum = res[currentDay][param]['sum']
+                    weekN = res[currentDay][param]['n']
+                except KeyError:
+                    print("missing day: {} or parameter: {}".format(currentDay, param))
+                    weekSum = 0
+                    weekN = 0
+                pass
+        try: 
+            avg = weekSum / weekN
+            time_year[param]['data'].append(avg)
+        except ZeroDivisionError:
+            #No meassurements in this week.
+            time_year[param]['data'].append(None)
+        
+
     return time_year
-
-
-
-
-
-    
-
-
-    return res
 
 def queryByDay(startDay, endDay, city):
     inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
-    outFormat = "%Y-%m-%dT%H:%M:%S+02:00" # Format recieved from openAQ 
+    summerFormat = "%Y-%m-%dT%H:%M:%S+02:00" # Format recieved from openAQ 
+    winterFormat = "%Y-%m-%dT%H:%M:%S+01:00" # Format recieved from openAQ 
+
 
     d0 = startDay
     d1 = d0 - dt.timedelta(days = 1) # The day before 
@@ -105,6 +131,7 @@ def queryByDay(startDay, endDay, city):
     paramUnits= {}
     res = {}
     while d0 != endDay: # Looping until every day of the month is done
+        print("Querying day {}".format(iter+1),end="\r")
         page = 1
         while True: #Looping though paginations
             d0String = d0.strftime(inFormat)+"%2B00%3A00"
@@ -146,7 +173,11 @@ def queryByDay(startDay, endDay, city):
             #    }
             # }
             for result in resJson['results']:
-                day = dt.datetime.strptime(result['date']['local'],outFormat).replace(hour=0,minute=0,second=0)
+                try:
+                    day = dt.datetime.strptime(result['date']['local'],summerFormat).replace(hour=0,minute=0,second=0)
+                except ValueError:
+                    day = dt.datetime.strptime(result['date']['local'],winterFormat).replace(hour=0,minute=0,second=0)
+
 
                 if day not in res.keys():
                     res[day] = {}
@@ -167,12 +198,12 @@ def queryByDay(startDay, endDay, city):
 
         # Safetybreak
         iter += 1
-        if iter == 40:
+        if iter == 400:
             print("Error: Infinite loop.")
             break
         
     return res, paramUnits
 
 
-res = getMonthData('Firenze')
+res = getYearData('Firenze')
 url2 = "https://api.openaq.org/v2/measurements?date_from=2022-04-01T00%3A00%3A00%2B00%3A00&date_to=2022-05-31T08%3A10%3A00%2B00%3A00&limit=100&page=1&offset=0&sort=desc&radius=1000&city=Roma&order_by=datetime"
