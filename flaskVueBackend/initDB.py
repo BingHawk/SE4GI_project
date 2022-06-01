@@ -28,8 +28,9 @@ class Pg:
         )''',
         "users": '''CREATE TABLE users(
             user_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-            user_name CHAR(20) NOT NULL,
-            user_password VARCHAR NOT NULL
+            user_name CHAR(20) UNIQUE NOT NULL,
+            user_password VARCHAR NOT NULL,
+            last_search VARCHAR
         )''',
         "contacts": '''CREATE TABLE contacts(
             contact_id SMALLINT GENERATED ALWAYS AS IDENTITY,
