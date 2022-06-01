@@ -13,8 +13,8 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
     MYUSER = 'postgres'
-    MYPWRD = '123456'
-    MYPORT = '5433'
+    MYPWRD = 'blod'
+    MYPORT = '5432'
 
     # Dictionary of the create statements for each table.
     #   There has to be one key equal to every item int tables. 
