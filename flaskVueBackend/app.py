@@ -2,7 +2,6 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import psycopg2
 import requests
-import json
 
 from historical import getMonthData, getYearData
 
@@ -39,7 +38,7 @@ def get_cityNames():
             continue
         if cityname not in citiesname: #Avoiding adding duplicates
             citiesname.append(cityname)
-    response = json.dumps({'cities': citiesname})
+    response = {'cities': citiesname}
     return response, cityDict
 
 
