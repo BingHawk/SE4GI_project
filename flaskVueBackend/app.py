@@ -108,7 +108,7 @@ def serveMonthData(city):
     try:
         city = cityDict[city.title()][0]
     except KeyError:
-        return "City {} does not exist in database".format(city), 400
+        return "City {} does not exist in database".format(city.title()), 400
     
     res = getMonthData(city)
     return jsonify(res)
@@ -116,9 +116,9 @@ def serveMonthData(city):
 @app.route('/api/year/<city>', methods = ['GET'])
 def serveYearData(city):
     try:
-        city = cityDict[city.title()] 
+        city = cityDict[city.title()][0]
     except KeyError:
-        return "City {} does not exist in database".format(city), 400
+        return "City {} does not exist in database".format(city.title()), 400
 
     res = getYearData(city)
     return jsonify(res)
