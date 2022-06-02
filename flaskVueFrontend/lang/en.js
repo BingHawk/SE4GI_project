@@ -1,5 +1,6 @@
 module.exports = {
   "sidebar": {
+    
     "title": "You Breath.IT",
     "shortTitle": "YB.IT",
     "dashboard": "Dashboard",
@@ -36,6 +37,7 @@ module.exports = {
     "vectorMaps": "Vector Maps",
     "widgets": "Widgets",
     "charts": "Charts",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "about": "About"
   }
 }

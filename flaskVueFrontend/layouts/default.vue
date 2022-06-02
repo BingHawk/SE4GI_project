@@ -27,8 +27,17 @@
         <sidebar-item
           :link="{
             name: $t('sidebar.maps'),
-            icon: 'tim-icons icon-pin',
+            icon: 'tim-icons icon-square-pin',
             path: '/map'
+          }"
+        >
+        </sidebar-item>
+
+        <sidebar-item
+          :link="{
+            name: $t('sidebar.about'),
+            icon: 'tim-icons icon-heart-2',
+            path: '/about'
           }"
         >
         </sidebar-item>
