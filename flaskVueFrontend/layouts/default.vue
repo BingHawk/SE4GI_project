@@ -5,6 +5,7 @@
       :background-color="sidebarBackground"
       :short-title="$t('sidebar.shortTitle')"
       :title="$t('sidebar.title')"
+      :logo = "'icon48.png'"
     >
       <template slot-scope="props" slot="links">
         <sidebar-item
