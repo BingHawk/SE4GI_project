@@ -1,7 +1,7 @@
 module.exports = {
   "sidebar": {
-    "title": "Breath.IT",
-    "shortTitle": "B.IT",
+    "title": "You Breath.IT",
+    "shortTitle": "YB.IT",
     "dashboard": "Dashboard",
     "pages": "Pages",
     "pricing": "Pricing",
