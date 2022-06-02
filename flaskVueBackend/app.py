@@ -2,12 +2,13 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import psycopg2
 import requests
-import json
+
+from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
-MYPORT = '5432'
+MYPWRD = '123456'
+MYPORT = '5433'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -37,9 +38,8 @@ def get_cityNames():
             continue
         if cityname not in citiesname: #Avoiding adding duplicates
             citiesname.append(cityname)
-    response = json.dumps({'cities': citiesname})
+    response = {'cities': citiesname}
     return response, cityDict
-
 
 # cityDict keys: ['Alessandria', 'Alfonsine', 'Ancona', 'Arezzo', 'Ascoli Piceno', 'Asti', 'Avellino', 'Bari', 'Barletta-Andria-Trani', 'Belluno', 'Benevento', 'Bergamo', 'Biella', 'Bologna', 'Bolzano/Bozen', 'Brescia', 'Brindisi', 'Cagliari', 'Campobasso', 'Carbonia-Iglesias', 'Carpi', 'Caserta', 'Catanzaro', 'Cento', 'Cesena', 'Chiesanuova', 'Civitavecchia', 'Colorno', 'Como', 'Cosenza', 'Cremona', 'Crotone', 'Cuneo', 'Faenza', 'Ferrara', 'Fiorano Modenese', 'Firenze', 'Foggia', "Forli'", "Forli'-Cesena", 'Frosinone', 'Genova', 'Grosseto', 'Guastalla', 'Imola', 'Imperia', 'Jolanda Di Savoia', 'Langhirano', "L'Aquila", 'La Spezia', 'Latina', 'Lecce', 'Lecco', 'Livorno', 'Lodi', 'Lucca', "Lugagnano Val D'Arda", 'Macerata', 'Mantova', 'Massa-Carrara', 'Matera', 'Mezzani', 'Milano', 'Mirandola', 'Modena', 'Molinella', 'Monza E Della Brianza', 'Napoli', 'Novara', 'Nuoro', 'Olbia-Tempio', 'Oristano', 'Ostellato', 'Padova', 'Parma', 'Pavia', 'Perugia', 'Pesaro E Urbino', 'Pescara', 'Piacenza', 'Pisa', 'Pistoia', 'Porretta Terme', 'Potenza', 'Prato', 'Ravenna', 'Reggio Di Calabria', "Reggio Nell'Emilia", 'Rieti', 'Rimini', 'Roma', 'Rovigo', 'Salerno', 'San Clemente', 'San Lazzaro Di Savena', 'San Leo', 'Sassari', 'Sassuolo', 'Savignano Sul Rubicone', 'Savona', 'Siena', 'Sogliano Al Rubicone', 'Sondrio', 'Sorbolo', 'Taranto', 'Teramo', 'Terni', 'Torino', 'Trento', 'Treviso', 'Varese', 'Venezia', 'Verbano-Cusio-Ossola', 'Vercelli', 'Verona', 'Verucchio', 'Vibo Valentia', 'Vicenza', 'Villa Minozzo', 'Viterbo']
 def getCityCoords():
@@ -67,7 +67,7 @@ def getCityCoords():
     cityCoords = {} 
     for result in res:
         cityCoords[result[1]] = [result[2],result[3]]
-    
+        
     return cityCoords
 
 #### PRE FLASK CODE (code that needs to run before flask server starts)
@@ -97,53 +97,35 @@ def get_locations():
             continue
         locations.append(location)
     
-    response = json.dumps({'locations': locations})
+    response = jsonify({'locations': locations})
 
     return response
 
-# Returns latest value for every city.
-@app.route('/api/latest', methods=["GET"])
-def get_latest():
-    #endpoint for latest values of meassuring stations in italy
-    latestEndpoint = 'https://api.openaq.org/v2/latest?limit=1000&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
+@app.route('/api/month/<city>', methods = ['GET'])
+def serveMonthData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
     
-    #get values
-    r = requests.get(latestEndpoint)
-    
-    locations = {}
-    for result in r.json()['results']:
-        if result['city'] == None:
-            continue
-        else:
-            city = result['city']
-        if city in locations.keys():
-            for particle in locations[city]['particles']:
-                for particle_in in result['measurements']:
-                    if particle['parameter'] == particle_in['parameter']:
-                        if isinstance(particle['value'], list):
-                            particle['value'].append(particle_in['value'])
-                        else:
-                            particle['value'] = [particle['value']]
-                            particle['value'].append(particle_in['value'])
-        else:
-            locations[city] = {'cityName': city, 'particles': result['measurements']}       
-        
-    for city in locations.keys():
-        for particle in locations[city]['particles']:
-            if isinstance(particle['value'], list):
-               n = len(particle['value'])
-               mean_l = sum(particle['value'])/n
-               particle['value'] = mean_l  
-               
-    locations = list(locations.values())
-    response = {'locations': locations}
-        
-    return jsonify(response)
+    res = getMonthData(city)
+    return jsonify(res)
+
+@app.route('/api/year/<city>', methods = ['GET'])
+def serveYearData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+
+    res = getYearData(city)
+    return jsonify(res)
+
     
 #EndPoint for the cities
-@app.route('/api/cities') # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
+@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
-    return cityResponse
+    return jsonify(cityResponse)
 
 
 
