@@ -13,8 +13,8 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
     MYUSER = 'postgres'
-    MYPWRD = '123456'
-    MYPORT = '5433'
+    MYPWRD = 'blod'
+    MYPORT = '5432'
 
     # Dictionary of the create statements for each table.
     #   There has to be one key equal to every item int tables. 
@@ -28,8 +28,9 @@ class Pg:
         )''',
         "users": '''CREATE TABLE users(
             user_id SMALLINT GENERATED ALWAYS AS IDENTITY,
-            user_name CHAR(20) NOT NULL,
-            user_password VARCHAR NOT NULL
+            user_name CHAR(20) UNIQUE NOT NULL,
+            user_password VARCHAR NOT NULL,
+            last_search VARCHAR
         )''',
         "contacts": '''CREATE TABLE contacts(
             contact_id SMALLINT GENERATED ALWAYS AS IDENTITY,
