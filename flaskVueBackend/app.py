@@ -6,8 +6,8 @@ import json
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = '123456'
-MYPORT = '5433'
+MYPWRD = 'qrC85Ba9Dpg'
+MYPORT = '5432'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
