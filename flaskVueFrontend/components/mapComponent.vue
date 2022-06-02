@@ -5,23 +5,35 @@
     :center="center"
     :zoom="zoom"
   >
-    <MglMarker 
-      v-for = "location in locations"
-      :key = "location.id"
-      :coordinates="location.coordinates">
+    <MglMarker
+      v-for="location in locations"
+      :key="location.id"
+      :coordinates="location.coordinates"
+    >
+      <MglPopup
+        :message="location.cityName"
+        v-for="(particle, particleIndex) of locations.particles"
+        :key="`particle-index-${particleIndex}`"
+        :value="particle.value"
+      >
+        <Popup> </Popup>
+      </MglPopup>
     </MglMarker>
   </MglMap>
 </template>
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker } from "vue-mapbox";
+import { MglMap, MglPopup, MglMarker } from "vue-mapbox";
+import Popup from "../components/Cards/Popup.vue";
 
 export default {
   name: "BaseMap",
   components: {
     MglMap,
     MglMarker,
+    MglPopup,
+    Popup,
   },
   props: {
     locations: {
