@@ -2,7 +2,8 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import psycopg2
 import requests
-import json
+
+from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
@@ -37,7 +38,7 @@ def get_cityNames():
             continue
         if cityname not in citiesname: #Avoiding adding duplicates
             citiesname.append(cityname)
-    response = json.dumps({'cities': citiesname})
+    response = {'cities': citiesname}
     return response, cityDict
 
 
@@ -97,9 +98,29 @@ def get_locations():
             continue
         locations.append(location)
     
-    response = json.dumps({'locations': locations})
+    response = jsonify({'locations': locations})
 
     return response
+
+@app.route('/api/month/<city>', methods = ['GET'])
+def serveMonthData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+    
+    res = getMonthData(city)
+    return jsonify(res)
+
+@app.route('/api/year/<city>', methods = ['GET'])
+def serveYearData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+
+    res = getYearData(city)
+    return jsonify(res)
 
 # Returns latest value for every city.
 @app.route('/api/latest', methods=["GET"])
@@ -141,9 +162,9 @@ def get_latest():
     return jsonify(response)
     
 #EndPoint for the cities
-@app.route('/api/cities') # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
+@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
-    return cityResponse
+    return jsonify(cityResponse)
 
 
 
