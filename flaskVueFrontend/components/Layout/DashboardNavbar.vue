@@ -20,7 +20,7 @@
     </div>
 
     <ul class="navbar-nav" :class="$rtl.isRTL ? 'mr-auto' : 'ml-auto'">
-      <div class="search-bar input-group" @click="searchModalVisible = true">
+      <!-- <div class="search-bar input-group" @click="searchModalVisible = true">
         <button
           class="btn btn-link"
           id="search-button"
@@ -29,7 +29,6 @@
         >
           <i class="tim-icons icon-zoom-split"></i>
         </button>
-        <!-- You can choose types of search input -->
       </div>
       <modal
         :show.sync="searchModalVisible"
@@ -80,7 +79,7 @@
         <li class="nav-link">
           <a href="#" class="nav-item dropdown-item">Another one</a>
         </li>
-      </base-dropdown>
+      </base-dropdown> -->
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -92,19 +91,19 @@
         <template
           slot="title"
         >
-          <div class="photo"><img src="img/mike.jpg" /></div>
+          <div class="photo"><i class="tim-icons icon-single-02"></i></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
-          <p class="d-lg-none">Log out</p>
+          <p class="d-lg-none">Log in</p>
         </template>
-        <li class="nav-link">
+        <!-- <li class="nav-link">
           <a href="#" class="nav-item dropdown-item">Profile</a>
         </li>
         <li class="nav-link">
           <a href="#" class="nav-item dropdown-item">Settings</a>
         </li>
-        <div class="dropdown-divider"></div>
+        <div class="dropdown-divider"></div> -->
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Log out</a>
+          <a href="#" class="nav-item dropdown-item">Log in</a>
         </li>
       </base-dropdown>
     </ul>

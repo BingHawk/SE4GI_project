@@ -1,7 +1,8 @@
 module.exports = {
   "sidebar": {
-    "title": "Creative Tim",
-    "shortTitle": "CT",
+    
+    "title": "You Breath.IT",
+    "shortTitle": "YB.IT",
     "dashboard": "Dashboard",
     "pages": "Pages",
     "pricing": "Pricing",
@@ -31,11 +32,12 @@ module.exports = {
     "extendedTables": "Extended Tables",
     "paginatedTables": "Paginated Tables",
     "maps": "Maps",
-    "googleMaps": "Google Maps",
+    "googleMaps": "Mapbox",
     "fullScreenMaps": "Full Screen Map",
     "vectorMaps": "Vector Maps",
     "widgets": "Widgets",
     "charts": "Charts",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "about": "About"
   }
 }

@@ -156,3 +156,6 @@ API_test.log
 
 #VSCode things
 .vscode
+
+#Some frontend stuff: 
+flaskVueFrontend/static/sw.js
