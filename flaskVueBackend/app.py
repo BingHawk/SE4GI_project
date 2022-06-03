@@ -155,6 +155,10 @@ def get_latest():
                n = len(particle['value'])
                mean_l = sum(particle['value'])/n
                particle['value'] = mean_l  
+
+    for city in getCityCoords().keys():
+            coords = getCityCoords()
+            locations[city] = {'cityName': city, 'coordinates': coords[city], 'particles': result['measurements']}
                
     locations = list(locations.values())
     response = {'locations': locations}
