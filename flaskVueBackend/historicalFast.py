@@ -2,15 +2,8 @@ import requests
 import datetime as dt
 import time
 import concurrent.futures
-# t = dt.datetime.now()
-# now = t.replace(second = 0, minute = 0)
-# oneMonthAgo = now - dt.timedelta(days = 30)
-# oneYearAgo  = now - dt.timedelta(days = 365)
 
-# dateformat = "%Y-%m-%dT%H:%M:%S"
-# print(now.strftime(dateformat)+"+00:00")
-# print(oneMonthAgo.strftime(dateformat)+"+00:00")
-# print(now.strftime(dateformat)+"+00:00")
+# FILE FOR TESTING STUFF FOR HISTORICAL PERFORMANCE UPGRADES
 
 def getMonthDataF(city):
     days = 30
