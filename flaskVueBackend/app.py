@@ -202,7 +202,7 @@ def register():
             conn = get_dbConn()
             cur = conn.cursor()
             cur.execute(
-            'SELECT user_id FROM users WHERE user_name = %s', (username,))
+            'SELECT user_id FROM users WHERE user_name = %s', (username,)) ##  'SELECT user_id FROM blog_user WHERE user_name = %s', (username,))
             if cur.fetchone() is not None:
                 error = 'User {} is already registered.'.format(username)
                 cur.close()
@@ -211,7 +211,7 @@ def register():
             conn = get_dbConn()
             cur = conn.cursor()
             cur.execute(
-                'INSERT INTO user_id (user_name, user_password) VALUES (%s, %s)',
+                'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
                 (username, generate_password_hash(password))
             )
             cur.close()
@@ -229,6 +229,7 @@ def login():
         #curl -X POST -H "Content-Type: application/json" \ -d '{"username": "user", "password": "pass"}' \ http://127.0.0.1:5000/register \
         #curl -X POST -F 'name=user' -F 'password=passw' http://127.0.0.1:5000/register
         #curl -X POST -d "userId=5&title=Hello World&body=Post body." http://127.0.0.1:5000/register
+        #curl -i -X POST -H 'Content-Type: application/json' -d '{"name": "user", "password": "passw"}' http://127.0.0.1:5000/register
 
         username = request.form['username']
         password = request.form['password']
@@ -236,7 +237,7 @@ def login():
         cur = conn.cursor()
         error = None
         cur.execute(
-            'SELECT * FROM user_id WHERE user_name = %s', (username,)
+            'SELECT * FROM users WHERE user_name = %s', (username,) 
         )
         user = cur.fetchone()
         cur.close()
@@ -271,7 +272,7 @@ def load_logged_in_user():
         conn = get_dbConn()
         cur = conn.cursor()
         cur.execute(
-            'SELECT * FROM user_id WHERE user_name = %s', (username,)
+            'SELECT * FROM users WHERE user_name = %s', (username,)
         )
         g.user = cur.fetchone()
         cur.close()
