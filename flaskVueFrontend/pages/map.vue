@@ -57,15 +57,19 @@ export default {
     MapComponent,
   },
   async asyncData({ $axios }) {
-    console.log("asyncData running");
+    //console.log("asyncData running");
   
-    const [locations, cities] = await Promise.all([
+    const [locations, cities, ] = await Promise.all([
       $axios.get("/api/locations"),
       $axios.get("/api/cities"),
+    
     ]);
-    // console.log(data)
-    console.log(locations);
-    console.log(cities);
+    //console.log(data)
+     console.log(locations.data);
+    // console.log(cities);
+    console.log(cities.data);
+    
+
 
     return {
       data: locations.data,
