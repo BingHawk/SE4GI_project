@@ -80,7 +80,7 @@ cityCoords = getCityCoords()
 print("setup complete")
 
 
-#### ROUTED FUNCTIONS
+#### ROUTED FUNCTIONS THAT SEND COORDINATES
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
     # the endpoint of meassuring stations in italy
@@ -101,26 +101,6 @@ def get_locations():
     response = jsonify({'locations': locations})
 
     return response
-
-@app.route('/api/month/<city>', methods = ['GET'])
-def serveMonthData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(city.title()), 400
-    
-    res = getMonthData(city)
-    return jsonify(res)
-
-@app.route('/api/year/<city>', methods = ['GET'])
-def serveYearData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(city.title()), 400
-
-    res = getYearData(city)
-    return jsonify(res)
 
 # Returns latest value for every city.
 @app.route('/api/latest', methods=["GET"])
@@ -164,6 +144,8 @@ def get_latest():
     response = {'locations': locations}
         
     return jsonify(response)
+
+#### ROUTED FUNCTIONS THAT DOES NOT SEND COORDINATES
     
 #EndPoint for the cities
 @app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
@@ -237,6 +219,26 @@ def get_cities(cityname):
     city={'id':id,'city':cityName , 'lastUpdate':lastUpdate,'Measurements':parameters }
     response = jsonify({'cities': city})
     return response  
+
+@app.route('/api/month/<city>', methods = ['GET'])
+def serveMonthData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+    
+    res = getMonthData(city)
+    return jsonify(res)
+
+@app.route('/api/year/<city>', methods = ['GET'])
+def serveYearData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+
+    res = getYearData(city)
+    return jsonify(res)
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
