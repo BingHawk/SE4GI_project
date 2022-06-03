@@ -185,10 +185,7 @@ export default {
   name: "dashboard",
   components: {
     LineChart,
-    // BarChart,
-    // TaskList,
-    // [Table.name]: Table,
-    // [TableColumn.name]: TableColumn,
+   
   },
   ///query the cities and visualize it on map as single items then add each to a DDL///
  async asyncData({ $axios }) {
@@ -203,8 +200,8 @@ export default {
     const res=monthData.data.time_month
 
     bigChartData[0]=res.co.data
-    // bigChartData[1]=res.so2.data
-    // bigChartData[2]=res.o3.data
+    bigChartData[1]=res.so2.data
+    bigChartData[2]=res.o3.data
    
     
 
@@ -235,81 +232,7 @@ export default {
         gradientStops: [1, 0.4, 0],
         categories: [],
       },
-      // purpleLineChart: {
-      //   extraOptions: chartConfigs.purpleChartOptions,
-      //   chartData: {
-      //     labels: ["JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
-      //     datasets: [
-      //       {
-      //         label: "Data",
-      //         fill: true,
-      //         borderColor: config.colors.primary,
-      //         borderWidth: 2,
-      //         borderDash: [],
-      //         borderDashOffset: 0.0,
-      //         pointBackgroundColor: config.colors.primary,
-      //         pointBorderColor: "rgba(255,255,255,0)",
-      //         pointHoverBackgroundColor: config.colors.primary,
-      //         pointBorderWidth: 20,
-      //         pointHoverRadius: 4,
-      //         pointHoverBorderWidth: 15,
-      //         pointRadius: 4,
-      //         data: [80, 100, 70, 80, 120, 80],
-      //       },
-      //     ],
-      //   },
-      //   gradientColors: config.colors.primaryGradient,
-      //   gradientStops: [1, 0.2, 0],
-      // },
-      // greenLineChart: {
-      //   extraOptions: chartConfigs.greenChartOptions,
-      //   chartData: {
-      //     labels: ["JUL", "AUG", "SEP", "OCT", "NOV"],
-      //     datasets: [
-      //       {
-      //         label: "My First dataset",
-      //         fill: true,
-      //         borderColor: config.colors.danger,
-      //         borderWidth: 2,
-      //         borderDash: [],
-      //         borderDashOffset: 0.0,
-      //         pointBackgroundColor: config.colors.danger,
-      //         pointBorderColor: "rgba(255,255,255,0)",
-      //         pointHoverBackgroundColor: config.colors.danger,
-      //         pointBorderWidth: 20,
-      //         pointHoverRadius: 4,
-      //         pointHoverBorderWidth: 15,
-      //         pointRadius: 4,
-      //         data: [90, 27, 60, 12, 80],
-      //       },
-      //     ],
-      //   },
-      //   gradientColors: [
-      //     "rgba(66,134,121,0.15)",
-      //     "rgba(66,134,121,0.0)",
-      //     "rgba(66,134,121,0)",
-      //   ],
-      //   gradientStops: [1, 0.4, 0],
-      // },
-      // blueBarChart: {
-      //   extraOptions: chartConfigs.barChartOptions,
-      //   chartData: {
-      //     labels: ["USA", "GER", "AUS", "UK", "RO", "BR"],
-      //     datasets: [
-      //       {
-      //         label: "Countries",
-      //         fill: true,
-      //         borderColor: config.colors.info,
-      //         borderWidth: 2,
-      //         borderDash: [],
-      //         borderDashOffset: 0.0,
-      //         data: [53, 20, 10, 80, 100, 45],
-      //       },
-      //     ],
-      //   },
-      //   gradientColors: config.colors.primaryGradient,
-      //   gradientStops: [1, 0.4, 0],
-      // },
+      
     };
   },
   computed: {
