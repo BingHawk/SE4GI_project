@@ -1,8 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, redirect, flash, url_for, session, g
 from flask_cors import CORS
 import psycopg2
 import requests
-
+from werkzeug.security import check_password_hash, generate_password_hash
+#from werkzeug.exceptions import abort
 from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
@@ -170,9 +171,116 @@ def get_latest():
 def serve_cityNames():
     return jsonify(cityResponse)
 
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'123'
 
+def get_dbConn():
+    if 'dbConn' not in g:
+        myConn = 'dbname=5432 user=postgres password=blod'
+        connStr = myConn
+        g.dbConn = psycopg2.connect(connStr)
+    
+    return g.dbConn
+
+def close_dbConn():
+    if 'dbConn' in g:
+        g.dbComm.close()
+        g.pop('dbConn')
+
+@app.route('/register', methods=('GET', 'POST')) # make POST request with curl (need front end data, the curl sends a request)
+def register():
+    if request.method == 'POST':
+        username = request.form['user_name']
+        password = request.form['user_password']
+        error = None
+
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+        else :
+            conn = get_dbConn()
+            cur = conn.cursor()
+            cur.execute(
+            'SELECT user_id FROM users WHERE user_name = %s', (username,))
+            if cur.fetchone() is not None:
+                error = 'User {} is already registered.'.format(username)
+                cur.close()
+
+        if error is None:
+            conn = get_dbConn()
+            cur = conn.cursor()
+            cur.execute(
+                'INSERT INTO user_id (user_name, user_password) VALUES (%s, %s)',
+                (username, generate_password_hash(password))
+            )
+            cur.close()
+            conn.commit()
+            return redirect(url_for('login'))
+
+        flash(error)
+
+        response = cur.fetchall() #guess
+        return jsonify(response) #render_template('auth/register.html')
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    if request.method == 'POST':
+        #curl -X POST -H "Content-Type: application/json" \ -d '{"username": "user", "password": "pass"}' \ http://127.0.0.1:5000/register \
+        #curl -X POST -F 'name=user' -F 'password=passw' http://127.0.0.1:5000/register
+        #curl -X POST -d "userId=5&title=Hello World&body=Post body." http://127.0.0.1:5000/register
+
+        username = request.form['username']
+        password = request.form['password']
+        conn = get_dbConn()
+        cur = conn.cursor()
+        error = None
+        cur.execute(
+            'SELECT * FROM user_id WHERE user_name = %s', (username,)
+        )
+        user = cur.fetchone()
+        cur.close()
+        conn.commit()
+
+        if user is None:
+            error = 'Incorrect username.'
+        elif not check_password_hash(user[2], password):
+            error = 'Incorrect password.'
+
+        if error is None:
+            session.clear()
+            session['user_id'] = user[0]
+            return redirect(url_for('index'))
+
+        flash(error)
+        
+        response = cur.fetchall() #guess
+        return jsonify(response) #render_template('auth/login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('register'))
+
+def load_logged_in_user():
+    username = session.get('user_name')
+
+    if username is None:
+        g.user = None
+    else:
+        conn = get_dbConn()
+        cur = conn.cursor()
+        cur.execute(
+            'SELECT * FROM user_id WHERE user_name = %s', (username,)
+        )
+        g.user = cur.fetchone()
+        cur.close()
+        conn.commit()
+    if g.user is None:
+        return False
+    else: 
+        return True  
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
-    # print(get_locations())
