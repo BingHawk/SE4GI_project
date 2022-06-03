@@ -10,13 +10,13 @@
       :key="location.id"
       :coordinates="location.coordinates"
     >
-      <MglPopup
+      <MglPopup>
+        <Popup
         :message="location.cityName"
-        v-for="(particle, particleIndex) of locations.particles"
-        :key="`particle-index-${particleIndex}`"
-        :value="particle.value"
-      >
-        <Popup> </Popup>
+        :particle="location.particles.particleName[2]"
+            
+          >
+        </Popup>
       </MglPopup>
     </MglMarker>
   </MglMap>

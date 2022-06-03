@@ -1,12 +1,12 @@
 <template>
   <div>
-    {{ message }}, 
+    {{ message }} {{particle}} {{value}} 
   </div>
 </template>
 
 <script>
 export default {
   name: "Popup",
-  props: { message: {}, value: {} },
+  props: { message: {}, particle: {}, value: {} },
 };
 </script>
