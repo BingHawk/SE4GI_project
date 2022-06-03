@@ -42,7 +42,7 @@ E - some other libraries that can be used
 
 then, the aditional modules specific to our project are needed:
 
-    conda install flask-cors
+    conda install flask-cors overpy
 
 ### Node
 
@@ -69,9 +69,10 @@ this will install all dependancies listed in the project. See below.
 - contextily
 - folium
 - geoalchemy2
-- jmcmurray json
-- anaconda psycopg2
+- json
+- psycopg2
 - flask-cors
+- overpy
 
 ### Node
 

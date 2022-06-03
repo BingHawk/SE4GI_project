@@ -1,11 +1,48 @@
 <template>
-<div class="row">
+  <div class="row">
     <div class="col-md-12">
-       <card type="plain">
+      <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
-        <div id="regularMap" class="map"> 
-          <map-component :locations="data.locations"></map-component> <!-- :locations="data.locations" -->
-          
+         <div
+                class="btn-group btn-group-toggle "
+                data-toggle="buttons"
+                style="zindex-dropdown:100"
+              >
+                <select
+                  class="custom-select m-1  text-white w-100"
+                  name="Cities"
+                  id="idCitiesDDL"
+                  data-toggle="tooltip"
+                  title="Your destination city"
+                  style="
+                background-image: linear-gradient(
+                    45deg,
+                    transparent 50%,
+                    white 50%
+                  ),
+                  linear-gradient(135deg, white 50%, transparent 50%),
+                  linear-gradient(to right, #242424, #242424);
+                background-position: calc(100% - 20px) calc(1em + 2px),
+                  calc(100% - 15px) calc(1em + 2px), 100% 0;
+                background-size: 5px 5px, 5px 5px, 2.5em 2.5em;
+                background-repeat: no-repeat;
+                background-color: #41B883;
+              "
+                >
+                  <option
+                    v-for="selectValue in selectValues"
+                    :value="selectValue"
+                    v-bind:key="option"
+                    >{{ selectValue }}</option
+                  >
+                </select>
+              </div>
+        <div id="regularMap" class="map">
+          <map-component
+            :locations="data.locations"
+            :cities="city.cities"
+          ></map-component>
+          <!-- :locations="data.locations" -->
         </div>
       </card>
     </div>
@@ -13,9 +50,9 @@
 </template>
 
 <script>
-import MapComponent from '../components/mapComponent.vue'
+import MapComponent from "../components/mapComponent.vue";
 export default {
-  name: 'MapPage',
+  name: "MapPage",
   components: {
     MapComponent,
   },
@@ -24,6 +61,7 @@ export default {
   
     const [locations, cities] = await Promise.all([
       $axios.get("/api/latest"),
+      $axios.get("/api/locations"),
       $axios.get("/api/cities"),
     ]);
     // console.log(data)
@@ -37,7 +75,7 @@ export default {
     };
     // },
   },
-}
+};
 </script>
 
 <!-- <template>
@@ -63,7 +101,7 @@ export default {
       </card>
     </div>
   </div> -->
-  <!-- <div id="map-wrap" style="height: 100vh">
+<!-- <div id="map-wrap" style="height: 100vh">
     <no-ssr>
       <l-map :zoom="8" :center="[45.4, 9.18]" :attribution="attribution">
         <L-marker
@@ -442,4 +480,3 @@ export default {
   }
 }
 </style> -->
-
