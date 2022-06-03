@@ -114,6 +114,7 @@ def getYearData(city):
         except ZeroDivisionError:
             #No meassurements in this week.
             time_year[param]['data'].append(None)
+            
         
 
     return {"time_year":time_year}

@@ -7,8 +7,8 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
-MYPORT = '5432'
+MYPWRD = '123456'
+MYPORT = '5433'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -119,8 +119,8 @@ def serveYearData(city):
     except KeyError:
         return "City {} does not exist in database".format(city.title()), 400
 
-    res = getYearData(city)
-    return jsonify(res)
+    res = jsonify(getYearData(city))
+    return res
 
 # Returns latest value for every city.
 @app.route('/api/latest', methods=["GET"])
