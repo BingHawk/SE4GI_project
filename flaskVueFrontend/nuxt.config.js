@@ -19,7 +19,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: "Nuxt Black Dashboard",
+    title: "You Breath.IT",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
