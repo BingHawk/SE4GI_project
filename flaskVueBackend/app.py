@@ -3,11 +3,11 @@ from flask_cors import CORS
 import psycopg2
 import requests
 
-from historical import getMonthData, getYearData, getMonthDataF
+from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'qrC85Ba9Dpg'
+MYPWRD = 'blod'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -110,16 +110,6 @@ def serveMonthData(city):
         return "City {} does not exist in database".format(city.title()), 400
     
     res = getMonthData(city)
-    return jsonify(res)
-
-@app.route('/api/month_fast/<city>', methods = ['GET'])
-def serveMonthDataFast(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(city.title()), 400
-    
-    res = getMonthDataF(city)
     return jsonify(res)
 
 @app.route('/api/year/<city>', methods = ['GET'])

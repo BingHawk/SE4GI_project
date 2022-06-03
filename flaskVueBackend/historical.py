@@ -15,14 +15,13 @@ import concurrent.futures
 # print(oneMonthAgo.strftime(dateformat)+"+00:00")
 # print(now.strftime(dateformat)+"+00:00")
 
-def getMonthDataF(city):
+def getMonthData(city):
     days = 30
     print("querying moth data for {}".format(city))
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
-    # endDay = startDay - dt.timedelta(days = days) #iterate untill d0 == stoptime
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor() as executor: # Execute queries asyncronously
         futures = []
         for _ in range(days):
             endDay = startDay - dt.timedelta(days = 1)
@@ -31,7 +30,7 @@ def getMonthDataF(city):
             startDay = endDay
         res = {}
         paramUnits = {}
-        for future in concurrent.futures.as_completed(futures):
+        for future in concurrent.futures.as_completed(futures): # Gather results together as completed
 
             resDay, paramUnitsDay = future.result()
             res.update(resDay)
@@ -57,7 +56,7 @@ def getMonthDataF(city):
             while currentDay != endDay.replace(hour=0,second=0,minute=0,microsecond=0) + dt.timedelta(days = days):
                 currentDay = currentDay + dt.timedelta(days = 1)
                 try:
-                    avg = round(res[currentDay][param]['sum']/res[currentDay][param]['n'],4)
+                    avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
                     time_month[param]['data'].append(avg)
                 except KeyError:
                     print("missing day: {} or parameter: {}".format(currentDay, param), end=("\r"))
@@ -65,13 +64,26 @@ def getMonthDataF(city):
         
         return {"time_month":time_month}
 
-def getMonthData(city):
-    print("querying moth data for {}".format(city))
+def getYearData(city):
+    days = 365
+    print("querying year data for {}".format(city))
     t = dt.datetime.now()
-    startDay = t.replace(second = 0, minute = 0) # Today the starting day of query
-    endDay = startDay - dt.timedelta(days = 30) #iterate untill d0 == stoptime
+    startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
-    res, paramUnits = queryByDay(startDay, endDay, city)
+    with concurrent.futures.ThreadPoolExecutor() as executor: #Run queries asyncronously
+        futures = []
+        for _ in range(days):
+            endDay = startDay - dt.timedelta(days = 1)
+            f = executor.submit(queryByDay, startDay, endDay, city)
+            futures.append(f)
+            startDay = endDay
+        res = {}
+        paramUnits = {}
+        for future in concurrent.futures.as_completed(futures): #Assmble results as the queries complete
+
+            resDay, paramUnitsDay = future.result()
+            res.update(resDay)
+            paramUnits.update(paramUnitsDay)
 
     # Desired JSON scheme
     #  {
@@ -85,89 +97,53 @@ def getMonthData(city):
     #         "unit": unit
     #         }
     # }
-    time_month = {}
-    for param in paramUnits.keys():
-        time_month[param] = {"data": [], "unit": paramUnits[param]}
+        time_year = {}
+        for param in paramUnits.keys():
+            time_year[param] = {"data": [], "unit": paramUnits[param]}
 
-        currentDay = endDay.replace(hour=0,minute=0,microsecond=0)
-        while currentDay != startDay.replace(hour=0,minute=0,microsecond=0):
-            currentDay = currentDay + dt.timedelta(days = 1)
-            try:
-                avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
-                time_month[param]['data'].append(avg)
-            except KeyError:
-                print("missing day: {} or parameter: {}".format(currentDay, param))
-                time_month[param]['data'].append(None)
-    
-    return {"time_month":time_month}
-
-def getYearData(city):
-    print("querying year data for {}".format(city))
-    t = dt.datetime.now()
-    startDay = t.replace(second = 0, minute = 0) # Today the starting day of query
-    endDay = startDay - dt.timedelta(days = 365) # The day that is furthest back. 
-
-    res, paramUnits = queryByDay(startDay, endDay, city)
-
-    # Desired JSON scheme
-    #     {
-    # "time_year": {
-    #     particle1: {
-    #         "data": [week1, week2, ... week52],
-    #         "unit":unit
-    #         },
-    #     particle2: {
-    #         "data": [week1, week2, ... week52],
-    #         "unit": unit
-    #         }
-    # }
-    time_year = {}
-    for param in paramUnits.keys():
-        time_year[param] = {"data": [], "unit": paramUnits[param]}
-
-        currentDay = endDay.replace(hour=0,minute=0,microsecond=0)
-        currentWeek = currentDay.isocalendar().week
-        weekSum = 0
-        weekN = 0
-        while currentDay != startDay.replace(hour=0,minute=0,microsecond=0):
-            currentDay = currentDay + dt.timedelta(days = 1)
-            lastWeek = currentWeek
+            currentDay = endDay.replace(hour=0,minute=0,second=0,microsecond=0)
             currentWeek = currentDay.isocalendar().week
-            if lastWeek == currentWeek:
-                # still in same week, just add upp the numbers
-                try:
-                    weekSum += res[currentDay][param]['sum']
-                    weekN += res[currentDay][param]['n']
-                except KeyError:
-                    print("missing day: {} or parameter: {}".format(currentDay, param))
-                    continue
-                pass
-            else: 
-                # new week has started, add last weeks average to data
-                try: 
-                    avg = weekSum / weekN
-                    time_year[param]['data'].append(avg)
-                except ZeroDivisionError:
-                    #No meassurements in this week.
-                    time_year[param]['data'].append(None)
-                try:
-                    # Reset week counts
-                    weekSum = res[currentDay][param]['sum']
-                    weekN = res[currentDay][param]['n']
-                except KeyError:
-                    print("missing day: {} or parameter: {}".format(currentDay, param))
-                    weekSum = 0
-                    weekN = 0
-                pass
-        try: 
-            avg = weekSum / weekN
-            time_year[param]['data'].append(avg)
-        except ZeroDivisionError:
-            #No meassurements in this week.
-            time_year[param]['data'].append(None)
-        
+            weekSum = 0
+            weekN = 0
+            while currentDay != endDay.replace(hour=0,minute=0,second=0,microsecond=0) + dt.timedelta(days = days):
+                currentDay = currentDay + dt.timedelta(days = 1)
+                lastWeek = currentWeek
+                currentWeek = currentDay.isocalendar().week
+                if lastWeek == currentWeek:
+                    # still in same week, just add upp the numbers
+                    try:
+                        weekSum += res[currentDay][param]['sum']
+                        weekN += res[currentDay][param]['n']
+                    except KeyError:
+                        print("missing day: {} or parameter: {}".format(currentDay, param), end="\r")
+                        continue
+                    pass
+                else: 
+                    # new week has started, add last weeks average to data
+                    try: 
+                        avg = weekSum / weekN
+                        time_year[param]['data'].append(avg)
+                    except ZeroDivisionError:
+                        #No meassurements in this week.
+                        time_year[param]['data'].append(None)
+                    try:
+                        # Reset week counts
+                        weekSum = res[currentDay][param]['sum']
+                        weekN = res[currentDay][param]['n']
+                    except KeyError:
+                        print("missing day: {} or parameter: {}".format(currentDay, param), end=("\r"))
+                        weekSum = 0
+                        weekN = 0
+                    pass
+            try: 
+                avg = weekSum / weekN
+                time_year[param]['data'].append(avg)
+            except ZeroDivisionError:
+                #No meassurements in this week.
+                time_year[param]['data'].append(None)
+            
 
-    return {"time_year":time_year}
+        return {"time_year":time_year}
 
 def queryByDay(startDay, endDay, city):
     inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
@@ -194,6 +170,11 @@ def queryByDay(startDay, endDay, city):
 
             r = requests.get(url)
             resJson = r.json()
+
+            # When an empty page is recieved, goes on to next day. 
+            if not resJson['results']:
+                break
+
             if resJson['meta']['found'] < limit or page == maxPages:
                 getNextPage = False
             else:
@@ -252,7 +233,6 @@ def queryByDay(startDay, endDay, city):
 if __name__ == "__main__":
     cities = ['Roma', 'MILANO', 'Firenze']
     resMonth = getMonthData('Roma')
-    resMonth = getMonthDataF('Roma')
 
     print(resMonth)
     # resYear = getYearData('Firenze')
