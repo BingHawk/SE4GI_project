@@ -80,7 +80,7 @@ cityCoords = getCityCoords()
 print("setup complete")
 
 
-#### ROUTED FUNCTIONS
+#### ROUTED FUNCTIONS THAT SEND COORDINATES
 @app.route('/api/locations', methods=["GET"])
 def get_locations():
     # the endpoint of meassuring stations in italy
@@ -101,26 +101,6 @@ def get_locations():
     response = jsonify({'locations': locations})
 
     return response
-
-@app.route('/api/month/<city>', methods = ['GET'])
-def serveMonthData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(city.title()), 400
-    
-    res = getMonthData(city)
-    return jsonify(res)
-
-@app.route('/api/year/<city>', methods = ['GET'])
-def serveYearData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(city.title()), 400
-
-    res = jsonify(getYearData(city))
-    return res
 
 # Returns latest value for every city.
 @app.route('/api/latest', methods=["GET"])
@@ -164,13 +144,101 @@ def get_latest():
     response = {'locations': locations}
         
     return jsonify(response)
+
+#### ROUTED FUNCTIONS THAT DOES NOT SEND COORDINATES
     
 #EndPoint for the cities
 @app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
     return jsonify(cityResponse)
 
+# the average as well as the parameters work finally!
+@app.route('/api/cities/<cityname>', methods=["GET"])
+def get_cities(cityname):
+    try:
+        cityname = cityDict[cityname.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(cityname.title()), 400
 
+    cityEndpoint =f"https://api.openaq.org/v2/locations?limit=15&page=1&offset=0&sort=desc&radius=1000&country_id=IT&city={cityname}&order_by=lastUpdated&dumpRaw=false"
+    # Get the stations
+    parameters=[]
+    r = requests.get(cityEndpoint)
+    parNO2, paro3, parco, parso2, parpm10, parpm25, parbc, parpm1, parnox, parch4, parufp, parno, parco2, parum010, parum025, parum100, parpm4 = ([] for i in range(17))
+    for result in r.json()['results']:
+        cityName = result['city']   
+        id=result['id']
+        lastUpdate=result['lastUpdated']
+        for value in result['parameters']:
+            print(value['parameter'])
+            print(value['lastValue'])
+            if value['parameter']== 'no2':
+                parNO2.append(value['lastValue'])
+            elif value['parameter']== "o3":
+                paro3.append(value['lastValue'])
+            elif value['parameter']== "co":
+                parco.append(value['lastValue'])
+            elif  value['parameter']== "so2":
+                parso2.append(value['lastValue'])
+            elif  value['parameter']== "pm10":
+                parpm10.append(value['lastValue'])
+            elif  value['parameter']== "pm25":
+                parpm25.append(value['lastValue'])
+            elif  value['parameter']== "bc":
+                parbc.append(value['lastValue'])
+            elif  value['parameter']== "pm1":
+                parpm1.append(value['lastValue'])
+            elif  value['parameter']== "nox":
+                parnox.append(value['lastValue'])
+            elif  value['parameter']== "ch4":
+                parch4.append(value['lastValue'])
+            elif  value['parameter']== "ufp":
+                parufp.append(value['lastValue'])
+            elif  value['parameter']== "no":
+                parno.append(value['lastValue'])
+            elif  value['parameter']== "co2":
+                parco2.append(value['lastValue'])
+            elif  value['parameter']== "um010":
+                parum010.append(value['lastValue'])
+            elif  value['parameter']== "um025":
+                parum025.append(value['lastValue'])
+            elif  value['parameter']== "um100":
+                parum100.append(value['lastValue'])
+            elif  value['parameter']== "pm4":
+                parpm4.append(value['lastValue'])
+            else:
+                print('new parameter')
+    d={"no2":parNO2, "o3":paro3, "co":parco, "so2":parso2, "pm10":parpm10, "pm25":parpm25, "bc":parbc, "pm1":parpm1, "nox":parnox , "ch4":parch4, "ufp":parufp , "no":parno, "co2":parco2 , "um010":parum010 , "um025":parum025 , "um100":parum100 , "pm4":parpm4}
+    for key, item in d.items():
+        try:
+            average= sum(item)/len(item)         
+        except ZeroDivisionError:
+            average= None
+        parametr = {'particleName': key,  'unit': 	"µg/m³" , 'value': average}
+        parameters.append(parametr)
+    city={'id':id,'city':cityName , 'lastUpdate':lastUpdate,'Measurements':parameters }
+    response = jsonify({'cities': city})
+    return response  
+
+@app.route('/api/month/<city>', methods = ['GET'])
+def serveMonthData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+    
+    res = getMonthData(city)
+    return jsonify(res)
+
+@app.route('/api/year/<city>', methods = ['GET'])
+def serveYearData(city):
+    try:
+        city = cityDict[city.title()][0]
+    except KeyError:
+        return "City {} does not exist in database".format(city.title()), 400
+
+    res = getYearData(city)
+    return jsonify(res)
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":

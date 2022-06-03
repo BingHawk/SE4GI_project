@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div class="container-fluid">
-      <ul class="nav">
+      <!-- <ul class="nav">
         <li class="nav-item">
           <a
             href="http://creative-tim.com"
@@ -32,9 +32,9 @@
             Blog
           </a>
         </li>
-      </ul>
+      </ul> -->
       <div class="copyright">
-        &copy; {{ year }}, made with <i class="tim-icons icon-heart-2"></i> by
+        &copy; {{ year }}, made with 
         
         <a
           href="https://www.creative-tim.com/?ref=pdf-vuejs"
@@ -42,7 +42,7 @@
           rel="noopener"
           >Creative Tim</a
         >
-        for a better web.
+        by Ahmed Abdalgader, Evalyn Horemans, Leonard Hökby, Alba Lunner and Mostafa Mahmoud
       </div>
     </div>
   </footer>
