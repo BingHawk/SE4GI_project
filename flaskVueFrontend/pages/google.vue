@@ -20,13 +20,22 @@ export default {
     MapComponent,
   },
   async asyncData({ $axios }) {
-    console.log("asyncData running")
-    const { data } = await $axios.get('api/locations')
-    // for(location in data.locations){
-    //   location.coordinates = [location.coordinates.lng, location.coordinates.lat]
-    // }
-    console.log(data)
-    return { data }
+    console.log("asyncData running");
+  
+    const [locations, cities] = await Promise.all([
+      $axios.get("/api/latest"),
+      $axios.get("/api/cities"),
+    ]);
+    // console.log(data)
+    console.log(locations);
+    console.log(cities);
+
+    return {
+      data: locations.data,
+      city: cities.data,
+      selectValues: cities.data.cities,
+    };
+    // },
   },
 }
 </script>
