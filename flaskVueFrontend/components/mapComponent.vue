@@ -12,8 +12,8 @@
     >
       <MglPopup>
         <Popup
-        :message="location.cityName"
-        :particle="location.particles.particleName[2]"
+        :message="latest.cityName"
+        :value="latest.particles.parameter"
             
           >
         </Popup>
@@ -40,7 +40,9 @@ export default {
       type: Array,
       required: true,
     },
-    cities:{
+    latest: {
+    type: Array,
+    required: true,
     }
   },
   head: {
@@ -56,14 +58,9 @@ export default {
       accessToken:
         "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
-      center: [9.5, 44],
-      zoom: 4,
+      center: [9.18, 45.4],
+      zoom: 8,
     };
-  },
-  methods: {
-    handleSearch(event) {
-      console.log(event)
-    }
   },
   created() {
     this.mapbox = Mapbox;

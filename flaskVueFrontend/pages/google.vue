@@ -39,6 +39,7 @@
               </div>
         <div id="regularMap" class="map">
           <map-component
+            :latest="data.latest"
             :locations="data.locations"
             :cities="city.cities"
           ></map-component>
@@ -65,10 +66,12 @@ export default {
       $axios.get("/api/cities"),
     ]);
     // console.log(data)
+    console.log(latest);
     console.log(locations);
     console.log(cities);
 
     return {
+      latestData: latest.data,
       data: locations.data,
       city: cities.data,
       selectValues: cities.data.cities,
