@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'postgres'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -161,6 +161,7 @@ def get_latest():
 #EndPoint for the cities
 @app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
+    print(cityResponse)
     return jsonify(cityResponse)
 
 # the average as well as the parameters work finally!

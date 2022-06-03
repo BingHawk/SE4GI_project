@@ -6,16 +6,14 @@
     :zoom="zoom"
   >
     <MglMarker
-      v-for="location in locations"
-      :key="location.id"
+      v-for="location in latest"
+      :key="location.cityName"
       :coordinates="location.coordinates"
     >
       <MglPopup>
         <Popup
-        :message="latest.cityName"
-        :value="latest.particles.parameter"
-            
-          >
+          :message="location.cityName"
+        >
         </Popup>
       </MglPopup>
     </MglMarker>
@@ -41,9 +39,8 @@ export default {
       required: true,
     },
     latest: {
-    type: Array,
-    required: true,
-    }
+      type: Array,
+    },
   },
   head: {
     link: [
@@ -59,11 +56,14 @@ export default {
         "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
       center: [9.18, 45.4],
-      zoom: 8,
+      zoom: 4,
     };
   },
   created() {
     this.mapbox = Mapbox;
+  },
+  mounted() {
+    console.log("Latest:" + this.latest[0].coordinates);
   },
 };
 </script>
