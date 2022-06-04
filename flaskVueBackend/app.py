@@ -352,7 +352,7 @@ def login():
         response = cur.fetchall() #guess
         return jsonify(response) #render_template('auth/login.html')
 
-@app.route('/logout') # Logout will not need any endpoint, it will be handled 100% on frontend /Leo
+@app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('register'))
