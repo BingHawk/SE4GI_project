@@ -108,35 +108,36 @@
       </base-dropdown>
       <modal
         :show.sync="loginModalVisible"
-        class="modal-search"
+        class="modal-black"
         id="loginModal"
         :centered="true"
         :show-close="true"
       >
-        <h1
-          slot="header"
-          type="text"
-          id="LoginTitle"
-          style="color: black"
-        >Login</h1>
-        <form slot="body" @submit="formSubmitted">
+        <h2 slot="header" type="text" id="LoginTitle">
+          Login
+        </h2>
+        <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+        <form @submit="formSubmitted">
           <input
-          type="username"
-          v-model="username"
-          class="form-control"
-          id="usernameInput"
-          placeholder="Username"
-        />
-        <input
-          type="password"
-          v-model="password"
-          class="form-control"
-          id="passwordInput"
-          placeholder="Password"
-        />
-        <input type="submit" value="Login"/>
+            type="username"
+            @input="(event) => (username = event.target.value)"
+            class="form-control"
+            id="usernameInput"
+            placeholder="Username"
+          />
+          <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+          <input
+            type="password"
+            @input="(event) => (password = event.target.value)"
+            class="form-control"
+            id="passwordInput"
+            placeholder="Password"
+          />
+          <input type="submit" value="Login" />
         </form>
-        
+        <div slot="footer">
+          <a class="text-info"> No account? Register here </a>
+        </div>
       </modal>
     </ul>
   </base-nav>
@@ -144,14 +145,16 @@
 <script>
 import { CollapseTransition } from "vue2-transitions";
 import { BaseNav, Modal } from "@/components";
+import BaseInput from "../Inputs/BaseInput.vue";
 
-const crypto = require('crypto')
+const crypto = require("crypto");
 
 export default {
   components: {
     CollapseTransition,
     BaseNav,
     Modal,
+    BaseInput,
   },
   computed: {
     routeName() {
@@ -174,7 +177,8 @@ export default {
       searchQuery: "",
       loginModalVisible: false,
       username: "",
-      password: ""
+      password: "",
+      missingLoginInfo: false,
     };
   },
   methods: {
@@ -195,21 +199,27 @@ export default {
     },
     togleLoginModal() {
       this.loginModalVisible = true;
+      this.missingLoginInfo = false;
       console.log(this.loginModalVisible);
     },
-    formSubmitted(e){
-      e.preventDefault()
-      console.log("form submit")
-      if(!this.username || !this.password){
-        allert("both fields are need")
-        return
+    formSubmitted(e) {
+      e.preventDefault();
+      console.log("form submit");
+      if (!this.username || !this.password) {
+        this.missingLoginInfo = true;
+        return;
       }
-      this.password = crypto.createHash('sha1').update(this.password).digest('hex');
-      console.log(this.username)
-      console.log(this.password)
+      this.password = crypto
+        .createHash("sha1")
+        .update(this.password)
+        .digest("hex");
+      console.log(this.username);
+      console.log(this.password);
 
+      //this.$axios.post('/api/authenticate',{username: this.username, password: this.password}).then(console.log)
 
-    }
+      this.loginModalVisible = false;
+    },
   },
 };
 </script>

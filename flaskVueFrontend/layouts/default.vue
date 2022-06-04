@@ -67,13 +67,13 @@
           }"
         ></sidebar-item> -->
 
-        <!-- <sidebar-item
+        <sidebar-item
           :link="{
             name: $t('sidebar.typography'),
             icon: 'tim-icons icon-align-center',
             path: '/typography'
           }"
-        ></sidebar-item> -->
+        ></sidebar-item>
 
         <!-- <sidebar-item
           :link="{

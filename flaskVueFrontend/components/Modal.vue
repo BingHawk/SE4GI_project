@@ -48,7 +48,6 @@
                 <i class="tim-icons icon-simple-remove"></i>
               </button>
             </slot>
-            <slot name="body"></slot>
           </div>
 
           <div v-if="$slots.default" class="modal-body" :class="bodyClasses">
