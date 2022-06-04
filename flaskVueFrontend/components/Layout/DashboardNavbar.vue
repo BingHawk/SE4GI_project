@@ -88,9 +88,7 @@
         title-classes="nav-link"
         menu-classes="dropdown-navbar"
       >
-        <template
-          slot="title"
-        >
+        <template slot="title">
           <div class="photo"><i class="tim-icons icon-single-02"></i></div>
           <b class="caret d-none d-lg-block d-xl-block"></b>
           <p class="d-lg-none">Log in</p>
@@ -103,47 +101,86 @@
         </li>
         <div class="dropdown-divider"></div> -->
         <li class="nav-link">
-          <a href="#" class="nav-item dropdown-item">Log in</a>
+          <button @click="togleLoginModal" class="nav-item dropdown-item">
+            Log in
+          </button>
         </li>
       </base-dropdown>
+      <modal
+        :show.sync="loginModalVisible"
+        class="modal-search"
+        id="loginModal"
+        :centered="true"
+        :show-close="true"
+      >
+        <h1
+          slot="header"
+          type="text"
+          id="LoginTitle"
+          style="color: black"
+        >Login</h1>
+        <form slot="body" @submit="formSubmitted">
+          <input
+          type="username"
+          v-model="username"
+          class="form-control"
+          id="usernameInput"
+          placeholder="Username"
+        />
+        <input
+          type="password"
+          v-model="password"
+          class="form-control"
+          id="passwordInput"
+          placeholder="Password"
+        />
+        <input type="submit" value="Login"/>
+        </form>
+        
+      </modal>
     </ul>
   </base-nav>
 </template>
 <script>
-import { CollapseTransition } from 'vue2-transitions';
-import { BaseNav, Modal } from '@/components';
+import { CollapseTransition } from "vue2-transitions";
+import { BaseNav, Modal } from "@/components";
+
+const crypto = require('crypto')
 
 export default {
   components: {
     CollapseTransition,
     BaseNav,
-    Modal
+    Modal,
   },
   computed: {
     routeName() {
       const { path } = this.$route;
-      let parts = path.split('/')
-      if(parts == ','){
-        return 'Dashboard';
+      let parts = path.split("/");
+      if (parts == ",") {
+        return "Dashboard";
       }
-      return parts.map(p => this.capitalizeFirstLetter(p)).join(' ');
+      return parts.map((p) => this.capitalizeFirstLetter(p)).join(" ");
     },
     isRTL() {
       return this.$rtl.isRTL;
-    }
+    },
   },
   data() {
     return {
       activeNotifications: false,
       showMenu: false,
       searchModalVisible: false,
-      searchQuery: ''
+      searchQuery: "",
+      loginModalVisible: false,
+      username: "",
+      password: ""
     };
   },
   methods: {
     capitalizeFirstLetter(string) {
-      if (!string || typeof string !== 'string') {
-        return ''
+      if (!string || typeof string !== "string") {
+        return "";
       }
       return string.charAt(0).toUpperCase() + string.slice(1);
     },
@@ -155,8 +192,25 @@ export default {
     },
     toggleMenu() {
       this.showMenu = !this.showMenu;
+    },
+    togleLoginModal() {
+      this.loginModalVisible = true;
+      console.log(this.loginModalVisible);
+    },
+    formSubmitted(e){
+      e.preventDefault()
+      console.log("form submit")
+      if(!this.username || !this.password){
+        allert("both fields are need")
+        return
+      }
+      this.password = crypto.createHash('sha1').update(this.password).digest('hex');
+      console.log(this.username)
+      console.log(this.password)
+
+
     }
-  }
+  },
 };
 </script>
 <style scoped>
