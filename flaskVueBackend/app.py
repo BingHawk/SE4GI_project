@@ -242,11 +242,23 @@ def serveYearData(city):
     return jsonify(res)
 
 #### ROUTED FUNCTIONS FOR LOGIN
+# This is the current endpoint used by the login function.
+# It will recive a post request with the payload: {"username": <String>, "password": <String>}'
+# It should check if that username exist in the database and if it has the specified password. 
+# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>}, "access": <Boleean>}
+# Where userID is the id of the user in the db, and None if authentication fails. Access bolean is true if access is granted, else false.
+# Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/authenticate', methods = ['POST'])
 def authenticate():
     print("Authenticate recieved request")
     return "Authenticate recieved"
 
+# This is the current endpoint used by the register function.
+# It will recive a post request with the payload: {"username": <String>, "password": <String>}'
+# It should check if that username exist in the database and if not register it together with the password 
+# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>},"register": <Boleean>}
+# Where userID is the id of the user in the db generated when adding, and None if username allready exist. Access bolean is true if register is sucsessful, else false.
+# Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/register', methods = ['POST'])
 def register():
     print("Register recieved request")
