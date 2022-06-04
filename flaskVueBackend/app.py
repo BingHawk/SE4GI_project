@@ -214,13 +214,14 @@ def register():
                 'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
                 (username, generate_password_hash(password))
             )
+            response = cur.fetchall() #guess
             cur.close()
             conn.commit()
             return redirect(url_for('login'))
 
         flash(error)
 
-        response = cur.fetchall() #guess
+        
         return jsonify(response) #render_template('auth/register.html')
 
 @app.route('/login', methods=('GET', 'POST'))
