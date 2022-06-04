@@ -67,13 +67,13 @@
           }"
         ></sidebar-item> -->
 
-        <sidebar-item
+        <!-- <sidebar-item
           :link="{
             name: $t('sidebar.typography'),
             icon: 'tim-icons icon-align-center',
             path: '/typography'
           }"
-        ></sidebar-item>
+        ></sidebar-item> -->
 
         <!-- <sidebar-item
           :link="{
@@ -91,7 +91,7 @@
       </template>
     </side-bar>
     <!--Share plugin (for demo purposes). You can remove it if don't plan on using it-->
-    <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share>
+    <!-- <sidebar-share :background-color.sync="sidebarBackground"> </sidebar-share> -->
     <div class="main-panel" :data="sidebarBackground">
       <dashboard-navbar></dashboard-navbar>
       <router-view name="header"></router-view>

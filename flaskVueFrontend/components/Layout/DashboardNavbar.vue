@@ -116,8 +116,13 @@
         <h2 slot="header" type="text" id="LoginTitle">
           Login
         </h2>
-        <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
         <form @submit="loginSubmitted">
+          <label v-if="missingLoginInfo" class="text-warning"
+            >Username:</label
+          >
+          <label v-if="!missingLoginInfo" class="text-primary"
+            >Username:</label
+          >
           <input
             type="username"
             @input="(event) => (username = event.target.value)"
@@ -125,7 +130,12 @@
             id="usernameInput"
             placeholder="Username"
           />
-          <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+          <label v-if="missingLoginInfo" class="text-warning"
+            >Password:</label
+          >
+          <label v-if="!missingLoginInfo" class="text-primary"
+            >Password:</label
+          >
           <input
             type="password"
             @input="(event) => (password = event.target.value)"
@@ -133,10 +143,12 @@
             id="passwordInput"
             placeholder="Password"
           />
-          <input type="submit" value="Login" />
+          <input type="submit" value="Login" class="btn-primary" style="margin-top:8pt"/>
         </form>
         <div slot="footer">
-          <a @click="toggleRegisterModal" class="text-info"> No account? Register here! </a>
+          <a @click="toggleRegisterModal" class="text-info">
+            No account? Register here!
+          </a>
         </div>
       </modal>
       <modal
@@ -149,8 +161,13 @@
         <h2 slot="header" type="text" id="RegisterTitle">
           Register new account
         </h2>
-        <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
         <form @submit="registerSubmitted">
+          <label v-if="missingLoginInfo" class="text-warning"
+            >Username:</label
+          >
+          <label v-if="!missingLoginInfo" class="text-primary"
+            >Username:</label
+          >
           <input
             type="username"
             @input="(event) => (username = event.target.value)"
@@ -158,7 +175,12 @@
             id="registerUsernameInput"
             placeholder="Username"
           />
-          <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+          <label v-if="missingLoginInfo" class="text-warning"
+            >Password:</label
+          >
+          <label v-if="!missingLoginInfo" class="text-primary"
+            >Password:</label
+          >
           <input
             type="password"
             @input="(event) => (password = event.target.value)"
@@ -166,10 +188,12 @@
             id="registerPasswordInput"
             placeholder="Password"
           />
-          <input type="submit" value="Register" />
+          <input type="submit" value="Register" class="btn-primary" style="margin-top:8pt" />
         </form>
         <div slot="footer">
-          <a @click="toggleLoginModal" class="text-info"> Already have an account? Login here! </a>
+          <a @click="toggleLoginModal" class="text-info">
+            Already have an account? Login here!
+          </a>
         </div>
       </modal>
     </ul>
@@ -236,15 +260,14 @@ export default {
       this.registerModalVisible = false;
       this.missingLoginInfo = false;
       console.log("loginModalVisible:", this.loginModalVisible);
-      console.log("registerModalVisible", this.registerModalVisible);      
+      console.log("registerModalVisible", this.registerModalVisible);
     },
-    toggleRegisterModal(){
+    toggleRegisterModal() {
       this.registerModalVisible = true;
       this.loginModalVisible = false;
       this.missingLoginInfo = false;
       console.log("registerModalVisible", this.registerModalVisible);
       console.log("loginModalVisible:", this.loginModalVisible);
-
     },
     loginSubmitted(e) {
       e.preventDefault();
@@ -260,7 +283,12 @@ export default {
       console.log(this.username);
       console.log(this.password);
 
-      this.$axios.post('/api/authenticate',{username: this.username, password: this.password}).then(console.log)
+      this.$axios
+        .post("/api/authenticate", {
+          username: this.username,
+          password: this.password,
+        })
+        .then(console.log);
 
       this.loginModalVisible = false;
     },
@@ -278,7 +306,12 @@ export default {
       console.log(this.username);
       console.log(this.password);
 
-      this.$axios.post('/api/register',{username: this.username, password: this.password}).then(console.log)
+      this.$axios
+        .post("/api/register", {
+          username: this.username,
+          password: this.password,
+        })
+        .then(console.log);
 
       this.registerModalVisible = false;
     },
