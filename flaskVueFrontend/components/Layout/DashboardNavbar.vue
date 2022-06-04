@@ -118,7 +118,7 @@
         </h2>
         <form @submit="loginSubmitted">
           <label v-if="missingLoginInfo" class="text-warning"
-            >Username:</label
+            >Username (needed):</label
           >
           <label v-if="!missingLoginInfo" class="text-primary"
             >Username:</label
@@ -131,7 +131,7 @@
             placeholder="Username"
           />
           <label v-if="missingLoginInfo" class="text-warning"
-            >Password:</label
+            >Password (needed):</label
           >
           <label v-if="!missingLoginInfo" class="text-primary"
             >Password:</label
@@ -163,7 +163,7 @@
         </h2>
         <form @submit="registerSubmitted">
           <label v-if="missingLoginInfo" class="text-warning"
-            >Username:</label
+            >Username (needed):</label
           >
           <label v-if="!missingLoginInfo" class="text-primary"
             >Username:</label
@@ -176,7 +176,7 @@
             placeholder="Username"
           />
           <label v-if="missingLoginInfo" class="text-warning"
-            >Password:</label
+            >Password (needed):</label
           >
           <label v-if="!missingLoginInfo" class="text-primary"
             >Password:</label

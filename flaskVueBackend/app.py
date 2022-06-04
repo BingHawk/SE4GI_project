@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'qrC85Ba9Dpg'
+MYPWRD = 'blod'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -246,6 +246,7 @@ def serveYearData(city):
 def authenticate():
     print("Authenticate recieved request")
     return "Authenticate recieved"
+
 
 @app.route('/api/register', methods = ['POST'])
 def register():
