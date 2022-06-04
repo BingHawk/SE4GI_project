@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -239,6 +239,19 @@ def serveYearData(city):
 
     res = getYearData(city)
     return jsonify(res)
+
+#### ROUTED FUNCTIONS FOR LOGIN
+
+@app.route('/api/authenticate', methods = ['POST'])
+def authenticate():
+    print("Authenticate recieved request")
+    return "Authenticate recieved"
+
+@app.route('/api/register', methods = ['POST'])
+def register():
+    print("Register recieved request")
+    return "Register recieved"
+
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":

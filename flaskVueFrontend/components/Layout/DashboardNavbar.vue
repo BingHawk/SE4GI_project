@@ -117,7 +117,7 @@
           Login
         </h2>
         <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
-        <form @submit="formSubmitted">
+        <form @submit="loginSubmitted">
           <input
             type="username"
             @input="(event) => (username = event.target.value)"
@@ -150,7 +150,7 @@
           Register new account
         </h2>
         <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
-        <form @submit="formSubmitted">
+        <form @submit="registerSubmitted">
           <input
             type="username"
             @input="(event) => (username = event.target.value)"
@@ -166,7 +166,7 @@
             id="registerPasswordInput"
             placeholder="Password"
           />
-          <input type="submit" value="Login" />
+          <input type="submit" value="Register" />
         </form>
         <div slot="footer">
           <a @click="toggleLoginModal" class="text-info"> Already have an account? Login here! </a>
@@ -241,13 +241,14 @@ export default {
     toggleRegisterModal(){
       this.registerModalVisible = true;
       this.loginModalVisible = false;
+      this.missingLoginInfo = false;
       console.log("registerModalVisible", this.registerModalVisible);
       console.log("loginModalVisible:", this.loginModalVisible);
 
     },
-    formSubmitted(e) {
+    loginSubmitted(e) {
       e.preventDefault();
-      console.log("form submit");
+      console.log("login submit");
       if (!this.username || !this.password) {
         this.missingLoginInfo = true;
         return;
@@ -259,9 +260,27 @@ export default {
       console.log(this.username);
       console.log(this.password);
 
-      //this.$axios.post('/api/authenticate',{username: this.username, password: this.password}).then(console.log)
+      this.$axios.post('/api/authenticate',{username: this.username, password: this.password}).then(console.log)
 
       this.loginModalVisible = false;
+    },
+    registerSubmitted(e) {
+      e.preventDefault();
+      console.log("register submit");
+      if (!this.username || !this.password) {
+        this.missingLoginInfo = true;
+        return;
+      }
+      this.password = crypto
+        .createHash("sha1")
+        .update(this.password)
+        .digest("hex");
+      console.log(this.username);
+      console.log(this.password);
+
+      this.$axios.post('/api/register',{username: this.username, password: this.password}).then(console.log)
+
+      this.registerModalVisible = false;
     },
   },
 };
