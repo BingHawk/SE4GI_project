@@ -2,18 +2,18 @@
   <div class="row">
     <!-- Big Chart -->
     <div class="col-12">
-             <div
-                class="btn-group btn-group-toggle"
-                :class="isRTL ? 'float-left' : 'float-right'"
-                data-toggle="buttons"
-              >
-                <select
-                  class="custom-select m-1  text-white w-100"
-                  name="Cities"
-                  id="idCitiesDDL"
-                  data-toggle="tooltip"
-                  title="Your destination city"
-                  style="
+      <div
+        class="btn-group btn-group-toggle"
+        :class="isRTL ? 'float-left' : 'float-right'"
+        data-toggle="buttons"
+      >
+        <select
+          class="custom-select m-1  text-white w-100"
+          name="Cities"
+          id="idCitiesDDL"
+          data-toggle="tooltip"
+          title="Your destination city"
+          style="
                 background-image: linear-gradient(
                     45deg,
                     transparent 50%,
@@ -27,25 +27,23 @@
                 background-repeat: no-repeat;
                 background-color: #41B883;
               "
-                >
-                  <option
-                    v-for="selectValue in selectValues"
-                    :value="selectValue"
-                    v-bind:key="option"
-                    >{{ selectValue }}</option
-                  >
-                </select>
-              </div>
+        >
+          <option
+            v-for="selectValue in selectValues"
+            :value="selectValue"
+            v-bind:key="option"
+            >{{ selectValue }}</option
+          >
+        </select>
+      </div>
       <card type="chart">
         <template slot="header">
           <div class="row">
-            
             <div class="col-sm-6" :class="isRTL ? 'text-right' : 'text-left'">
               <!-- <h5 class="card-category">Total shipments</h5> -->
               <h2 class="card-title">Monthly Data</h2>
             </div>
             <div class="col-sm-6 d-flex d-sm-block">
-              
               <div
                 class="btn-group btn-group-toggle"
                 :class="isRTL ? 'float-left' : 'float-right'"
@@ -55,15 +53,15 @@
                   v-for="(option, index) in bigLineChartCategories"
                   :key="option.name"
                   class="btn btn-sm btn-primary btn-simple"
-                  :class="{ active: bigLineChart.activeIndex === index }"
+                  :class="{ active: monthBigLineChart.activeIndex === index }"
                   :id="index"
                 >
                   <input
                     type="radio"
-                    @click="initBigChart(index)"
+                    @click="initMonthChart(index)"
                     name="options"
                     autocomplete="off"
-                    :checked="bigLineChart.activeIndex === index"
+                    :checked="monthBigLineChart.activeIndex === index"
                   />
                   <span class="d-none d-sm-block">{{ option.name }}</span>
                   <span class="d-block d-sm-none">
@@ -74,15 +72,15 @@
             </div>
           </div>
         </template>
-        
+
         <div class="chart-area">
           <line-chart
             style="height: 100%"
-            ref="bigChart"
-            :chart-data="bigLineChart.chartData"
-            :gradient-colors="bigLineChart.gradientColors"
-            :gradient-stops="bigLineChart.gradientStops"
-            :extra-options="bigLineChart.extraOptions"
+            ref="monthBigChart"
+            :chart-data="monthBigLineChart.chartData"
+            :gradient-colors="monthBigLineChart.gradientColors"
+            :gradient-stops="monthBigLineChart.gradientStops"
+            :extra-options="monthBigLineChart.extraOptions"
           >
           </line-chart>
         </div>
@@ -94,7 +92,6 @@
         <template slot="header">
           <div class="row">
             <div class="col-sm-6" :class="isRTL ? 'text-right' : 'text-left'">
-              <!-- <h5 class="card-category">Total shipments</h5> -->
               <h2 class="card-title">Annual Data</h2>
             </div>
             <div class="col-sm-6 d-flex d-sm-block">
@@ -107,15 +104,15 @@
                   v-for="(option, index) in bigLineChartCategories"
                   :key="option.name"
                   class="btn btn-sm btn-primary btn-simple"
-                  :class="{ active: bigLineChart.activeIndex === index }"
+                  :class="{ active: yearBigLineChart.activeIndex === index }"
                   :id="index"
                 >
                   <input
                     type="radio"
-                    @click="initBigChart(index)"
+                    @click="initYearChart(index)"
                     name="options"
                     autocomplete="off"
-                    :checked="bigLineChart.activeIndex === index"
+                    :checked="yearBigLineChart.activeIndex === index"
                   />
                   <span class="d-none d-sm-block">{{ option.name }}</span>
                   <span class="d-block d-sm-none">
@@ -123,24 +120,22 @@
                   </span>
                 </label>
               </div>
-       
             </div>
           </div>
         </template>
         <div class="chart-area">
           <line-chart
             style="height: 100%"
-            ref="bigChart"
-            :chart-data="bigLineChart.chartData"
-            :gradient-colors="bigLineChart.gradientColors"
-            :gradient-stops="bigLineChart.gradientStops"
-            :extra-options="bigLineChart.extraOptions"
+            ref="yearBigChart"
+            :chart-data="yearBigLineChart.chartData"
+            :gradient-colors="yearBigLineChart.gradientColors"
+            :gradient-stops="yearBigLineChart.gradientStops"
+            :extra-options="yearBigLineChart.extraOptions"
           >
           </line-chart>
         </div>
       </card>
     </div>
-
   </div>
 </template>
 <script>
@@ -151,7 +146,8 @@ import TaskList from "@/components/Dashboard/TaskList";
 import config from "@/config";
 import { Table, TableColumn } from "element-ui";
 
-let bigChartData = [[],[],[]]
+let bigChartMonthData = [[], [], []];
+let bigChartYearData = [[], [], []];
 let bigChartLabels = [
   "JAN",
   "FEB",
@@ -185,25 +181,28 @@ export default {
   name: "dashboard",
   components: {
     LineChart,
-   
   },
   ///query the cities and visualize it on map as single items then add each to a DDL///
- async asyncData({ $axios }) {
+  async asyncData({ $axios }) {
     // console.log("asyncData running");
 
-    const [cities,monthData] = await Promise.all([
+    const [cities, monthData, yearData] = await Promise.all([
       $axios.get("/api/cities"),
-      $axios.get('/api/month/roma'),
+      $axios.get("/api/month/firenze"),
+      $axios.get("/api/year/firenze"),
     ]);
-    // console.log(monthData.data.time_month)
+    console.log(yearData.data);
     // console.log(locations);
-    const res=monthData.data.time_month
+    const monthRes = monthData.data.time_month;
+    const yearRes = yearData.data.time_year;
 
-    bigChartData[0]=res.co.data
-    bigChartData[1]=res.so2.data
-    bigChartData[2]=res.o3.data
-   
-    
+    bigChartMonthData[0] = monthRes.co.data;
+    bigChartMonthData[1] = monthRes.so2.data;
+    bigChartMonthData[2] = monthRes.o3.data;
+
+    bigChartYearData[0] = yearRes.co.data;
+    bigChartYearData[1] = yearRes.so2.data;
+    bigChartYearData[2] = yearRes.o3.data;
 
     return {
       // data: monthData.data.time_month.co,
@@ -215,14 +214,13 @@ export default {
   creatCitiesDDL() {},
   data() {
     return {
-    
-      bigLineChart: {
+      monthBigLineChart: {
         activeIndex: 0,
         chartData: {
           datasets: [
             {
               ...bigChartDatasetOptions,
-              data: bigChartData[0],
+              data: bigChartMonthData[0],
             },
           ],
           labels: bigChartLabels,
@@ -232,7 +230,22 @@ export default {
         gradientStops: [1, 0.4, 0],
         categories: [],
       },
-      
+      yearBigLineChart: {
+        activeIndex: 0,
+        chartData: {
+          datasets: [
+            {
+              ...bigChartDatasetOptions,
+              data: bigChartYearData[0],
+            },
+          ],
+          labels: bigChartLabels,
+        },
+        extraOptions: chartConfigs.purpleChartOptions,
+        gradientColors: config.colors.primaryGradient,
+        gradientStops: [1, 0.4, 0],
+        categories: [],
+      },
     };
   },
   computed: {
@@ -244,35 +257,50 @@ export default {
     },
     bigLineChartCategories() {
       return [
-        { name: "Co",
-         icon: "tim-icons icon-single-02" },
+        { name: "Co", icon: "tim-icons icon-single-02" },
         {
           name: "So2",
           icon: "tim-icons icon-gift-2",
         },
-        { name: "O3",
-         icon: "tim-icons icon-tap-02" },
+        { name: "O3", icon: "tim-icons icon-tap-02" },
       ];
     },
   },
   methods: {
-    initBigChart(index) {
+    initMonthChart(index) {
       let chartData = {
         datasets: [
           {
             ...bigChartDatasetOptions,
-            data: bigChartData[index],
+            data: bigChartMonthData[index],
           },
         ],
         labels: bigChartLabels,
       };
-      this.$refs.bigChart.updateGradients(chartData);
-      this.bigLineChart.chartData = chartData;
-      this.bigLineChart.activeIndex = index;
+      this.$refs.monthBigChart.updateGradients(chartData);
+      this.monthBigLineChart.chartData = chartData;
+      this.monthBigLineChart.activeIndex = index;
+      
+    },
+
+    initYearChart(index) {
+      let chartData = {
+        datasets: [
+          {
+            ...bigChartDatasetOptions,
+            data: bigChartYearData[index],
+          },
+        ],
+        labels: bigChartLabels,
+      };
+      this.$refs.yearBigChart.updateGradients(chartData);
+      this.yearBigLineChart.chartData = chartData;
+      this.yearBigLineChart.activeIndex = index;
     },
   },
   mounted() {
-    this.initBigChart(0);
+    this.initMonthChart(0);
+    this.initYearChart(0)
   },
 };
 </script>
