@@ -105,6 +105,11 @@
             Log in
           </button>
         </li>
+        <li class="nav-link">
+          <button @click="toggleRegisterModal" class="nav-item dropdown-item">
+            Register
+          </button>
+        </li>
       </base-dropdown>
       <modal
         :show.sync="loginModalVisible"
