@@ -138,8 +138,11 @@ def get_latest():
                             particle['value'] = [particle['value']]
                             particle['value'].append(particle_in['value'])
         else:
-            locations[city] = {'cityName': city, 'particles': result['measurements']}       
-        
+            try:
+                locations[city] = {'cityName': city,'coordinates': cityCoords[city.title()], 'particles': result['measurements']}
+            except KeyError:
+                continue #Not storing the data if we don't have coordinates for it
+
     for city in locations.keys():
         for particle in locations[city]['particles']:
             if isinstance(particle['value'], list):
@@ -147,10 +150,6 @@ def get_latest():
                mean_l = sum(particle['value'])/n
                particle['value'] = mean_l  
 
-    for city in getCityCoords().keys():
-            coords = getCityCoords()
-            locations[city] = {'cityName': city, 'coordinates': coords[city], 'particles': result['measurements']}
-               
     locations = list(locations.values())
     response = {'locations': locations}
         

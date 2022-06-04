@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
-        <!-- <div
+        <div
           class="btn-group btn-group-toggle "
           data-toggle="buttons"
           style="zindex-dropdown:100"
@@ -36,7 +36,7 @@
               >{{ selectValue }}</option
             >
           </select>
-        </div> -->
+        </div>
         <div id="regularMap" class="map">
           <map-component
             :latest="latest"
@@ -57,16 +57,18 @@ export default {
   async asyncData({ $axios }) {
     console.log("asyncData running");
     try {
-      const latest = await $axios.get("/api/latest",{responseType: "json"})
+      const [latest, cities] = await Promise.all([
+        $axios.get("/api/latest",{responseType: "json"}),
+        $axios.get("/api/cities",{responseType: "json"})
+      ]);
+      
       console.log(latest.data);
-      // console.log(locations.data);
-      // console.log(cities.data);
+      console.log(cities.data);
 
       return {
         latest: latest.data.locations,
-        // locations: locations.data,
-        // city: cities.data,
-        // selectValues: cities.data.cities,
+        city: cities.data,
+        selectValues: cities.data.cities,
       };
     } catch (e) {
       console.log(e);
