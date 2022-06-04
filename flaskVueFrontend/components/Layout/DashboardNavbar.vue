@@ -101,7 +101,7 @@
         </li>
         <div class="dropdown-divider"></div> -->
         <li class="nav-link">
-          <button @click="togleLoginModal" class="nav-item dropdown-item">
+          <button @click="toggleLoginModal" class="nav-item dropdown-item">
             Log in
           </button>
         </li>
@@ -136,7 +136,40 @@
           <input type="submit" value="Login" />
         </form>
         <div slot="footer">
-          <a class="text-info"> No account? Register here </a>
+          <a @click="toggleRegisterModal" class="text-info"> No account? Register here! </a>
+        </div>
+      </modal>
+      <modal
+        :show.sync="registerModalVisible"
+        class="modal-black"
+        id="registerModal"
+        :centered="true"
+        :show-close="true"
+      >
+        <h2 slot="header" type="text" id="RegisterTitle">
+          Register new account
+        </h2>
+        <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+        <form @submit="formSubmitted">
+          <input
+            type="username"
+            @input="(event) => (username = event.target.value)"
+            class="form-control"
+            id="registerUsernameInput"
+            placeholder="Username"
+          />
+          <label v-if="missingLoginInfo" class="text-warning">Necessary input:</label>
+          <input
+            type="password"
+            @input="(event) => (password = event.target.value)"
+            class="form-control"
+            id="registerPasswordInput"
+            placeholder="Password"
+          />
+          <input type="submit" value="Login" />
+        </form>
+        <div slot="footer">
+          <a @click="toggleLoginModal" class="text-info"> Already have an account? Login here! </a>
         </div>
       </modal>
     </ul>
@@ -176,6 +209,7 @@ export default {
       searchModalVisible: false,
       searchQuery: "",
       loginModalVisible: false,
+      registerModalVisible: false,
       username: "",
       password: "",
       missingLoginInfo: false,
@@ -197,10 +231,19 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu;
     },
-    togleLoginModal() {
+    toggleLoginModal() {
       this.loginModalVisible = true;
+      this.registerModalVisible = false;
       this.missingLoginInfo = false;
-      console.log(this.loginModalVisible);
+      console.log("loginModalVisible:", this.loginModalVisible);
+      console.log("registerModalVisible", this.registerModalVisible);      
+    },
+    toggleRegisterModal(){
+      this.registerModalVisible = true;
+      this.loginModalVisible = false;
+      console.log("registerModalVisible", this.registerModalVisible);
+      console.log("loginModalVisible:", this.loginModalVisible);
+
     },
     formSubmitted(e) {
       e.preventDefault();
