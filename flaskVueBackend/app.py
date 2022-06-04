@@ -245,8 +245,10 @@ def serveYearData(city):
 # This is the current endpoint used by the login function.
 # It will recive a post request with the payload: {"username": <String>, "password": <String>}'
 # It should check if that username exist in the database and if it has the specified password. 
-# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>}, "access": <Boleean>}
-# Where userID is the id of the user in the db, and None if authentication fails. Access bolean is true if access is granted, else false.
+# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>}, "access": <Boleean>, "lastSelect": <String>|<None>}
+    # Where userID is the id of the user in the db, and None if authentication fails.
+    # access bolean is true if access is granted, else false. 
+    # lastSelect is the name of the city in Title() case that was last queried by the user or None if authentication fails or there is no info. 
 # Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/authenticate', methods = ['POST'])
 def authenticate():
