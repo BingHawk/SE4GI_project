@@ -11,6 +11,7 @@
           class="custom-select m-1  text-white w-100"
           name="Cities"
           id="idCitiesDDL"
+          @change="onChange($event)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -148,7 +149,7 @@ import { Table, TableColumn } from "element-ui";
 
 let bigChartMonthData = [[], [], []];
 let bigChartYearData = [[], [], []];
-let bigChartLabels = [
+let yearChartLabels = [
   "JAN",
   "FEB",
   "MAR",
@@ -162,6 +163,7 @@ let bigChartLabels = [
   "NOV",
   "DEC",
 ];
+let monthChartLabels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
 let bigChartDatasetOptions = {
   fill: true,
   borderColor: config.colors.primary,
@@ -176,6 +178,8 @@ let bigChartDatasetOptions = {
   pointHoverBorderWidth: 15,
   pointRadius: 4,
 };
+var store="firenze"
+
 
 export default {
   name: "dashboard",
@@ -183,16 +187,21 @@ export default {
     LineChart,
   },
   ///query the cities and visualize it on map as single items then add each to a DDL///
-  async asyncData({ $axios }) {
+  async asyncData({ $axios, $store }) {
     // console.log("asyncData running");
+    $store = (typeof $store !== 'undefined') ?  $store : "firenze"
+    var cityName=$store
+    console.log(cityName);
+    
 
     const [cities, monthData, yearData] = await Promise.all([
       $axios.get("/api/cities"),
-      $axios.get("/api/month/firenze"),
-      $axios.get("/api/year/firenze"),
+      $axios.get(`/api/month/${cityName}`),
+      $axios.get(`/api/year/${cityName}`),
     ]);
-    console.log(yearData.data);
-    // console.log(locations);
+
+    // console.log(yearData.data);
+    
     const monthRes = monthData.data.time_month;
     const yearRes = yearData.data.time_year;
 
@@ -223,7 +232,7 @@ export default {
               data: bigChartMonthData[0],
             },
           ],
-          labels: bigChartLabels,
+          labels: monthChartLabels,
         },
         extraOptions: chartConfigs.purpleChartOptions,
         gradientColors: config.colors.primaryGradient,
@@ -239,7 +248,7 @@ export default {
               data: bigChartYearData[0],
             },
           ],
-          labels: bigChartLabels,
+          labels: yearChartLabels,
         },
         extraOptions: chartConfigs.purpleChartOptions,
         gradientColors: config.colors.primaryGradient,
@@ -275,7 +284,7 @@ export default {
             data: bigChartMonthData[index],
           },
         ],
-        labels: bigChartLabels,
+        labels: monthChartLabels,
       };
       this.$refs.monthBigChart.updateGradients(chartData);
       this.monthBigLineChart.chartData = chartData;
@@ -291,17 +300,43 @@ export default {
             data: bigChartYearData[index],
           },
         ],
-        labels: bigChartLabels,
+        labels: yearChartLabels,
       };
       this.$refs.yearBigChart.updateGradients(chartData);
       this.yearBigLineChart.chartData = chartData;
       this.yearBigLineChart.activeIndex = index;
     },
+    async onChange(event){
+    console.log(event.target.value)
+    //this.$nuxt.refresh()
+   let cityName=event.target.value
+   let $axios=this.$axios
+   const [ monthData, yearData] = await Promise.all([
+      $axios.get(`/api/month/${cityName}`),
+      $axios.get(`/api/year/${cityName}`),
+    ]);
+
+    // console.log(yearData.data);
+    
+    const monthRes = monthData.data.time_month;
+    const yearRes = yearData.data.time_year;
+
+    bigChartMonthData[0] = monthRes.co.data;
+    bigChartMonthData[1] = monthRes.so2.data;
+    bigChartMonthData[2] = monthRes.o3.data;
+
+    bigChartYearData[0] = yearRes.co.data;
+    bigChartYearData[1] = yearRes.so2.data;
+    bigChartYearData[2] = yearRes.o3.data;
+  }
   },
   mounted() {
     this.initMonthChart(0);
     this.initYearChart(0)
+    
+    
   },
+ 
 };
 </script>
 <style></style>
