@@ -153,10 +153,8 @@ def serve_cityNames():
 # the average as well as the parameters work finally!
 @app.route('/api/cities/<cityname>', methods=["GET"])
 def get_cities(cityname):
-    try:
-        cityname = cityDict[cityname.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(cityname.title()), 400
+    if cityname.title() not in cityNames:
+        return "City {} does not exist in database".format(city.title()), 400
 
     cityEndpoint =f"https://api.openaq.org/v2/locations?limit=15&page=1&offset=0&sort=desc&radius=1000&country_id=IT&city={cityname}&order_by=lastUpdated&dumpRaw=false"
     # Get the stations
