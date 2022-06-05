@@ -178,7 +178,12 @@ let bigChartDatasetOptions = {
   pointHoverBorderWidth: 15,
   pointRadius: 4,
 };
-var store="firenze"
+let missedCities= ['Alfonsine', 'Bergamo', 'Brescia', 'Carpi', 'Cento', 'Cesena', 'Civitavecchia', 'Colorno',
+ 'Como', 'Cremona', 'Faenza', 'Fiorano Modenese', "Forli'", 'Guastalla', 'Imola', 'Jolanda Di Savoia',
+  'Langhirano', 'Lecco', 'Lodi', "Lugagnano Val D'Arda", 'Mantova', 'Mezzani', 'Milano', 'Mirandola',
+   'Molinella', 'Monza E Della Brianza', 'Ostellato', 'Pavia', 'Porretta Terme', 'San Clemente',
+    'San Lazzaro Di Savena', 'San Leo', 'Sassuolo', 'Savignano Sul Rubicone', 'Sogliano Al Rubicone',
+     'Sondrio', 'Sorbolo', 'Varese', 'Verucchio', 'Villa Minozzo',]
 
 
 export default {
@@ -199,19 +204,28 @@ export default {
       $axios.get(`/api/month/${cityName}`),
       $axios.get(`/api/year/${cityName}`),
     ]);
-
-    // console.log(yearData.data);
+    let activeCities=cities.data.cities
+    // console.log(activeCities);
+    // console.log(missedCities)
+    activeCities = activeCities.filter(city => !missedCities.includes(city))
+    // console.log(activeCities);
     
-    const monthRes = monthData.data.time_month;
-    const yearRes = yearData.data.time_year;
+    const monthRes = monthData.data;
+    const yearRes = yearData.data;
+    console.log(monthRes);
+    console.log(monthRes[Object.keys(monthRes)[0]])
+    console.log(yearRes);
+    console.log(yearRes[Object.keys(yearRes)[0]])
+    // bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
+    // bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
+    // bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-    bigChartMonthData[0] = monthRes.co.data;
-    bigChartMonthData[1] = monthRes.so2.data;
-    bigChartMonthData[2] = monthRes.o3.data;
-
-    bigChartYearData[0] = yearRes.co.data;
-    bigChartYearData[1] = yearRes.so2.data;
-    bigChartYearData[2] = yearRes.o3.data;
+    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+    
+    //avtiveCities=cities.data.cities
+  
 
     return {
       // data: monthData.data.time_month.co,

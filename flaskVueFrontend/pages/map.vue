@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <div
         class="btn-group btn-group-toggle "
-             :class="isRTL ? 'float-left' : 'float-right'"
+             :class="false ? 'float-left' : 'float-right'"
         data-toggle="buttons"
         style="zindex-dropdown:100"
       >
