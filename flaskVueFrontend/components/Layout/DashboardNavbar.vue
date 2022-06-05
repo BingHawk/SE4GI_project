@@ -138,6 +138,14 @@
         >
           Username or password does not exist.
         </h4>
+        <h4
+          v-if="account.userCreatedMessage"
+          type="text"
+          id="userCreatedMessage"
+          class="text-success"
+        >
+          Account created, please log in!
+        </h4>
         <form @submit="loginSubmitted">
           <label v-if="account.missingLoginInfo" class="text-warning"
             >Username (needed):</label
@@ -188,6 +196,14 @@
         <h2 slot="header" type="text" id="RegisterTitle">
           Register new account
         </h2>
+        <h4
+          v-if="account.registerFail"
+          type="text"
+          id="registerFailMessage"
+          class="text-warning"
+        >
+          Username exists, choose another one or log in.
+        </h4>
         <form @submit="registerSubmitted">
           <label v-if="account.missingLoginInfo" class="text-warning"
             >Username (needed):</label
@@ -228,18 +244,18 @@
           </a>
         </div>
       </modal>
-      <modal
-        :show.sync="account.logoutModalVisible"
-        class="modal-success"
-        id="logoutModal"
-        :centered="false"
-        :show-close="true"
-      >
-        <h2 slot="header" type="text" id="logoutTitle">
-          Logout successful!
-        </h2>
-      </modal>
     </ul>
+    <modal
+      :show.sync="account.logoutModalVisible"
+      class="modal-success"
+      id="logoutModal"
+      :centered="false"
+      :show-close="true"
+    >
+      <h2 slot="header" type="text" id="logoutTitle">
+        Logout successful!
+      </h2>
+    </modal>
   </base-nav>
 </template>
 <script>
@@ -279,11 +295,13 @@ export default {
         loginModalVisible: false,
         registerModalVisible: false,
         logoutModalVisible: false,
+        userCreatedMessage: false,
         username: "",
         password: "",
         missingLoginInfo: false,
         loggedIn: false,
         wrongPassword: false,
+        registerFail: false,
       },
     };
   },
@@ -344,10 +362,11 @@ export default {
         this.account.loginModalVisible = false;
       } else {
         this.account.wrongPassword = true;
+        this.account.userCreatedMessage = false;
         console.log("authentication failed");
       }
     },
-    registerSubmitted(e) {
+    async registerSubmitted(e) {
       e.preventDefault();
       console.log("register submit");
       if (!this.account.username || !this.account.password) {
@@ -361,15 +380,24 @@ export default {
       // console.log(this.username);
       // console.log(this.password);
 
-      this.$axios
-        .post("/api/register", {
-          username: this.account.username,
-          password: hashedPassword,
-        })
-        .then(console.log);
+      const registerResponse = await this.$axios.post("/api/register", {
+        username: this.account.username,
+        password: hashedPassword,
+      });
+
+      console.log(registerResponse.data);
       this.account.password = ""; //Clearing password from the browser
 
-      this.account.registerModalVisible = false;
+      if (registerResponse.data.register) {
+        this.account.userCreatedMessage = true;
+        this.account.registerFail = false;
+        this.account.registerModalVisible = false;
+        this.account.loginModalVisible = true;
+
+        console.log(this.userCreatedModalVisible);
+      } else {
+        this.account.registerFail = true;
+      }
     },
     logout() {
       this.account.logoutModalVisible = true;
