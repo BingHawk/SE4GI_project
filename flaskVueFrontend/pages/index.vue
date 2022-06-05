@@ -194,7 +194,7 @@ export default {
   ///query the cities and visualize it on map as single items then add each to a DDL///
   async asyncData({ $axios, $store }) {
     // console.log("asyncData running");
-    $store = (typeof $store !== 'undefined') ?  $store : "firenze"
+    $store = (typeof $store !== 'undefined') ?  $store : "alessandria"
     var cityName=$store
     console.log(cityName);
     
@@ -210,27 +210,24 @@ export default {
     activeCities = activeCities.filter(city => !missedCities.includes(city))
     // console.log(activeCities);
     
-    const monthRes = monthData.data;
-    const yearRes = yearData.data;
-    console.log(monthRes);
-    console.log(monthRes[Object.keys(monthRes)[0]])
-    console.log(yearRes);
-    console.log(yearRes[Object.keys(yearRes)[0]])
-    // bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
-    // bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
-    // bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
+    const monthRes = monthData.data.time_month;
+    const yearRes = yearData.data.time_year;
+    // console.log(monthRes);
+    // console.log(monthRes[Object.keys(monthRes)[0]])
+    // console.log(yearRes);
+    // console.log(yearRes[Object.keys(yearRes)[0]])
+    bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
+    bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
+    bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
-    
-    //avtiveCities=cities.data.cities
-  
+    bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+    bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+    bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
     return {
       // data: monthData.data.time_month.co,
       // city: cities.data,
-      selectValues: cities.data.cities,
+      selectValues: activeCities,
     };
     // },
   },
@@ -335,13 +332,13 @@ export default {
     const monthRes = monthData.data.time_month;
     const yearRes = yearData.data.time_year;
 
-    bigChartMonthData[0] = monthRes.co.data;
-    bigChartMonthData[1] = monthRes.so2.data;
-    bigChartMonthData[2] = monthRes.o3.data;
+  bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
+    bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
+    bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-    bigChartYearData[0] = yearRes.co.data;
-    bigChartYearData[1] = yearRes.so2.data;
-    bigChartYearData[2] = yearRes.o3.data;
+    bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+    bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+    bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
   }
   },
   mounted() {
