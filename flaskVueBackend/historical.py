@@ -352,10 +352,12 @@ def test():
         'Vicenza': ['Vicenza'], 
         'Villa Minozzo': ['VILLA MINOZZO'], #Fails
         'Viterbo': ['Viterbo']}
-    failedMonth = ['Alfonsine', 'Bergamo', 'Brescia', 'Carpi', 'Cento', 'Cesena', 'Civitavecchia', 'Colorno', 'Como', 'Cremona', 'Faenza', 'Fiorano Modenese', "Forli'", 'Guastalla', 'Imola', 'Jolanda Di Savoia', 'Langhirano', 'Lecco', 'Lodi', "Lugagnano Val D'Arda", 'Mantova', 'Mezzani', 'Milano', 'Mirandola', 'Molinella', 'Monza E Della Brianza', 'Ostellato', 'Pavia', 'Porretta Terme', 'San Clemente', 'San Lazzaro Di Savena', 'San Leo', 'Sassuolo', 'Savignano Sul Rubicone', 'Sogliano Al Rubicone', 'Sondrio', 'Sorbolo', 'Varese', 'Verucchio', 'Villa Minozzo']
+    cityNames = ['Alessandria', 'Ancona', 'Arezzo', 'Ascoli Piceno', 'Asti', 'Avellino', 'Bari', 'Barletta-Andria-Trani', 'Belluno', 'Benevento', 'Bergamo', 'Biella', 'Bologna', 'Bolzano/Bozen', 'Brescia', 'Brindisi', 'Cagliari', 'Campobasso', 'Carbonia-Iglesias', 'Caserta', 'Catanzaro', 'Chiesanuova', 'Civitavecchia', 'Como', 'Cosenza', 'Cremona', 'Crotone', 'Cuneo', 'Ferrara', 'Firenze', 'Foggia', "Forli'-Cesena", 'Frosinone', 'Genova', 'Grosseto', 'Imperia', "L'Aquila", 'La Spezia', 'Latina', 'Lecce', 'Lecco', 'Livorno', 'Lodi', 'Lucca', 'Macerata', 'Mantova', 'Massa-Carrara', 'Matera', 'Milano', 'Modena', 'Monza E Della Brianza', 'Napoli', 'Novara', 'Nuoro', 'Olbia-Tempio', 'Oristano', 'Padova', 'Parma', 'Pavia', 'Perugia', 'Pesaro E Urbino', 'Pescara', 'Piacenza', 'Pisa', 'Pistoia', 'Potenza', 'Prato', 'Ravenna', 'Reggio Di Calabria', "Reggio Nell'Emilia", 'Rieti', 'Rimini', 'Roma', 'Rovigo', 'Salerno', 'Sassari', 'Savona', 'Siena', 'Sondrio', 'Taranto', 'Teramo', 'Terni', 'Torino', 'Trento', 'Treviso', 'Varese', 'Venezia', 'Verbano-Cusio-Ossola', 'Vercelli', 'Verona', 'Vibo Valentia', 'Vicenza', 'Viterbo']
+    
+    failedMonth = ['Bergamo', 'Brescia', 'Civitavecchia', 'Colorno', 'Como', 'Cremona', 'Lecco', 'Lodi', 'Mantova', 'Milano', 'Monza E Della Brianza', 'Pavia', 'Sondrio', 'Varese', 'Verucchio', 'Villa Minozzo']
     missedCities = []
-    for city in ['Sorbolo','Sondrio','Varese','Verucchio','Villa Minozzo']:
-        resMonth = getYearData(cityDict[city][0])
+    for city in failedMonth:
+        resMonth = getYearData(city)
         if len(resMonth["time_year"].keys()) != 0:
             print(city,"OK")
         else:
