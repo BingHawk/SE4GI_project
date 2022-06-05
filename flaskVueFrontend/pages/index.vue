@@ -200,7 +200,7 @@ export default {
       $axios.get(`/api/year/${cityName}`),
     ]);
 
-    // console.log(yearData.data);
+    console.log(yearData.data);
     
     const monthRes = monthData.data.time_month;
     const yearRes = yearData.data.time_year;
