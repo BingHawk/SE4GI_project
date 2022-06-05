@@ -26,11 +26,12 @@ def get_cityNames():
     # return r.json()
     for result in r.json()['results']:
         try:
-            if result['city'] != "unused": #Filtering out the "unused" value that exist in the API. 
-                if result['city'].upper() == result['city']: #nFiltering out capitalized cities since there is no data on them
-                    continue
-                cityname = result['city']
-                # print(result['city'])
+            if result['city'] in ['unused', 'Civitavecchia', 'Colorno', 'Verucchio', 'Villa Minozzo']: 
+                continue # Filtering out the "unused" value that exist in the API and some cities without data
+            if result['city'].upper() == result['city']: # Filtering out capitalized cities since there is no data on them
+                continue # Filtering out capitalized cities since there is no data on them
+            cityname = result['city']
+            # print(result['city'])
         except KeyError:
             continue
         if cityname not in cityNames: #Avoiding adding duplicates
@@ -71,6 +72,7 @@ def getCityCoords():
 print("starting setup")
 
 cityNames = get_cityNames()
+print(cityNames)
 cityCoords = getCityCoords()
 
 print("setup complete")
