@@ -219,7 +219,7 @@ def get_cities(cityname):
 @app.route('/api/month/<city>', methods = ['GET'])
 def serveMonthData(city):
     if city.title() in cityNames:
-        res = getMonthData(city)
+        res = getMonthData(city.title())
         return jsonify(res)
     else:
         return "City {} does not exist in database".format(city.title()), 400
@@ -227,7 +227,7 @@ def serveMonthData(city):
 @app.route('/api/year/<city>', methods = ['GET'])
 def serveYearData(city):
     if city.title() in cityNames:
-        res = getYearData(city)
+        res = getYearData(city.title())
         return jsonify(res)
     else:
         return "City {} does not exist in database".format(city.title()), 400
