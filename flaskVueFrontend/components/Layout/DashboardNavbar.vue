@@ -80,6 +80,9 @@
           <a href="#" class="nav-item dropdown-item">Another one</a>
         </li>
       </base-dropdown> -->
+      <div v-if="account.loggedIn" class="nav-item">
+        <p style="margin-top:8px">Logged in as: {{ account.username }}</p>
+      </div>
       <base-dropdown
         tag="li"
         :menu-on-right="!$rtl.isRTL"
@@ -100,19 +103,25 @@
           <a href="#" class="nav-item dropdown-item">Settings</a>
         </li>
         <div class="dropdown-divider"></div> -->
-        <li class="nav-link">
+        <li class="nav-link" v-if="!account.loggedIn">
           <button @click="toggleLoginModal" class="nav-item dropdown-item">
             Log in
           </button>
         </li>
-        <li class="nav-link">
+        <li class="nav-link" v-if="!account.loggedIn">
           <button @click="toggleRegisterModal" class="nav-item dropdown-item">
             Register
           </button>
         </li>
+        <li class="nav-link" v-if="account.loggedIn">
+          <p class="text-muted">Current user: {{ account.username }}</p>
+          <button @click="logout" class="nav-item dropdown-item">
+            Log out
+          </button>
+        </li>
       </base-dropdown>
       <modal
-        :show.sync="loginModalVisible"
+        :show.sync="account.loginModalVisible"
         class="modal-black"
         id="loginModal"
         :centered="true"
@@ -121,34 +130,47 @@
         <h2 slot="header" type="text" id="LoginTitle">
           Login
         </h2>
+        <h4
+          v-if="account.wrongPassword"
+          type="text"
+          id="wrongPasswordMessage"
+          class="text-warning"
+        >
+          Username or password does not exist.
+        </h4>
         <form @submit="loginSubmitted">
-          <label v-if="missingLoginInfo" class="text-warning"
+          <label v-if="account.missingLoginInfo" class="text-warning"
             >Username (needed):</label
           >
-          <label v-if="!missingLoginInfo" class="text-primary"
+          <label v-if="!account.missingLoginInfo" class="text-primary"
             >Username:</label
           >
           <input
             type="username"
-            @input="(event) => (username = event.target.value)"
+            v-model="account.username"
             class="form-control"
             id="usernameInput"
             placeholder="Username"
           />
-          <label v-if="missingLoginInfo" class="text-warning"
+          <label v-if="account.missingLoginInfo" class="text-warning"
             >Password (needed):</label
           >
-          <label v-if="!missingLoginInfo" class="text-primary"
+          <label v-if="!account.missingLoginInfo" class="text-primary"
             >Password:</label
           >
           <input
             type="password"
-            @input="(event) => (password = event.target.value)"
+            v-model="account.password"
             class="form-control"
             id="passwordInput"
             placeholder="Password"
           />
-          <input type="submit" value="Login" class="btn-primary" style="margin-top:8pt"/>
+          <input
+            type="submit"
+            value="Login"
+            class="btn-primary"
+            style="margin-top:8pt"
+          />
         </form>
         <div slot="footer">
           <a @click="toggleRegisterModal" class="text-info">
@@ -157,7 +179,7 @@
         </div>
       </modal>
       <modal
-        :show.sync="registerModalVisible"
+        :show.sync="account.registerModalVisible"
         class="modal-black"
         id="registerModal"
         :centered="true"
@@ -167,39 +189,55 @@
           Register new account
         </h2>
         <form @submit="registerSubmitted">
-          <label v-if="missingLoginInfo" class="text-warning"
+          <label v-if="account.missingLoginInfo" class="text-warning"
             >Username (needed):</label
           >
-          <label v-if="!missingLoginInfo" class="text-primary"
+          <label v-if="!account.missingLoginInfo" class="text-primary"
             >Username:</label
           >
           <input
             type="username"
-            @input="(event) => (username = event.target.value)"
+            v-model="account.username"
             class="form-control"
             id="registerUsernameInput"
             placeholder="Username"
           />
-          <label v-if="missingLoginInfo" class="text-warning"
+          <label v-if="account.missingLoginInfo" class="text-warning"
             >Password (needed):</label
           >
-          <label v-if="!missingLoginInfo" class="text-primary"
+          <label v-if="!account.missingLoginInfo" class="text-primary"
             >Password:</label
           >
           <input
             type="password"
-            @input="(event) => (password = event.target.value)"
+            v-model="account.password"
             class="form-control"
             id="registerPasswordInput"
             placeholder="Password"
           />
-          <input type="submit" value="Register" class="btn-primary" style="margin-top:8pt" />
+          <input
+            type="submit"
+            value="Register"
+            class="btn-primary"
+            style="margin-top:8pt"
+          />
         </form>
         <div slot="footer">
           <a @click="toggleLoginModal" class="text-info">
             Already have an account? Login here!
           </a>
         </div>
+      </modal>
+      <modal
+        :show.sync="account.logoutModalVisible"
+        class="modal-success"
+        id="logoutModal"
+        :centered="false"
+        :show-close="true"
+      >
+        <h2 slot="header" type="text" id="logoutTitle">
+          Logout successful!
+        </h2>
       </modal>
     </ul>
   </base-nav>
@@ -237,11 +275,16 @@ export default {
       showMenu: false,
       searchModalVisible: false,
       searchQuery: "",
-      loginModalVisible: false,
-      registerModalVisible: false,
-      username: "",
-      password: "",
-      missingLoginInfo: false,
+      account: {
+        loginModalVisible: false,
+        registerModalVisible: false,
+        logoutModalVisible: false,
+        username: "",
+        password: "",
+        missingLoginInfo: false,
+        loggedIn: false,
+        wrongPassword: false,
+      },
     };
   },
   methods: {
@@ -261,64 +304,82 @@ export default {
       this.showMenu = !this.showMenu;
     },
     toggleLoginModal() {
-      this.loginModalVisible = true;
-      this.registerModalVisible = false;
-      this.missingLoginInfo = false;
-      console.log("loginModalVisible:", this.loginModalVisible);
-      console.log("registerModalVisible", this.registerModalVisible);
+      this.account.loginModalVisible = true;
+      this.account.registerModalVisible = false;
+      this.account.missingLoginInfo = false;
+      // console.log("loginModalVisible:", this.loginModalVisible);
+      // console.log("registerModalVisible", this.registerModalVisible);
     },
     toggleRegisterModal() {
-      this.registerModalVisible = true;
-      this.loginModalVisible = false;
-      this.missingLoginInfo = false;
-      console.log("registerModalVisible", this.registerModalVisible);
-      console.log("loginModalVisible:", this.loginModalVisible);
+      this.account.registerModalVisible = true;
+      this.account.loginModalVisible = false;
+      this.account.missingLoginInfo = false;
+      // console.log("registerModalVisible", this.registerModalVisible);
+      // console.log("loginModalVisible:", this.loginModalVisible);
     },
-    loginSubmitted(e) {
+    async loginSubmitted(e) {
       e.preventDefault();
       console.log("login submit");
-      if (!this.username || !this.password) {
-        this.missingLoginInfo = true;
+      if (!this.account.username || !this.account.password) {
+        this.account.missingLoginInfo = true;
         return;
       }
-      this.password = crypto
+      const hashedPassword = crypto
         .createHash("sha1")
-        .update(this.password)
+        .update(this.account.password)
         .digest("hex");
-      console.log(this.username);
-      console.log(this.password);
+      // console.log(this.username);
+      // console.log(this.password);
+      this.account.password = "";
 
-      this.$axios
-        .post("/api/authenticate", {
-          username: this.username,
-          password: this.password,
-        })
-        .then(console.log);
+      const loginResponse = await this.$axios.post("/api/authenticate", {
+        username: this.account.username,
+        password: hashedPassword,
+      });
 
-      this.loginModalVisible = false;
+      if (loginResponse.data.access) {
+        console.log("authentication success");
+        this.account.loggedIn = true;
+        this.account.wrongPassword = false;
+        this.account.loginModalVisible = false;
+      } else {
+        this.account.wrongPassword = true;
+        console.log("authentication failed");
+      }
     },
     registerSubmitted(e) {
       e.preventDefault();
       console.log("register submit");
-      if (!this.username || !this.password) {
-        this.missingLoginInfo = true;
+      if (!this.account.username || !this.account.password) {
+        this.account.missingLoginInfo = true;
         return;
       }
-      this.password = crypto
+      const hashedPassword = crypto //hashing password before sending.
         .createHash("sha1")
-        .update(this.password)
+        .update(this.account.password)
         .digest("hex");
-      console.log(this.username);
-      console.log(this.password);
+      // console.log(this.username);
+      // console.log(this.password);
 
       this.$axios
         .post("/api/register", {
-          username: this.username,
-          password: this.password,
+          username: this.account.username,
+          password: hashedPassword,
         })
         .then(console.log);
+      this.account.password = ""; //Clearing password from the browser
 
-      this.registerModalVisible = false;
+      this.account.registerModalVisible = false;
+    },
+    logout() {
+      this.account.logoutModalVisible = true;
+      this.account.loggedIn = false;
+      this.account.username = "";
+      this.account.password = "";
+
+      console.log(this.account.logoutModalVisible);
+
+      //send last search to backend
     },
   },
 };
