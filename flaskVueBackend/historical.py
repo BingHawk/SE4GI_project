@@ -59,7 +59,7 @@ def getMonthData(city):
                     avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
                     time_month[param]['data'].append(avg)
                 except KeyError:
-                    print("missing day: {} or parameter: {}".format(currentDay, param), end=("\r"))
+                    # print("missing day: {} or parameter: {}".format(currentDay, param), end="\r")
                     time_month[param]['data'].append(None)
         
         return {"time_month":time_month}
@@ -115,7 +115,7 @@ def getYearData(city):
                         weekSum += res[currentDay][param]['sum']
                         weekN += res[currentDay][param]['n']
                     except KeyError:
-                        print("missing day: {} or parameter: {}".format(currentDay, param), end="\r")
+                        # print("missing day: {} or parameter: {}".format(currentDay, param), end="\r")
                         continue
                     pass
                 else: 
@@ -131,7 +131,7 @@ def getYearData(city):
                         weekSum = res[currentDay][param]['sum']
                         weekN = res[currentDay][param]['n']
                     except KeyError:
-                        print("missing day: {} or parameter: {}".format(currentDay, param), end=("\r"))
+                        # print("missing day: {} or parameter: {}".format(currentDay, param), end=("\r"))
                         weekSum = 0
                         weekN = 0
                     pass
@@ -159,7 +159,7 @@ def queryByDay(startDay, endDay, city):
 
     maxPages = 10
     while d0 != endDay: # Looping until every day of the month is done
-        print("Querying day {}".format(iter+1),end="\r")
+        # print("Querying day {}".format(iter+1),end="\r")
         page = 1
         getNextPage = True
         while getNextPage: #Looping though paginations
@@ -230,10 +230,145 @@ def queryByDay(startDay, endDay, city):
         
     return res, paramUnits
 
-if __name__ == "__main__":
-    cities = ['Roma', 'MILANO', 'Firenze']
-    resMonth = getMonthData('Roma')
+def test():
+    cityDict = {
+        'Alessandria': ['Alessandria'],
+        'Alfonsine': ['ALFONSINE'], #Fails
+        'Ancona': ['Ancona'],
+        'Arezzo': ['Arezzo'],
+        'Ascoli Piceno': ['Ascoli Piceno'], 
+        'Asti': ['Asti'],
+        'Avellino': ['Avellino'],
+        'Bari': ['Bari'],
+        'Barletta-Andria-Trani': ['Barletta-Andria-Trani'],
+        'Belluno': ['Belluno'],
+        'Benevento': ['Benevento'],
+        'Bergamo': ['Bergamo'], #Fails month
+        'Biella': ['Biella'],
+        'Bologna': ['Bologna', 'BOLOGNA'],
+        'Bolzano/Bozen': ['Bolzano/Bozen'],
+        'Brescia': ['Brescia'], #Fails month
+        'Brindisi': ['Brindisi'],
+        'Cagliari': ['Cagliari'],
+        'Campobasso': ['Campobasso'],
+        'Carbonia-Iglesias': ['Carbonia-Iglesias'],
+        'Carpi': ['CARPI'], #Fails
+        'Caserta': ['Caserta'],
+        'Catanzaro': ['Catanzaro'],
+        'Cento': ['CENTO'], #Fails
+        'Cesena': ['CESENA'], #Fails
+        'Chiesanuova': ['Chiesanuova'],
+        'Civitavecchia': ['Civitavecchia'], #Fails
+        'Colorno': ['COLORNO'], #Fails
+        'Como': ['Como'], #Fails month
+        'Cosenza': ['Cosenza'],
+        'Cremona': ['Cremona'], #Fails month
+        'Crotone': ['Crotone'],
+        'Cuneo': ['Cuneo'],
+        'Faenza': ['FAENZA'], #Fails
+        'Ferrara': ['Ferrara', 'FERRARA'],
+        'Fiorano Modenese': ['FIORANO MODENESE'], #Fails
+        'Firenze': ['Firenze'],
+        'Foggia': ['Foggia'],
+        "Forli'": ["FORLI'"], #Fails
+        "Forli'-Cesena": ["Forli'-Cesena"],
+        'Frosinone': ['Frosinone'],
+        'Genova': ['Genova'],
+        'Grosseto': ['Grosseto'],
+        'Guastalla': ['GUASTALLA'], #Fails
+        'Imola': ['IMOLA'], #Fails
+        'Imperia': ['Imperia'],
+        'Jolanda Di Savoia': ['JOLANDA DI SAVOIA'], #Fails
+        'Langhirano': ['LANGHIRANO'], #Fails
+        "L'Aquila": ["L'Aquila"],
+        'La Spezia': ['La Spezia'],
+        'Latina': ['Latina'],
+        'Lecce': ['Lecce'],
+        'Lecco': ['Lecco'], #Fails month
+        'Livorno': ['Livorno'],
+        'Lodi': ['Lodi'], #Fails month
+        'Lucca': ['Lucca'],
+        "Lugagnano Val D'Arda": ["LUGAGNANO VAL D'ARDA"], #Fails
+        'Macerata': ['Macerata'],
+        'Mantova': ['Mantova'], #Fails month
+        'Massa-Carrara': ['Massa-Carrara'],
+        'Matera': ['Matera'],
+        'Mezzani': ['MEZZANI'], #Fails
+        'Milano': ['Milano'], #Fails month
+        'Mirandola': ['MIRANDOLA'], #Fails
+        'Modena': ['Modena', 'MODENA'],
+        'Molinella': ['MOLINELLA'], #Fails
+        'Monza E Della Brianza': ['Monza E Della Brianza'], #Fails month
+        'Napoli': ['Napoli'],
+        'Novara': ['Novara'],
+        'Nuoro': ['Nuoro'],
+        'Olbia-Tempio': ['Olbia-Tempio'],
+        'Oristano': ['Oristano'],
+        'Ostellato': ['OSTELLATO'], #Fails
+        'Padova': ['Padova'],
+        'Parma': ['Parma', 'PARMA'],
+        'Pavia': ['Pavia'], #Fails month
+        'Perugia': ['Perugia'],
+        'Pesaro E Urbino': ['Pesaro E Urbino'],
+        'Pescara': ['Pescara'],
+        'Piacenza': ['Piacenza', 'PIACENZA'],
+        'Pisa': ['Pisa'],
+        'Pistoia': ['Pistoia'],
+        'Porretta Terme': ['PORRETTA TERME'], #Fails
+        'Potenza': ['Potenza'], 
+        'Prato': ['Prato'], 
+        'Ravenna': ['Ravenna', 'RAVENNA'], 
+        'Reggio Di Calabria': ['Reggio Di Calabria'], 
+        "Reggio Nell'Emilia": ["Reggio Nell'Emilia", "REGGIO NELL'EMILIA"], 
+        'Rieti': ['Rieti'],
+        'Rimini': ['Rimini', 'RIMINI'], 
+        'Roma': ['Roma'], 
+        'Rovigo': ['Rovigo'], 
+        'Salerno': ['Salerno'], 
+        'San Clemente': ['SAN CLEMENTE'], #Fails
+        'San Lazzaro Di Savena': ['SAN LAZZARO DI SAVENA'], #Fails
+        'San Leo': ['SAN LEO'], #Fails
+        'Sassari': ['Sassari'], 
+        'Sassuolo': ['SASSUOLO'], #Fails
+        'Savignano Sul Rubicone': ['SAVIGNANO SUL RUBICONE'], #Fails
+        'Savona': ['Savona'], 
+        'Siena': ['Siena'], 
+        'Sogliano Al Rubicone': ['SOGLIANO AL RUBICONE'], #Fails
+        'Sondrio': ['Sondrio'], #Fails month
+        'Sorbolo': ['SORBOLO'], #Fails
+        'Taranto': ['Taranto'], 
+        'Teramo': ['Teramo'], 
+        'Terni': ['Terni'], 
+        'Torino': ['Torino'], 
+        'Trento': ['Trento'],
+        'Treviso': ['Treviso'],
+        'Varese': ['Varese'], #Fails month
+        'Venezia': ['Venezia'],
+        'Verbano-Cusio-Ossola': ['Verbano-Cusio-Ossola'], 
+        'Vercelli': ['Vercelli'], 
+        'Verona': ['Verona'], 
+        'Verucchio': ['VERUCCHIO'], #Fails
+        'Vibo Valentia': ['Vibo Valentia'], 
+        'Vicenza': ['Vicenza'], 
+        'Villa Minozzo': ['VILLA MINOZZO'], #Fails
+        'Viterbo': ['Viterbo']}
+    failedMonth = ['Alfonsine', 'Bergamo', 'Brescia', 'Carpi', 'Cento', 'Cesena', 'Civitavecchia', 'Colorno', 'Como', 'Cremona', 'Faenza', 'Fiorano Modenese', "Forli'", 'Guastalla', 'Imola', 'Jolanda Di Savoia', 'Langhirano', 'Lecco', 'Lodi', "Lugagnano Val D'Arda", 'Mantova', 'Mezzani', 'Milano', 'Mirandola', 'Molinella', 'Monza E Della Brianza', 'Ostellato', 'Pavia', 'Porretta Terme', 'San Clemente', 'San Lazzaro Di Savena', 'San Leo', 'Sassuolo', 'Savignano Sul Rubicone', 'Sogliano Al Rubicone', 'Sondrio', 'Sorbolo', 'Varese', 'Verucchio', 'Villa Minozzo']
+    missedCities = []
+    for city in ['Sorbolo','Sondrio','Varese','Verucchio','Villa Minozzo']:
+        resMonth = getYearData(cityDict[city][0])
+        if len(resMonth["time_year"].keys()) != 0:
+            print(city,"OK")
+        else:
+            missedCities.append(city)
+            print(resMonth)
+    print(missedCities)
+    print(len(missedCities))
 
-    print(resMonth)
+if __name__ == "__main__":
+    # cities = ['Roma', 'MILANO', 'Firenze']
+    # resMonth = getMonthData('Roma')
+
+    # print(resMonth)
     # resYear = getYearData('Firenze')
     # print(resYear)
+    test()
