@@ -355,6 +355,8 @@ export default {
         password: hashedPassword,
       });
 
+      console.log(loginResponse.data.access);
+
       if (loginResponse.data.access) {
         console.log("authentication success");
         this.account.loggedIn = true;
@@ -387,7 +389,7 @@ export default {
 
       console.log(registerResponse.data);
       this.account.password = ""; //Clearing password from the browser
-
+      console.log(registerResponse.data.register);
       if (registerResponse.data.register) {
         this.account.userCreatedMessage = true;
         this.account.registerFail = false;
@@ -397,24 +399,38 @@ export default {
         console.log(this.userCreatedModalVisible);
       } else {
         this.account.registerFail = true;
+        this.account.userCreatedMessage = false;
       }
     },
     async logout() {
       this.account.loggedIn = false;
-      this.account.username = "";
-      this.account.password = "";
 
-      const lastsearch = "Firenze"
 
-      // logoutResponse = await this.$axios.post("/api/logout", {username: this.username, lastsearch: lastsearch})
-      //console.log(logoutResponse.data)
+      const lastsearch = "Firenze";
 
+      const logoutResponse = await this.$axios.post("/api/logout", {
+        username: this.account.username,
+        lastsearch: lastsearch,
+      });
+      console.log(logoutResponse.data);
+
+      this.resetModals()
       this.account.logoutModalVisible = true;
       console.log(this.account.logoutModalVisible);
 
-
-
       //send last search to backend
+    },
+    resetModals() {
+      this.account.loginModalVisible = false;
+      this.account.registerModalVisible = false;
+      this.account.logoutModalVisible = false;
+      this.account.userCreatedMessage = false;
+      this.account.username = "";
+      this.account.password = "";
+      this.account.missingLoginInfo = false;
+      this.account.loggedIn = false;
+      this.account.wrongPassword = false;
+      this.account.registerFail = false;
     },
   },
 };

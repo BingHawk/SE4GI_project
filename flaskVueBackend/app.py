@@ -2,13 +2,13 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
 import requests
-
+#from werkzeug.exceptions import abort
 from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = '123456'
-MYPORT = '5433'
+MYPWRD = 'blod'
+MYPORT = '5432'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -255,27 +255,58 @@ def serveYearData(city):
 # This is the current endpoint used by the login function.
 # It will recive a post request with the payload: {"username": <String>, "password": <String>}'
 # It should check if that username exist in the database and if it has the specified password. 
-# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>}, "access": <Boleean>, "lastSelect": <String>|<None>}
-    # Where userID is the id of the user in the db, and None if authentication fails.
-    # access bolean is true if access is granted, else false. 
-    # lastSelect is the name of the city in Title() case that was last queried by the user or None if authentication fails or there is no info. 
+# It should return the following JSON:  
+# Where userID is the id of the user in the db, and None if authentication fails. Access bolean is true if access is granted, else false.
 # Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/authenticate', methods = ['POST'])
 def authenticate():
-    payload = request.get_json()
-    print("Authenticate recieved request", payload)
+    if request.method == 'POST' :
+        data = request.get_json()
+        try:
+            username= data['username']
+            password = data['password']
+        except KeyError:
+            return "Wrong input", 400
+        #The authentication
+        #Checking whether he is already in the DB|registered
+        else :
+            conn = psycopg2.connect(
+            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+            )
+            cur = conn.cursor()
+            cur.execute(
+            'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+            # The user is registered then is verified
+            if cur.fetchone() is not None:
+                cur.execute(
+                'SELECT * FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+                res= cur.fetchone()
+                responde= {
+                    "user": {
+                                "username": res[1],
+                                "userID": res[0],
+                             },
+                    "access": True
+                        }
+                print('the user is being verified to be registered, hence it has been authenticated')
+                print("Authenticate recieved")
+                cur.close()
+            # If he is not registered then the authentication fails    
+            else:
+                responde={
+                    "access": False
+                }
+                print('the user is not being verified to be registered, hence it has to register first')
+                print("Authenticate not being granted")
+                # cur.execute(
 
-    response = {"user":{"username": payload['username']}}
-    if payload['username'] == "Leo":
-        response['user']['userID'] = 1
-        response['access'] = True
-        response['lastSelect'] = None
-    else: 
-        response['user']['userID'] = None
-        response['access'] = False
-        response['lastSelect'] = None
+            conn.commit()
+            conn.close()
+    # flash(error)
+    return jsonify(responde)   
 
-    return jsonify(response)
+    # print("Authenticate recieved request")
+    # return "Authenticate recieved"
 
 # This is the current endpoint used by the register function.
 # It will recive a post request with the payload: {"username": <String>, "password": <String>}'
@@ -283,23 +314,81 @@ def authenticate():
 # It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>},"register": <Boleean>}
 # Where userID is the id of the user in the db generated when adding, and None if username allready exist. Access bolean is true if register is sucsessful, else false.
 # Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
-@app.route('/api/register', methods = ['POST'])
+
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'123'
+
+@app.route('/api/register', methods= ['POST'])
 def register():
-    payload = request.get_json()
-    print("Register recieved request", payload)
+    data = request.get_json()
+    try:
+        username= data['username']
+        password = data['password']
+    except KeyError:
+        return "Wrong input", 400
 
-    response = {"user":{"username": payload['username']}}
-    if payload['username'] == "Leo":
-        response['user']['userID'] = None
-        response['register'] = False
-    else: 
-        response['user']['userID'] = 2
-        response['register'] = True
-        
-    return jsonify(response)
+    conn = psycopg2.connect(
+    database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+    )
+    cur = conn.cursor()
+    try:
+        cur.execute(f"INSERT INTO users (user_name,user_password) VALUES ('{username}','{password}') RETURNING user_id;")
 
+        output= {
+        'user':{
+            'user_id': cur.fetchone()[0],
+            'username': username,
+        },
+        'register': True
+        }  
+    except psycopg2.errors.UniqueViolation:
+        print("not a new username")
+        output= {
+        'user':{
+            'user_id': None,
+            'username': username,
+        },
+        'register': False
+        }
+
+    conn.commit()
+    conn.close()
+    return jsonify(output)    
+
+@app.route('/api/logout', methods= ['POST'])
+def logout():
+    #log info from /api/cities, får data från front end med POST
+    data = request.get_json()
+    #expected to get these json-files from front end
+    try:
+        username= data['username']
+        lastsearch = data['lastsearch']
+    except KeyError:
+        return "Wrong input", 400
+
+
+    conn = psycopg2.connect(
+            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+            )
+    cur = conn.cursor()
+
+    cur.execute(f"UPDATE users SET last_search = '{lastsearch}' WHERE user_name = '{username}'")
+    conn.commit()
+    cur.execute(f"SELECT user_id FROM users WHERE user_name = '{username}'")
+    error = {
+            'user':{
+                'user_id': cur.fetchone()[0],
+                'username': username,
+                'saved': bool(id)
+                }}  
+    print(error)         
+    conn.commit()
+    conn.close()
+
+
+    #returns boolean to see if operation was succesful (if the last search was stored in the database)
+    return jsonify(error)
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
-    # print(get_locations())
