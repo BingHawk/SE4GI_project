@@ -407,26 +407,31 @@ def logout():
     #log info from /api/cities, får data från front end med POST
     data = request.get_json()
     #expected to get these json-files from front end
-    username= data['username']
-    lastsearch = data['lastsearch']
+    try:
+        username= data['username']
+        lastsearch = data['lastsearch']
+    except KeyError:
+        return "Wrong input", 400
+    print(data)
+    print(username, lastsearch)
 
     conn = psycopg2.connect(
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
             )
     cur = conn.cursor()
-    cur.execute(
-                'INSERT INTO users (last_search) VALUES (%s)',
-                (lastsearch))
-    id= cur.execute(
-                     'SELECT user_id FROM users WHERE users.user_name = %s', (username))
-    error= {
+    cur.execute(f"UPDATE users SET last_search = '{lastsearch}' WHERE user_name = '{username}'")
+    conn.commit()
+    id = cur.execute(f"SELECT user_id FROM users WHERE user_name = '{username}'")
+    error = {
             'user':{
                 'user_id': cur.fetchone()[0],
                 'username': username,
                 'saved': bool(id)
-                }}            
+                }}  
+    print(error)         
     conn.commit()
     conn.close()
+
 
     #returns boolean to see if operation was succesful (if the last search was stored in the database)
     return jsonify(error)

@@ -355,6 +355,8 @@ export default {
         password: hashedPassword,
       });
 
+      console.log(loginResponse.data.access);
+
       if (loginResponse.data.access) {
         console.log("authentication success");
         this.account.loggedIn = true;
@@ -387,7 +389,7 @@ export default {
 
       console.log(registerResponse.data);
       this.account.password = ""; //Clearing password from the browser
-
+      console.log(registerResponse.data.register);
       if (registerResponse.data.register) {
         this.account.userCreatedMessage = true;
         this.account.registerFail = false;
@@ -401,18 +403,20 @@ export default {
     },
     async logout() {
       this.account.loggedIn = false;
+      
+
+      const lastsearch = "Firenze";
+
+      const logoutResponse = await this.$axios.post("/api/logout", {
+        username: this.account.username,
+        lastsearch: lastsearch,
+      });
+      console.log(logoutResponse.data);
+
       this.account.username = "";
       this.account.password = "";
-
-      const lastsearch = "Firenze"
-
-      // logoutResponse = await this.$axios.post("/api/logout", {username: this.username, lastsearch: lastsearch})
-      //console.log(logoutResponse.data)
-
       this.account.logoutModalVisible = true;
       console.log(this.account.logoutModalVisible);
-
-
 
       //send last search to backend
     },
