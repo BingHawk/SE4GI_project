@@ -1,4 +1,6 @@
+import flask_cors
 import psycopg2
+
 from osm import Osm
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"

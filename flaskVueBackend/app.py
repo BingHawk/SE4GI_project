@@ -85,12 +85,23 @@ def get_locations():
     
     # Get the stations
     r = requests.get(italyEndpoint)
-
     locations = []
-    print(r.json()['results'][0])
     for result in r.json()['results']:
         try:
-            location = {'id': result['id'], 'coordinates': [result['coordinates']['longitude'], result['coordinates']['latitude']]}
+            location = {
+                'id': result['id'],
+                'cityName': result['name'], # Not correct, this is the name of the station. 
+                'coordinates': [result['coordinates']['longitude'],result['coordinates']['latitude']],
+                'particles': []
+                }
+            for parameter in result['parameters']:
+                particle = {
+                    'particleName': parameter['displayName'],
+                    'value': parameter['lastValue'],
+                    'unit': parameter['unit'],
+                    'lastUpdate': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
+                }
+                location['particles'].append(particle)
         except KeyError:
             continue
         locations.append(location)
@@ -124,8 +135,11 @@ def get_latest():
                             particle['value'] = [particle['value']]
                             particle['value'].append(particle_in['value'])
         else:
-            locations[city] = {'cityName': city, 'particles': result['measurements']}       
-        
+            try:
+                locations[city] = {'cityName': city,'coordinates': cityCoords[city.title()], 'particles': result['measurements']}
+            except KeyError:
+                continue #Not storing the data if we don't have coordinates for it
+
     for city in locations.keys():
         for particle in locations[city]['particles']:
             if isinstance(particle['value'], list):
@@ -133,10 +147,6 @@ def get_latest():
                mean_l = sum(particle['value'])/n
                particle['value'] = mean_l  
 
-    for city in getCityCoords().keys():
-            coords = getCityCoords()
-            locations[city] = {'cityName': city, 'coordinates': coords[city], 'particles': result['measurements']}
-               
     locations = list(locations.values())
     response = {'locations': locations}
         
@@ -230,6 +240,19 @@ def serveYearData(city):
         return jsonify(res)
     else:
         return "City {} does not exist in database".format(city.title()), 400
+
+#### ROUTED FUNCTIONS FOR LOGIN
+@app.route('/api/authenticate', methods = ['POST'])
+def authenticate():
+    print("Authenticate recieved request")
+    return "Authenticate recieved"
+
+
+@app.route('/api/register', methods = ['POST'])
+def register():
+    print("Register recieved request")
+    return "Register recieved"
+
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":

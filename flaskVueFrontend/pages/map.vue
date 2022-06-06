@@ -41,10 +41,8 @@
 
         <div id="regularMap" class="map">
           <map-component
-            :locations="data.locations"
-            :cities="city.cities"
+            :latest="latest"
           ></map-component>
-          <!-- :locations="data.locations" -->
         </div>
       </card>
     </div>
@@ -59,22 +57,24 @@ export default {
     MapComponent,
   },
   async asyncData({ $axios }) {
-    // console.log("asyncData running");
+    console.log("asyncData running");
+    try {
+      const [latest, cities] = await Promise.all([
+        $axios.get("/api/latest",{responseType: "json"}),
+        $axios.get("/api/cities",{responseType: "json"})
+      ]);
+      
+      console.log(latest.data);
+      console.log(cities.data);
 
-    const [locations, cities] = await Promise.all([
-      $axios.get("/api/locations"),
-      $axios.get("/api/cities"),
-    ]);
-    // console.log(data)
-    // console.log(locations);
-    // console.log(cities);
-
-    return {
-      data: locations.data,
-      city: cities.data,
-      selectValues: cities.data.cities,
-    };
-    // },
+      return {
+        latest: latest.data.locations,
+        city: cities.data,
+        selectValues: cities.data.cities,
+      };
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 </script>
