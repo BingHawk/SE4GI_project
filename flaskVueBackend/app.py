@@ -8,8 +8,8 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = '123456'
-MYPORT = '5433'
+MYPWRD = 'blod'
+MYPORT = '5432'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -405,7 +405,7 @@ def register():
 
 @app.route('/api/logout', methods= ['POST'])
 def logout():
-    #log info from /api/cities, får data fron front end med POST
+    #log info from /api/cities, får data från front end med POST
     data = request.get_json()
     #expected to get these json-files from front end
     username= data['username'] 
