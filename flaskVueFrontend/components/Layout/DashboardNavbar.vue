@@ -399,13 +399,19 @@ export default {
         this.account.registerFail = true;
       }
     },
-    logout() {
-      this.account.logoutModalVisible = true;
+    async logout() {
       this.account.loggedIn = false;
       this.account.username = "";
       this.account.password = "";
 
+      const lastsearch = "Firenze"
+
+      this.$axios.post("/api/logout", {username: this.username, lastsearch: lastsearch})
+
+      this.account.logoutModalVisible = true;
       console.log(this.account.logoutModalVisible);
+
+
 
       //send last search to backend
     },
