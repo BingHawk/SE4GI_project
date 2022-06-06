@@ -347,60 +347,37 @@ def register():
         username= data['username'] 
         # = request.form['username']
         password = data['password'] 
-        # request.form['password']
-        # username = request.args.get("username")
-        # password = request.args.get("password")
-        print(username)
-        print(password)
-        # if the username isn't inserted
-        if not username:
-            error = 'Username is required.'
-        # if the password isn't inserted
-        elif not password:
-            error = 'Password is required.'
-        # if both password and username are inserted
-        # Then checking weather the user is already in the DB|registered
-        else :
-            conn = psycopg2.connect(
-            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
-            )
-            cur = conn.cursor()
-            access= cur.execute(
-            'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password)) #LEOs comment: You dont need to check if the user exist, postgres will do that itsalf when you do insert since username field is configured as unique. 
-            # The user is already registered
-            if cur.fetchone() is not None:
-                # error = 'User {} is already registered.'.format(username)
-                error= {
-                    'user':{
-                        'user_id': None,
-                        'username': username,
-                    },
-                    'register': True
-                } #LEOs comment: JSON structure seems coorect. 
-                print('the user is already in the database')
-                cur.close()
-                # conn.close()
-            else:
-                cur.execute(
-                'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
-                (username, password)
-                )
-                access= cur.execute(
-                     'SELECT user_id FROM users WHERE users.user_name = %s AND users.user_password= %s', (username, password))
-                error= {
-                    'user':{
-                        'user_id': cur.fetchone()[0],
-                        'username': username,
-                    },
-                    'register': True
-                }
-                print('the user is not in the database and is being registered')
-                cur.close()
-                # conn.close()
-            conn.commit()
-            conn.close()
-    flash(error)
-    return jsonify(error)    
+
+        conn = psycopg2.connect(
+        database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+        )
+        cur = conn.cursor()
+        # conn.close()
+        try:
+            cur.execute(f"INSERT INTO users (user_name,user_password) VALUES ('{username}','{password}') RETURNING user_id;")
+
+            output= {
+            'user':{
+                'user_id': cur.fetchone()[0],
+                'username': username,
+            },
+            'register': True
+            }  
+        except psycopg2.errors.UniqueViolation:
+            print("not a new username")
+            output= {
+            'user':{
+                'user_id': None,
+                'username': username,
+            },
+            'register': False
+            }
+
+        # conn.close()
+        conn.commit()
+        conn.close()
+    flash(output)
+    return jsonify(output)    
 
 @app.route('/api/logout', methods= ['POST'])
 def logout():
@@ -419,9 +396,10 @@ def logout():
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
             )
     cur = conn.cursor()
+
     cur.execute(f"UPDATE users SET last_search = '{lastsearch}' WHERE user_name = '{username}'")
     conn.commit()
-    id = cur.execute(f"SELECT user_id FROM users WHERE user_name = '{username}'")
+    cur.execute(f"SELECT user_id FROM users WHERE user_name = '{username}'")
     error = {
             'user':{
                 'user_id': cur.fetchone()[0],
