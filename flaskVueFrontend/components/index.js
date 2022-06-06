@@ -12,6 +12,7 @@ import BaseDropdown from './BaseDropdown.vue';
 import BaseTable from './BaseTable.vue';
 
 import Card from './Cards/Card.vue';
+import Team from './Cards/Team.vue';
 import BaseNav from './Navbar/BaseNav';
 import NavbarToggleButton from './Navbar/NavbarToggleButton';
 

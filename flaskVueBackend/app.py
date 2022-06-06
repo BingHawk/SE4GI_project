@@ -8,8 +8,8 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
-MYPORT = '5432'
+MYPWRD = '123456'
+MYPORT = '5433'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -89,12 +89,23 @@ def get_locations():
     
     # Get the stations
     r = requests.get(italyEndpoint)
-
     locations = []
-    print(r.json()['results'][0])
     for result in r.json()['results']:
         try:
-            location = {'id': result['id'], 'coordinates': [result['coordinates']['longitude'], result['coordinates']['latitude']]}
+            location = {
+                'id': result['id'],
+                'cityName': result['name'], # Not correct, this is the name of the station. 
+                'coordinates': [result['coordinates']['longitude'],result['coordinates']['latitude']],
+                'particles': []
+                }
+            for parameter in result['parameters']:
+                particle = {
+                    'particleName': parameter['displayName'],
+                    'value': parameter['lastValue'],
+                    'unit': parameter['unit'],
+                    'lastUpdate': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
+                }
+                location['particles'].append(particle)
         except KeyError:
             continue
         locations.append(location)
@@ -128,19 +139,18 @@ def get_latest():
                             particle['value'] = [particle['value']]
                             particle['value'].append(particle_in['value'])
         else:
-            locations[city] = {'cityName': city, 'particles': result['measurements']}       
-        
+            try:
+                locations[city] = {'cityName': city,'coordinates': cityCoords[city.title()], 'particles': result['measurements']}
+            except KeyError:
+                continue #Not storing the data if we don't have coordinates for it
+
     for city in locations.keys():
         for particle in locations[city]['particles']:
             if isinstance(particle['value'], list):
                n = len(particle['value'])
                mean_l = sum(particle['value'])/n
-               particle['value'] = mean_l  
+               particle['value'] = round(mean_l,2) 
 
-    for city in getCityCoords().keys():
-            coords = getCityCoords()
-            locations[city] = {'cityName': city, 'coordinates': coords[city], 'particles': result['measurements']}
-               
     locations = list(locations.values())
     response = {'locations': locations}
         
@@ -151,11 +161,12 @@ def get_latest():
 #EndPoint for the cities
 @app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
 def serve_cityNames():
+    print(cityResponse)
     return jsonify(cityResponse)
 
 # the average as well as the parameters work finally!
 @app.route('/api/cities/<cityname>', methods=["GET"])
-def get_cities(cityname):
+def get_city(cityname):
     try:
         cityname = cityDict[cityname.title()][0]
     except KeyError:
@@ -212,7 +223,7 @@ def get_cities(cityname):
     d={"no2":parNO2, "o3":paro3, "co":parco, "so2":parso2, "pm10":parpm10, "pm25":parpm25, "bc":parbc, "pm1":parpm1, "nox":parnox , "ch4":parch4, "ufp":parufp , "no":parno, "co2":parco2 , "um010":parum010 , "um025":parum025 , "um100":parum100 , "pm4":parpm4}
     for key, item in d.items():
         try:
-            average= sum(item)/len(item)         
+            average= round(sum(item)/len(item),2)       
         except ZeroDivisionError:
             average= None
         parametr = {'particleName': key,  'unit': 	"µg/m³" , 'value': average}
