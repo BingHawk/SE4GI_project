@@ -7,8 +7,8 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'qrC85Ba9Dpg'
-MYPORT = '5432'
+MYPWRD = '123456'
+MYPORT = '5433'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
