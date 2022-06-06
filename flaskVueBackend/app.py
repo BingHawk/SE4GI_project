@@ -407,8 +407,8 @@ def logout():
     #log info from /api/cities, får data från front end med POST
     data = request.get_json()
     #expected to get these json-files from front end
-    username= data['username'] 
-    lastsearch = data['lastsearch'] 
+    username= data['username']
+    lastsearch = data['lastsearch']
 
     conn = psycopg2.connect(
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
