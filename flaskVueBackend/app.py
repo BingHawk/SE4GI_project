@@ -1,9 +1,6 @@
 from flask import Flask, jsonify, request, redirect, flash, url_for, session, g
 from flask_cors import CORS
 import psycopg2
-from psycopg2 import (
-        connect
-)
 import requests
 from werkzeug.security import check_password_hash, generate_password_hash
 #from werkzeug.exceptions import abort
@@ -251,10 +248,75 @@ def serveYearData(city):
 # It should return the following JSON:  
 # Where userID is the id of the user in the db, and None if authentication fails. Access bolean is true if access is granted, else false.
 # Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
-# @app.route('/api/authenticate', methods = ['POST'])
-# def authenticate():
-#     print("Authenticate recieved request")
-#     return "Authenticate recieved"
+@app.route('/api/authenticate', methods = ['POST'])
+def authenticate():
+    if request.method == 'POST' :
+        data = request.get_json()
+        print(data)
+        username= data['username'] 
+        password = data['password'] 
+        print(username)
+        print(password)
+        # if the username isn't inserted
+        if not username:
+            error = 'Username is required.'
+        # if the password isn't inserted
+        elif not password:
+            error = 'Password is required.'
+        # if both are inserted
+        #The authentication
+        #Checking whether he is already in the DB|registered
+        else :
+            conn = psycopg2.connect(
+            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+            )
+            cur = conn.cursor()
+            cur.execute(
+            'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+            # The user is registered then is verified
+            if cur.fetchone() is not None:
+                cur.execute(
+                'SELECT * FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+                res= cur.fetchone()
+                responde= {
+                    "user": {
+                                "username": res[1],
+                                "userID": res[0],
+                             },
+                    "register": True
+                        }
+                print('the user is being verified to be registered, hence it has been authenticated')
+                print("Authenticate recieved")
+                cur.close()
+            # If he is not registered then the authentication fails    
+            else:
+                responde={
+                    "register": False
+                }
+                print('the user is not being verified to be registered, hence it has to register first')
+                print("Authenticate not being granted")
+                # cur.execute(
+                # 'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
+                # (username, password)
+                # )
+                # access= cur.execute(
+                #      'SELECT user_id FROM users WHERE users.user_name = %s AND users.user_password= %s', (username, password))
+                # error= {
+                #     'user':{
+                #         'user_id': cur.fetchone()[0],
+                #         'username': username,
+                #     },
+                #     'register': bool(access)
+                # }
+                # print('the user is not in the database and is being registered')
+                # cur.close()
+                # # conn.close()
+            conn.commit()
+            conn.close()
+    # flash(error)
+    return jsonify(responde)    
+    # print("Authenticate recieved request")
+    # return "Authenticate recieved"
 
 # This is the current endpoint used by the register function.
 # It will recive a post request with the payload: {"username": <String>, "password": <String>}'
@@ -288,7 +350,9 @@ def register():
         # if both are inserted
         # Then checking wether he is already in the DB|registered
         else :
-            conn = connect("dbname=SE4G user=postgres password=postgres")
+            conn = psycopg2.connect(
+            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+            )
             cur = conn.cursor()
             access= cur.execute(
             'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
