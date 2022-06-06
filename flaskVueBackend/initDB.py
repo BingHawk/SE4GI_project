@@ -105,7 +105,7 @@ class Pg:
             conn.commit()
 
 
-df = pd.read_json("flaskVueBackend\contacts.json", typ="series")
+contacts = pd.read_json("flaskVueBackend\contacts.json")
 
        # Adding the contact data
 for person in contacts:
