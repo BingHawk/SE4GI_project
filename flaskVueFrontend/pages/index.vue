@@ -339,6 +339,15 @@ export default {
     bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
     bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
     bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+
+    this.initMonthChart(0);
+    this.initYearChart(0)
+
+//     this.showSomething = false
+// this.$nextTick(() => {
+//   // Okay, now that everything is destroyed, lets build it up again
+//   this.showSomething = true
+// });
   }
   },
   mounted() {
