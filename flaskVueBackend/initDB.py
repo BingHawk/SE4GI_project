@@ -2,6 +2,7 @@ import psycopg2
 from osm import Osm
 import pandas as pd
 
+
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
 
 # Import to other files and initialize by typing:
@@ -105,20 +106,41 @@ class Pg:
             conn.commit()
 
 
-df = pd.read_json("flaskVueBackend\contacts.json", typ="series")
+    # contacts = pd.read_json("flaskVueBackend\contacts.json", typ="series")
+    # conn = psycopg2.connect(
+    #             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+    #         )
+    # cur = conn.cursor()
+    #     # Adding the contact data
+    # for person in contacts:
+    #         print(person['first_name'])
+    #         cur.execute( 'INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES(%s, %s, %s, %s, %s)', (person['first_name'], person['nationality'], person['description'], person['nationality'], person['email'])
+    #             )
+    #         print(f"Table created successfully for {person['first_name']}.......")
+    #             # .format(person['first_name'], person['last_name'], person['description'], person['nationality'], person['email'])
+    #         # SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+    #         # cur.execute(sql)
+    # conn.commit()
 
-       # Adding the contact data
-for person in contacts:
-        sql = '''
-            INSERT INTO person (first_name, last_name, description, nationality, email)
-            VALUES('{}', {}, {}, {}, {});
-            '''.format(person['first_name'], person['last_name'], person['description'], person['nationality'], person['email'])
-        cursor.execute(sql)
-conn.commit()
-
-    # Closing the connection
-conn.close()
+    #     # Closing the connection
+    # conn.close()
 
 
 if __name__ == "__main__":
     Pg = Pg()
+    contacts = pd.read_json("flaskVueBackend\contacts.json", typ="series")
+    conn = psycopg2.connect(
+                database="SE4G", user = 'postgres', password= 'postgres', host='localhost', port= '5432'
+            )
+    cur = conn.cursor()
+        # Adding the contact data
+    for person in contacts:
+            print(person['first_name'])
+            cur.execute( 'INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES(%s, %s, %s, %s, %s)', (person['first_name'], person['nationality'], person['description'], person['nationality'], person['email'])
+                )
+            print(f"Contacts info inserted successfully for {person['first_name']}.......")
+
+    conn.commit()
+
+        # Closing the connection
+    conn.close()
