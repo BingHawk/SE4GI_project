@@ -399,11 +399,12 @@ export default {
         console.log(this.userCreatedModalVisible);
       } else {
         this.account.registerFail = true;
+        this.account.userCreatedMessage = false;
       }
     },
     async logout() {
       this.account.loggedIn = false;
-      
+
 
       const lastsearch = "Firenze";
 
@@ -413,12 +414,23 @@ export default {
       });
       console.log(logoutResponse.data);
 
-      this.account.username = "";
-      this.account.password = "";
+      this.resetModals()
       this.account.logoutModalVisible = true;
       console.log(this.account.logoutModalVisible);
 
       //send last search to backend
+    },
+    resetModals() {
+      this.account.loginModalVisible = false;
+      this.account.registerModalVisible = false;
+      this.account.logoutModalVisible = false;
+      this.account.userCreatedMessage = false;
+      this.account.username = "";
+      this.account.password = "";
+      this.account.missingLoginInfo = false;
+      this.account.loggedIn = false;
+      this.account.wrongPassword = false;
+      this.account.registerFail = false;
     },
   },
 };

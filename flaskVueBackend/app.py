@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, flash
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
 import requests
@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'qrC85Ba9Dpg'
+MYPWRD = 'blod'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -262,18 +262,11 @@ def serveYearData(city):
 def authenticate():
     if request.method == 'POST' :
         data = request.get_json()
-        print(data)
-        username= data['username'] 
-        password = data['password'] 
-        print(username)
-        print(password)
-        # if the username isn't inserted
-        if not username:
-            error = 'Username is required.'
-        # if the password isn't inserted
-        elif not password:
-            error = 'Password is required.'
-        # if both are inserted
+        try:
+            username= data['username']
+            password = data['password']
+        except KeyError:
+            return "Wrong input", 400
         #The authentication
         #Checking whether he is already in the DB|registered
         else :
@@ -306,21 +299,7 @@ def authenticate():
                 print('the user is not being verified to be registered, hence it has to register first')
                 print("Authenticate not being granted")
                 # cur.execute(
-                # 'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
-                # (username, password)
-                # )
-                # access= cur.execute(
-                #      'SELECT user_id FROM users WHERE users.user_name = %s AND users.user_password= %s', (username, password))
-                # error= {
-                #     'user':{
-                #         'user_id': cur.fetchone()[0],
-                #         'username': username,
-                #     },
-                #     'register': bool(access)
-                # }
-                # print('the user is not in the database and is being registered')
-                # cur.close()
-                # # conn.close()
+
             conn.commit()
             conn.close()
     # flash(error)
@@ -341,42 +320,39 @@ app.secret_key = b'123'
 
 @app.route('/api/register', methods= ['POST'])
 def register():
-    if request.method == 'POST' :
-        data = request.get_json()
-        # data['username']
-        username= data['username'] 
-        # = request.form['username']
-        password = data['password'] 
+    data = request.get_json()
+    try:
+        username= data['username']
+        password = data['password']
+    except KeyError:
+        return "Wrong input", 400
 
-        conn = psycopg2.connect(
-        database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
-        )
-        cur = conn.cursor()
-        # conn.close()
-        try:
-            cur.execute(f"INSERT INTO users (user_name,user_password) VALUES ('{username}','{password}') RETURNING user_id;")
+    conn = psycopg2.connect(
+    database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+    )
+    cur = conn.cursor()
+    try:
+        cur.execute(f"INSERT INTO users (user_name,user_password) VALUES ('{username}','{password}') RETURNING user_id;")
 
-            output= {
-            'user':{
-                'user_id': cur.fetchone()[0],
-                'username': username,
-            },
-            'register': True
-            }  
-        except psycopg2.errors.UniqueViolation:
-            print("not a new username")
-            output= {
-            'user':{
-                'user_id': None,
-                'username': username,
-            },
-            'register': False
-            }
+        output= {
+        'user':{
+            'user_id': cur.fetchone()[0],
+            'username': username,
+        },
+        'register': True
+        }  
+    except psycopg2.errors.UniqueViolation:
+        print("not a new username")
+        output= {
+        'user':{
+            'user_id': None,
+            'username': username,
+        },
+        'register': False
+        }
 
-        # conn.close()
-        conn.commit()
-        conn.close()
-    flash(output)
+    conn.commit()
+    conn.close()
     return jsonify(output)    
 
 @app.route('/api/logout', methods= ['POST'])
@@ -389,8 +365,7 @@ def logout():
         lastsearch = data['lastsearch']
     except KeyError:
         return "Wrong input", 400
-    print(data)
-    print(username, lastsearch)
+
 
     conn = psycopg2.connect(
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
