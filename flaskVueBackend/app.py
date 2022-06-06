@@ -165,7 +165,7 @@ def serve_cityNames():
 
 # the average as well as the parameters work finally!
 @app.route('/api/cities/<cityname>', methods=["GET"])
-def get_cities(cityname):
+def get_city(cityname):
     try:
         cityname = cityDict[cityname.title()][0]
     except KeyError:
