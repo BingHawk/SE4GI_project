@@ -17,7 +17,7 @@ app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 #### UNROUTED FUNCTIONS
-def get_cityNames():
+def getCityNames():
 
     r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
 
@@ -40,7 +40,7 @@ def get_cityNames():
 
 
 # cityDict keys: ['Alessandria', 'Alfonsine', 'Ancona', 'Arezzo', 'Ascoli Piceno', 'Asti', 'Avellino', 'Bari', 'Barletta-Andria-Trani', 'Belluno', 'Benevento', 'Bergamo', 'Biella', 'Bologna', 'Bolzano/Bozen', 'Brescia', 'Brindisi', 'Cagliari', 'Campobasso', 'Carbonia-Iglesias', 'Carpi', 'Caserta', 'Catanzaro', 'Cento', 'Cesena', 'Chiesanuova', 'Civitavecchia', 'Colorno', 'Como', 'Cosenza', 'Cremona', 'Crotone', 'Cuneo', 'Faenza', 'Ferrara', 'Fiorano Modenese', 'Firenze', 'Foggia', "Forli'", "Forli'-Cesena", 'Frosinone', 'Genova', 'Grosseto', 'Guastalla', 'Imola', 'Imperia', 'Jolanda Di Savoia', 'Langhirano', "L'Aquila", 'La Spezia', 'Latina', 'Lecce', 'Lecco', 'Livorno', 'Lodi', 'Lucca', "Lugagnano Val D'Arda", 'Macerata', 'Mantova', 'Massa-Carrara', 'Matera', 'Mezzani', 'Milano', 'Mirandola', 'Modena', 'Molinella', 'Monza E Della Brianza', 'Napoli', 'Novara', 'Nuoro', 'Olbia-Tempio', 'Oristano', 'Ostellato', 'Padova', 'Parma', 'Pavia', 'Perugia', 'Pesaro E Urbino', 'Pescara', 'Piacenza', 'Pisa', 'Pistoia', 'Porretta Terme', 'Potenza', 'Prato', 'Ravenna', 'Reggio Di Calabria', "Reggio Nell'Emilia", 'Rieti', 'Rimini', 'Roma', 'Rovigo', 'Salerno', 'San Clemente', 'San Lazzaro Di Savena', 'San Leo', 'Sassari', 'Sassuolo', 'Savignano Sul Rubicone', 'Savona', 'Siena', 'Sogliano Al Rubicone', 'Sondrio', 'Sorbolo', 'Taranto', 'Teramo', 'Terni', 'Torino', 'Trento', 'Treviso', 'Varese', 'Venezia', 'Verbano-Cusio-Ossola', 'Vercelli', 'Verona', 'Verucchio', 'Vibo Valentia', 'Vicenza', 'Villa Minozzo', 'Viterbo']
-def getCityCoords():
+def getCityCoords(cityNames):
 
     cityString = ""
     for city in cityNames:
@@ -71,9 +71,8 @@ def getCityCoords():
 #### PRE FLASK CODE (code that needs to run before flask server starts)
 print("starting setup")
 
-cityNames = get_cityNames()
-print(cityNames)
-cityCoords = getCityCoords()
+cityNames = getCityNames()
+cityCoords = getCityCoords(cityNames)
 
 print("setup complete")
 
@@ -146,7 +145,7 @@ def get_latest():
 #### ROUTED FUNCTIONS THAT DOES NOT SEND COORDINATES
     
 #EndPoint for the cities
-@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
+@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse getCityNames() elsewhere. 
 def serve_cityNames():
     return jsonify({'cities':cityNames})
 
