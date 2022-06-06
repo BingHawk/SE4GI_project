@@ -406,7 +406,8 @@ export default {
 
       const lastsearch = "Firenze"
 
-      this.$axios.post("/api/logout", {username: this.username, lastsearch: lastsearch})
+      // logoutResponse = await this.$axios.post("/api/logout", {username: this.username, lastsearch: lastsearch})
+      //console.log(logoutResponse.data)
 
       this.account.logoutModalVisible = true;
       console.log(this.account.logoutModalVisible);
