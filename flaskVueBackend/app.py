@@ -148,7 +148,7 @@ def get_latest():
             if isinstance(particle['value'], list):
                n = len(particle['value'])
                mean_l = sum(particle['value'])/n
-               particle['value'] = mean_l  
+               particle['value'] = round(mean_l,2) 
 
     locations = list(locations.values())
     response = {'locations': locations}
@@ -222,7 +222,7 @@ def get_city(cityname):
     d={"no2":parNO2, "o3":paro3, "co":parco, "so2":parso2, "pm10":parpm10, "pm25":parpm25, "bc":parbc, "pm1":parpm1, "nox":parnox , "ch4":parch4, "ufp":parufp , "no":parno, "co2":parco2 , "um010":parum010 , "um025":parum025 , "um100":parum100 , "pm4":parpm4}
     for key, item in d.items():
         try:
-            average= sum(item)/len(item)         
+            average= round(sum(item)/len(item),2)       
         except ZeroDivisionError:
             average= None
         parametr = {'particleName': key,  'unit': 	"µg/m³" , 'value': average}
