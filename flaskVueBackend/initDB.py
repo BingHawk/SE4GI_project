@@ -1,5 +1,6 @@
 import psycopg2
 from osm import Osm
+import json
 import pandas as pd
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
@@ -105,7 +106,7 @@ class Pg:
             conn.commit()
 
 
-contacts = pd.read_json("flaskVueBackend\contacts.json")
+contacts = pd.json_normalize(json.loads("flaskVueBackend\contacts.json"))
 
        # Adding the contact data
 for person in contacts:

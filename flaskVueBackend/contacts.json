@@ -1,36 +1,43 @@
-{"data":
-    {"person1": {
-        "first_name": "Alba",
-        "last_name": "Lunner",
-        "description": "When Alba is not hard at work studying Transportation Engineering, she loves skiing on Oare mountain.",
-        "nationality": "SWE",
-        "email": "albasofia.lunner@mail.polimi.it"
-    },
-        "person2": {
-        "first_name": "Evalyn",
-        "last_name": "Horemans",
-        "description": "Evalyn studied Environmental Science at McGill University in Montreal. She likes snowboarding, interior canoeing, and scuba diving.",
-            "nationality": "CAN",
-            "email": "evalyn.horemans@mail.polimi.it"
-            },
-    "person3": {
-        "first_name": "Ahmed Abdalgader Ahmed",
-        "last_name": "Eisaa",
-        "description": "Ahmed is passionate about football and learning new languages. He believes in random acts of kindness, and has a special interest in accents and dialects.",
-        "nationality": "SDN",
-        "email": "  @mail.polimi.it"
-    }
-    "person1": {
-        "first_name": "Leo",
-        "last_name": "Hokby",
-        "description": "Hailing from Sweden, Leo loves philosophizing by the (relatively) cold Scandinavian seaside. He is also a budding poker shark. ",
-        "nationality": "SWE",
-        "email": "bing.hawk@telia.com"
-    }
-    "person1": {
-        "first_name": "Mostafa",
-        "last_name": "Mahmoud",
-        "description": "After his first career as a pro footballer in Egypt, Mostafa turned his sights on a career with a lower probability of injury: Geoinformatics. He also loves cooking for friends and travelling.",
-        "nationality": "EGY",
-        "email": "mostafa.mahmoud@mail.polimi.it"
-}       
+{
+    "contacts": [
+        {
+            "person": [
+                {
+                    "first_name": "Alba",
+                    "last_name": "Lunner",
+                    "description": "When Alba is not hard at work studying Transportation Engineering, she loves skiing on Oare mountain.",
+                    "nationality": "SWE",
+                    "email": "albasofia.lunner@mail.polimi.it"
+                },
+                {
+                    "first_name": "Evalyn",
+                    "last_name": "Horemans",
+                    "description": "Evalyn studied Environmental Science at McGill University in Montreal. She likes snowboarding, interior canoeing, and scuba diving.",
+                    "nationality": "CAN",
+                    "email": "evalyn.horemans@mail.polimi.it"
+                },
+                {
+                    "first_name": "Ahmed Abdalgader Ahmed",
+                    "last_name": "Eisaa",
+                    "description": "Ahmed is passionate about football and learning new languages. He believes in random acts of kindness, and has a special interest in accents and dialects.",
+                    "nationality": "SDN",
+                    "email": "  @mail.polimi.it"
+                },
+                {
+                    "first_name": "Leo",
+                    "last_name": "Hokby",
+                    "description": "Hailing from Sweden, Leo loves philosophizing by the (relatively) cold Scandinavian seaside. He is also a budding poker shark. ",
+                    "nationality": "SWE",
+                    "email": "bing.hawk@telia.com"
+                },
+                {
+                    "first_name": "Mostafa",
+                    "last_name": "Mahmoud",
+                    "description": "After his first career as a pro footballer in Egypt, Mostafa turned his sights on a career with a lower probability of injury: Geoinformatics. He also loves cooking for friends and travelling.",
+                    "nationality": "EGY",
+                    "email": "mostafa.mahmoud@mail.polimi.it"
+                }
+            ]
+        }
+    ]
+}
