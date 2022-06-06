@@ -293,7 +293,7 @@ def authenticate():
                                 "username": res[1],
                                 "userID": res[0],
                              },
-                    "register": True
+                    "access": True
                         }
                 print('the user is being verified to be registered, hence it has been authenticated')
                 print("Authenticate recieved")
