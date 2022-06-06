@@ -3,18 +3,18 @@
     <div class="col-md-12">
       <card type="plain">
         <h4 slot="header" class="card-title">MapBox Map</h4>
-         <div
-                class="btn-group btn-group-toggle "
-                data-toggle="buttons"
-                style="zindex-dropdown:100"
-              >
-                <select
-                  class="custom-select m-1  text-white w-100"
-                  name="Cities"
-                  id="idCitiesDDL"
-                  data-toggle="tooltip"
-                  title="Your destination city"
-                  style="
+        <div
+          class="btn-group btn-group-toggle "
+          data-toggle="buttons"
+          style="zindex-dropdown:100"
+        >
+          <select
+            class="custom-select m-1  text-white w-100"
+            name="Cities"
+            id="idCitiesDDL"
+            data-toggle="tooltip"
+            title="Your destination city"
+            style="
                 background-image: linear-gradient(
                     45deg,
                     transparent 50%,
@@ -28,21 +28,19 @@
                 background-repeat: no-repeat;
                 background-color: #41B883;
               "
-                >
-                  <option
-                    v-for="selectValue in selectValues"
-                    :value="selectValue"
-                    v-bind:key="option"
-                    >{{ selectValue }}</option
-                  >
-                </select>
-              </div>
+          >
+            <option
+              v-for="selectValue in selectValues"
+              :value="selectValue"
+              v-bind:key="option"
+              >{{ selectValue }}</option
+            >
+          </select>
+        </div>
         <div id="regularMap" class="map">
           <map-component
-            :locations="data.locations"
-            :cities="city.cities"
+            :latest="latest"
           ></map-component>
-          <!-- :locations="data.locations" -->
         </div>
       </card>
     </div>
@@ -58,21 +56,23 @@ export default {
   },
   async asyncData({ $axios }) {
     console.log("asyncData running");
-  
-    const [locations, cities] = await Promise.all([
-      $axios.get("/api/locations"),
-      $axios.get("/api/cities"),
-    ]);
-    // console.log(data)
-    console.log(locations);
-    console.log(cities);
+    try {
+      const [latest, cities] = await Promise.all([
+        $axios.get("/api/latest",{responseType: "json"}),
+        $axios.get("/api/cities",{responseType: "json"})
+      ]);
+      
+      console.log(latest.data);
+      console.log(cities.data);
 
-    return {
-      data: locations.data,
-      city: cities.data,
-      selectValues: cities.data.cities,
-    };
-    // },
+      return {
+        latest: latest.data.locations,
+        city: cities.data,
+        selectValues: cities.data.cities,
+      };
+    } catch (e) {
+      console.log(e);
+    }
   },
 };
 </script>

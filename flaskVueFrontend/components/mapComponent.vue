@@ -5,39 +5,40 @@
     :center="center"
     :zoom="zoom"
   >
-  <!-- <MglGeocoderControl
-      :accessToken="accessToken"
-      :input.sync="defaultInput"
-      @results="handleSearch"    
-    /> -->
-    <MglMarker 
-      v-for = "location in locations"
-      :key = "location.id"
-      :coordinates="location.coordinates">
+    <MglMarker
+      v-for="location in latest"
+      :key="location.cityName"
+      :coordinates="location.coordinates"
+    >
+      <MglPopup>
+        <Popup :message="location.cityName" :particles="location.particles">
+        </Popup>
+      </MglPopup>
     </MglMarker>
   </MglMap>
 </template>
 
 <script>
 import Mapbox from "mapbox-gl";
-import { MglMap, MglMarker } from "vue-mapbox";
-//import MglGeocoderControl from 'vue-mapbox-geocoder'
-
+import { MglMap, MglPopup, MglMarker } from "vue-mapbox";
+import Popup from "../components/Cards/Popup.vue";
 
 export default {
   name: "BaseMap",
   components: {
     MglMap,
     MglMarker,
-    //MglGeocoderControl,
+    MglPopup,
+    Popup,
   },
   props: {
     locations: {
       type: Array,
       required: true,
     },
-    cities:{
-    }
+    latest: {
+      type: Array,
+    },
   },
   head: {
     link: [
@@ -52,17 +53,18 @@ export default {
       accessToken:
         "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
-      center: [9.5, 44],
+      center: [9.18, 45.4],
       zoom: 4,
     };
   },
-  methods: {
-    handleSearch(event) {
-      console.log(event)
-    }
-  },
+
   created() {
     this.mapbox = Mapbox;
+  },
+
+  mounted() {
+    console.log("Latest:" + this.latest[0].coordinates);
+
   },
 };
 </script>
