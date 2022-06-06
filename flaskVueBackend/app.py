@@ -375,7 +375,7 @@ def register():
                         'user_id': None,
                         'username': username,
                     },
-                    'register': bool(access)
+                    'register': True
                 } #LEOs comment: JSON structure seems coorect. 
                 print('the user is already in the database')
                 cur.close()
@@ -392,7 +392,7 @@ def register():
                         'user_id': cur.fetchone()[0],
                         'username': username,
                     },
-                    'register': bool(access)
+                    'register': True
                 }
                 print('the user is not in the database and is being registered')
                 cur.close()
