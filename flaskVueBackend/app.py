@@ -314,7 +314,8 @@ def authenticate():
             conn.commit()
             conn.close()
     # flash(error)
-    return jsonify(responde)    
+    return jsonify(responde)   
+
     # print("Authenticate recieved request")
     # return "Authenticate recieved"
 
@@ -397,7 +398,6 @@ def logout():
     data = request.get_json()
     #expected to get these json-files from front end
     username= data['username'] 
-    password = data['password'] 
     lastsearch = data['lastsearch'] 
 
     conn = psycopg2.connect(
@@ -408,7 +408,7 @@ def logout():
                 'INSERT INTO users (last_search) VALUES (%s)',
                 (lastsearch))
     id= cur.execute(
-                     'SELECT user_id FROM users WHERE users.user_name = %s AND users.user_password= %s', (username, password))
+                     'SELECT user_id FROM users WHERE users.user_name = %s', (username))
     error= {
             'user':{
                 'user_id': cur.fetchone()[0],
