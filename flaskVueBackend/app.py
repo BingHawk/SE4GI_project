@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'postgres'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
