@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import psycopg2
 import requests
@@ -252,17 +252,51 @@ def serveYearData(city):
     return jsonify(res)
 
 #### ROUTED FUNCTIONS FOR LOGIN
-
+# This is the current endpoint used by the login function.
+# It will recive a post request with the payload: {"username": <String>, "password": <String>}'
+# It should check if that username exist in the database and if it has the specified password. 
+# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>}, "access": <Boleean>, "lastSelect": <String>|<None>}
+    # Where userID is the id of the user in the db, and None if authentication fails.
+    # access bolean is true if access is granted, else false. 
+    # lastSelect is the name of the city in Title() case that was last queried by the user or None if authentication fails or there is no info. 
+# Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/authenticate', methods = ['POST'])
 def authenticate():
-    print("Authenticate recieved request")
-    return "Authenticate recieved"
+    payload = request.get_json()
+    print("Authenticate recieved request", payload)
 
+    response = {"user":{"username": payload['username']}}
+    if payload['username'] == "Leo":
+        response['user']['userID'] = 1
+        response['access'] = True
+        response['lastSelect'] = None
+    else: 
+        response['user']['userID'] = None
+        response['access'] = False
+        response['lastSelect'] = None
 
+    return jsonify(response)
+
+# This is the current endpoint used by the register function.
+# It will recive a post request with the payload: {"username": <String>, "password": <String>}'
+# It should check if that username exist in the database and if not register it together with the password 
+# It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>},"register": <Boleean>}
+# Where userID is the id of the user in the db generated when adding, and None if username allready exist. Access bolean is true if register is sucsessful, else false.
+# Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
 @app.route('/api/register', methods = ['POST'])
 def register():
-    print("Register recieved request")
-    return "Register recieved"
+    payload = request.get_json()
+    print("Register recieved request", payload)
+
+    response = {"user":{"username": payload['username']}}
+    if payload['username'] == "Leo":
+        response['user']['userID'] = None
+        response['register'] = False
+    else: 
+        response['user']['userID'] = 2
+        response['register'] = True
+        
+    return jsonify(response)
 
 
 #### RUNNING FLASK IN DEV MODE
