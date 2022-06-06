@@ -13,7 +13,7 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
     MYUSER = 'postgres'
-    MYPWRD = 'blod'
+    MYPWRD = 'postgres'
     MYPORT = '5432'
 
     # Dictionary of the create statements for each table.
@@ -86,6 +86,38 @@ class Pg:
 
         # Closing the connection
         conn.close()
+
+#our version:
+        conn = psycopg2.connect(
+    database="SE4G", user = user, password= password, host='localhost', port= port
+    )
+        # Creating a cursor object using the cursor() method
+        cursor = conn.cursor()
+
+        # Creates all the tables in the list of tables. 
+        for table in self.create.keys():
+            #Doping table if already exists.
+            cursor.execute(self._drop(table))
+
+            cursor.execute(self.create[table])
+            print("Table created successfully........")
+            conn.commit()
+
+        # Getting the coordinates for cities
+        contacts = [[ 'Alba', 'Lunner', 'When Alba is not hard at work studying Transportation Engineering, she loves skiing on Oare mountain. ', 'SWE', 'albasofia.lunner@mail.polimi.it'], [ 'Evalyn', 'Horemans', 'Evalyn studied Environmental Science at McGill University in Montreal. She likes snowboarding, interior canoeing, and scuba diving.', 'CAN', 'evalyn.horemans@mail.polimi.it']]
+
+        # Adding the city data
+        for person in contacts:
+            sql = '''
+            INSERT INTO person (first_name, last_name, description, nationality, email)
+            VALUES('{}', {}, {}, {}, {});
+            '''.format( person['first_name'], person['last_name'][0], person['description'][1], person['nationality'][2], person['email'][3] )
+            cursor.execute(sql)
+        conn.commit()
+
+        # Closing the connection
+        conn.close()
+
 
 if __name__ == "__main__":
     Pg = Pg()
