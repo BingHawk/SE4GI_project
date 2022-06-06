@@ -350,12 +350,16 @@ def register():
         # if both are inserted
         # Then checking wether he is already in the DB|registered
         else :
+<<<<<<< HEAD
             conn = psycopg2.connect(
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
             )
+=======
+            conn = connect("dbname=SE4G user=postgres password=postgres") # LEOs Comment: This is wrong. Use the variables from top of the file. You will find the correct syntax in the getCityCoords() function above. 
+>>>>>>> 75b973a9ae223fa59cc3193fe98f98c561143eae
             cur = conn.cursor()
             access= cur.execute(
-            'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
+            'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password)) #LEOs comment: You dont need to check if the user exist, postgres will do that itsalf when you do insert since username field is configured as unique. 
             # The user is aleardy registered
             if cur.fetchone() is not None:
                 # error = 'User {} is already registered.'.format(username)
@@ -365,7 +369,7 @@ def register():
                         'username': username,
                     },
                     'register': bool(access)
-                }
+                } #LEOs comment: JSON structure seems coorect. 
                 print('the user is aleardy in the database')
                 cur.close()
                 # conn.close()
