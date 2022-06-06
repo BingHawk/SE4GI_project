@@ -88,7 +88,7 @@
       </card>
     </div>
 
-    <div class="col-12">
+    <!-- <div class="col-12">
       <card type="chart">
         <template slot="header">
           <div class="row">
@@ -136,7 +136,7 @@
           </line-chart>
         </div>
       </card>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -199,10 +199,10 @@ export default {
     console.log(cityName);
     
 
-    const [cities, monthData, yearData] = await Promise.all([
+    const [cities, monthData] = await Promise.all([ // removed yearData
       $axios.get("/api/cities"),
       $axios.get(`/api/month/${cityName}`),
-      $axios.get(`/api/year/${cityName}`),
+      // $axios.get(`/api/year/${cityName}`),
     ]);
     let activeCities=cities.data.cities
     // console.log(activeCities);
@@ -211,7 +211,7 @@ export default {
     // console.log(activeCities);
     
     const monthRes = monthData.data.time_month;
-    const yearRes = yearData.data.time_year;
+    // const yearRes = yearData.data.time_year;
     // console.log(monthRes);
     // console.log(monthRes[Object.keys(monthRes)[0]])
     // console.log(yearRes);
@@ -220,9 +220,9 @@ export default {
     bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
     bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-    bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-    bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-    bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
     return {
       // data: monthData.data.time_month.co,
@@ -250,22 +250,22 @@ export default {
         gradientStops: [1, 0.4, 0],
         categories: [],
       },
-      yearBigLineChart: {
-        activeIndex: 0,
-        chartData: {
-          datasets: [
-            {
-              ...bigChartDatasetOptions,
-              data: bigChartYearData[0],
-            },
-          ],
-          labels: yearChartLabels,
-        },
-        extraOptions: chartConfigs.purpleChartOptions,
-        gradientColors: config.colors.primaryGradient,
-        gradientStops: [1, 0.4, 0],
-        categories: [],
-      },
+      // yearBigLineChart: {
+      //   activeIndex: 0,
+      //   chartData: {
+      //     datasets: [
+      //       {
+      //         ...bigChartDatasetOptions,
+      //         data: bigChartYearData[0],
+      //       },
+      //     ],
+      //     labels: yearChartLabels,
+      //   },
+      //   extraOptions: chartConfigs.purpleChartOptions,
+      //   gradientColors: config.colors.primaryGradient,
+      //   gradientStops: [1, 0.4, 0],
+      //   categories: [],
+      // },
     };
   },
   computed: {
@@ -322,26 +322,26 @@ export default {
     //this.$nuxt.refresh()
    let cityName=event.target.value
    let $axios=this.$axios
-   const [ monthData, yearData] = await Promise.all([
+   const [ monthData] = await Promise.all([ // removed yearData
       $axios.get(`/api/month/${cityName}`),
-      $axios.get(`/api/year/${cityName}`),
+      // $axios.get(`/api/year/${cityName}`),
     ]);
 
     // console.log(yearData.data);
     
     const monthRes = monthData.data.time_month;
-    const yearRes = yearData.data.time_year;
+    // const yearRes = yearData.data.time_year;
 
   bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
     bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
     bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-    bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-    bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-    bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
     this.initMonthChart(0);
-    this.initYearChart(0)
+    // this.initYearChart(0)
 
 //     this.showSomething = false
 // this.$nextTick(() => {
@@ -352,7 +352,7 @@ export default {
   },
   mounted() {
     this.initMonthChart(0);
-    this.initYearChart(0)
+    // this.initYearChart(0)
     
     
   },
