@@ -1,6 +1,7 @@
 import psycopg2
 from osm import Osm
 import pandas as pd
+import json
 
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     for person in contacts:
             print(person['first_name'])
             cur.execute( 'INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES(%s, %s, %s, %s, %s)', (person['first_name'], person['nationality'], person['description'], person['nationality'], person['email'])
-                )
+            )
             print(f"Contacts info inserted successfully for {person['first_name']}.......")
 
     conn.commit()
