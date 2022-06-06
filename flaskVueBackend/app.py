@@ -1,8 +1,7 @@
-from flask import Flask, jsonify, request, redirect, flash, url_for, session, g
+from flask import Flask, jsonify, request, flash
 from flask_cors import CORS
 import psycopg2
 import requests
-from werkzeug.security import check_password_hash, generate_password_hash
 #from werkzeug.exceptions import abort
 from historical import getMonthData, getYearData
 
