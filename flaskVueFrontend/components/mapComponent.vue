@@ -11,9 +11,7 @@
       :coordinates="location.coordinates"
     >
       <MglPopup>
-        <Popup
-          :message="location.cityName"
-        >
+        <Popup :message="location.cityName" :particles="location.particles">
         </Popup>
       </MglPopup>
     </MglMarker>
@@ -59,11 +57,14 @@ export default {
       zoom: 4,
     };
   },
+
   created() {
     this.mapbox = Mapbox;
   },
+
   mounted() {
     console.log("Latest:" + this.latest[0].coordinates);
+
   },
 };
 </script>
