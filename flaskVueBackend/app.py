@@ -17,36 +17,33 @@ app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 #### UNROUTED FUNCTIONS
-def get_cityNames():
+def getCityNames():
 
     r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
 
-    citiesname=[]
-    cityDict = {} # Maps recapitalized city names to their original caputalization. 
+    cityNames=[]
     # print(r.json()['results'][0])
     # return r.json()
     for result in r.json()['results']:
         try:
-            if result['city'] != "unused": #Filtering out the "unused" value that exist in the API. 
-                cityname = result['city'].title() #Forcing one capitalization policy
-                if cityname in cityDict.keys(): # Filling the cityDict with lists, as there are sometimes two endpint entries per city. 
-                    cityDict[cityname].append(result['city'])
-                else: 
-                    cityDict[cityname] = [result['city']]
-                # print(result['city'])
+            if result['city'] in ['unused', 'Civitavecchia', 'Colorno', 'Verucchio', 'Villa Minozzo']: 
+                continue # Filtering out the "unused" value that exist in the API and some cities without data
+            if result['city'].upper() == result['city']: # Filtering out capitalized cities since there is no data on them
+                continue # Filtering out capitalized cities since there is no data on them
+            cityname = result['city']
+            # print(result['city'])
         except KeyError:
             continue
-        if cityname not in citiesname: #Avoiding adding duplicates
-            citiesname.append(cityname)
-    response = {'cities': citiesname}
-    return response, cityDict
+        if cityname not in cityNames: #Avoiding adding duplicates
+            cityNames.append(cityname)
+    return cityNames
 
 
 # cityDict keys: ['Alessandria', 'Alfonsine', 'Ancona', 'Arezzo', 'Ascoli Piceno', 'Asti', 'Avellino', 'Bari', 'Barletta-Andria-Trani', 'Belluno', 'Benevento', 'Bergamo', 'Biella', 'Bologna', 'Bolzano/Bozen', 'Brescia', 'Brindisi', 'Cagliari', 'Campobasso', 'Carbonia-Iglesias', 'Carpi', 'Caserta', 'Catanzaro', 'Cento', 'Cesena', 'Chiesanuova', 'Civitavecchia', 'Colorno', 'Como', 'Cosenza', 'Cremona', 'Crotone', 'Cuneo', 'Faenza', 'Ferrara', 'Fiorano Modenese', 'Firenze', 'Foggia', "Forli'", "Forli'-Cesena", 'Frosinone', 'Genova', 'Grosseto', 'Guastalla', 'Imola', 'Imperia', 'Jolanda Di Savoia', 'Langhirano', "L'Aquila", 'La Spezia', 'Latina', 'Lecce', 'Lecco', 'Livorno', 'Lodi', 'Lucca', "Lugagnano Val D'Arda", 'Macerata', 'Mantova', 'Massa-Carrara', 'Matera', 'Mezzani', 'Milano', 'Mirandola', 'Modena', 'Molinella', 'Monza E Della Brianza', 'Napoli', 'Novara', 'Nuoro', 'Olbia-Tempio', 'Oristano', 'Ostellato', 'Padova', 'Parma', 'Pavia', 'Perugia', 'Pesaro E Urbino', 'Pescara', 'Piacenza', 'Pisa', 'Pistoia', 'Porretta Terme', 'Potenza', 'Prato', 'Ravenna', 'Reggio Di Calabria', "Reggio Nell'Emilia", 'Rieti', 'Rimini', 'Roma', 'Rovigo', 'Salerno', 'San Clemente', 'San Lazzaro Di Savena', 'San Leo', 'Sassari', 'Sassuolo', 'Savignano Sul Rubicone', 'Savona', 'Siena', 'Sogliano Al Rubicone', 'Sondrio', 'Sorbolo', 'Taranto', 'Teramo', 'Terni', 'Torino', 'Trento', 'Treviso', 'Varese', 'Venezia', 'Verbano-Cusio-Ossola', 'Vercelli', 'Verona', 'Verucchio', 'Vibo Valentia', 'Vicenza', 'Villa Minozzo', 'Viterbo']
-def getCityCoords():
+def getCityCoords(cityNames):
 
     cityString = ""
-    for city in cityDict.keys():
+    for city in cityNames:
         city = city.replace("'","''")
         cityString += "'{}',".format(city)
     cityString += cityString[0:-1]
@@ -74,8 +71,8 @@ def getCityCoords():
 #### PRE FLASK CODE (code that needs to run before flask server starts)
 print("starting setup")
 
-cityResponse, cityDict = get_cityNames()
-cityCoords = getCityCoords()
+cityNames = getCityNames()
+cityCoords = getCityCoords(cityNames)
 
 print("setup complete")
 
@@ -158,18 +155,15 @@ def get_latest():
 #### ROUTED FUNCTIONS THAT DOES NOT SEND COORDINATES
     
 #EndPoint for the cities
-@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse get_cityNames() elsewhere. 
+@app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse getCityNames() elsewhere. 
 def serve_cityNames():
-    print(cityResponse)
-    return jsonify(cityResponse)
+    return jsonify({'cities':cityNames})
 
 # the average as well as the parameters work finally!
 @app.route('/api/cities/<cityname>', methods=["GET"])
-def get_city(cityname):
-    try:
-        cityname = cityDict[cityname.title()][0]
-    except KeyError:
-        return "City {} does not exist in database".format(cityname.title()), 400
+def get_cities(cityname):
+    if cityname.title() not in cityNames:
+        return "City {} does not exist in database".format(city.title()), 400
 
     cityEndpoint =f"https://api.openaq.org/v2/locations?limit=15&page=1&offset=0&sort=desc&radius=1000&country_id=IT&city={cityname}&order_by=lastUpdated&dumpRaw=false"
     # Get the stations
@@ -233,25 +227,22 @@ def get_city(cityname):
 
 @app.route('/api/month/<city>', methods = ['GET'])
 def serveMonthData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
+    if city.title() in cityNames:
+        res = getMonthData(city.title())
+        return jsonify(res)
+    else:
         return "City {} does not exist in database".format(city.title()), 400
-    
-    res = getMonthData(city)
-    return jsonify(res)
 
 @app.route('/api/year/<city>', methods = ['GET'])
 def serveYearData(city):
-    try:
-        city = cityDict[city.title()][0]
-    except KeyError:
+    if city.title() in cityNames:
+        res = getYearData(city.title())
+        return jsonify(res)
+    else:
         return "City {} does not exist in database".format(city.title()), 400
 
-    res = getYearData(city)
-    return jsonify(res)
-
 #### ROUTED FUNCTIONS FOR LOGIN
+
 # This is the current endpoint used by the login function.
 # It will recive a post request with the payload: {"username": <String>, "password": <String>}'
 # It should check if that username exist in the database and if it has the specified password. 

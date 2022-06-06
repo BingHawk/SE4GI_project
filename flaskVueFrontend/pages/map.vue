@@ -1,20 +1,19 @@
 <template>
   <div class="row">
     <div class="col-md-12">
-      <card type="plain">
-        <h4 slot="header" class="card-title">MapBox Map</h4>
-        <div
-          class="btn-group btn-group-toggle "
-          data-toggle="buttons"
-          style="zindex-dropdown:100"
-        >
-          <select
-            class="custom-select m-1  text-white w-100"
-            name="Cities"
-            id="idCitiesDDL"
-            data-toggle="tooltip"
-            title="Your destination city"
-            style="
+      <div
+        class="btn-group btn-group-toggle "
+             :class="false ? 'float-left' : 'float-right'"
+        data-toggle="buttons"
+        style="zindex-dropdown:100"
+      >
+        <select
+          class="custom-select m-1  text-white w-100"
+          name="Cities"
+          id="idCitiesDDL"
+          data-toggle="tooltip"
+          title="Your destination city"
+          style="
                 background-image: linear-gradient(
                     45deg,
                     transparent 50%,
@@ -28,15 +27,18 @@
                 background-repeat: no-repeat;
                 background-color: #41B883;
               "
+        >
+          <option
+            v-for="selectValue in selectValues"
+            :value="selectValue"
+            v-bind:key="option"
+            >{{ selectValue }}</option
           >
-            <option
-              v-for="selectValue in selectValues"
-              :value="selectValue"
-              v-bind:key="option"
-              >{{ selectValue }}</option
-            >
-          </select>
-        </div>
+        </select>
+      </div>
+      <card type="plain">
+        <h4 slot="header" class="card-title">MapBox Map</h4>
+
         <div id="regularMap" class="map">
           <map-component
             :latest="latest"
