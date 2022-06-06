@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -301,7 +301,7 @@ def authenticate():
             # If he is not registered then the authentication fails    
             else:
                 responde={
-                    "register": False
+                    "access": False
                 }
                 print('the user is not being verified to be registered, hence it has to register first')
                 print("Authenticate not being granted")
