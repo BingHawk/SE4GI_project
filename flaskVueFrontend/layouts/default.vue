@@ -8,16 +8,23 @@
       :logo = "'icon48.png'"
     >
       <template slot-scope="props" slot="links">
-        
-        <!-- <sidebar-item
+        <sidebar-item
+          :link="{
+            name: $t('sidebar.dashboard'),
+            icon: 'tim-icons icon-chart-pie-36',
+            path: '/'
+          }"
+        >
+        </sidebar-item>
+        <sidebar-item
           :link="{
             name: $t('sidebar.icons'),
             icon: 'tim-icons icon-atom',
             path: '/icons'
           }"
         >
-        </sidebar-item> -->
-           <sidebar-item
+        </sidebar-item>
+        <sidebar-item
           :link="{
             name: $t('sidebar.maps'),
             icon: 'tim-icons icon-square-pin',
@@ -69,13 +76,13 @@
           }"
         ></sidebar-item> -->
 
-        <!-- <sidebar-item
+        <sidebar-item
           :link="{
             name: $t('sidebar.typography'),
             icon: 'tim-icons icon-align-center',
             path: '/typography'
           }"
-        ></sidebar-item> -->
+        ></sidebar-item>
 
         <!-- <sidebar-item
           :link="{

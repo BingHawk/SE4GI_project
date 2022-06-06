@@ -57,7 +57,7 @@ def getMonthData(city):
                 currentDay = currentDay + dt.timedelta(days = 1)
                 try:
                     avg = res[currentDay][param]['sum']/res[currentDay][param]['n']
-                    time_month[param]['data'].append(avg)
+                    time_month[param]['data'].append(round(avg,2))
                 except KeyError:
                     # print("missing day: {} or parameter: {}".format(currentDay, param), end="\r")
                     time_month[param]['data'].append(None)
@@ -121,7 +121,7 @@ def getYearData(city):
                 else: 
                     # new week has started, add last weeks average to data
                     try: 
-                        avg = weekSum / weekN
+                        avg = round(weekSum / weekN,2)
                         time_year[param]['data'].append(avg)
                     except ZeroDivisionError:
                         #No meassurements in this week.
