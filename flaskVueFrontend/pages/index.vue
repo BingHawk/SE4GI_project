@@ -163,7 +163,38 @@ let yearChartLabels = [
   "NOV",
   "DEC",
 ];
-let monthChartLabels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+let monthChartLabels = [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+];
 let bigChartDatasetOptions = {
   fill: true,
   borderColor: config.colors.primary,
@@ -178,13 +209,48 @@ let bigChartDatasetOptions = {
   pointHoverBorderWidth: 15,
   pointRadius: 4,
 };
-let missedCities= ['Alfonsine', 'Bergamo', 'Brescia', 'Carpi', 'Cento', 'Cesena', 'Civitavecchia', 'Colorno',
- 'Como', 'Cremona', 'Faenza', 'Fiorano Modenese', "Forli'", 'Guastalla', 'Imola', 'Jolanda Di Savoia',
-  'Langhirano', 'Lecco', 'Lodi', "Lugagnano Val D'Arda", 'Mantova', 'Mezzani', 'Milano', 'Mirandola',
-   'Molinella', 'Monza E Della Brianza', 'Ostellato', 'Pavia', 'Porretta Terme', 'San Clemente',
-    'San Lazzaro Di Savena', 'San Leo', 'Sassuolo', 'Savignano Sul Rubicone', 'Sogliano Al Rubicone',
-     'Sondrio', 'Sorbolo', 'Varese', 'Verucchio', 'Villa Minozzo',]
-
+let missedCities = [
+  "Alfonsine",
+  "Bergamo",
+  "Brescia",
+  "Carpi",
+  "Cento",
+  "Cesena",
+  "Civitavecchia",
+  "Colorno",
+  "Como",
+  "Cremona",
+  "Faenza",
+  "Fiorano Modenese",
+  "Forli'",
+  "Guastalla",
+  "Imola",
+  "Jolanda Di Savoia",
+  "Langhirano",
+  "Lecco",
+  "Lodi",
+  "Lugagnano Val D'Arda",
+  "Mantova",
+  "Mezzani",
+  "Milano",
+  "Mirandola",
+  "Molinella",
+  "Monza E Della Brianza",
+  "Ostellato",
+  "Pavia",
+  "Porretta Terme",
+  "San Clemente",
+  "San Lazzaro Di Savena",
+  "San Leo",
+  "Sassuolo",
+  "Savignano Sul Rubicone",
+  "Sogliano Al Rubicone",
+  "Sondrio",
+  "Sorbolo",
+  "Varese",
+  "Verucchio",
+  "Villa Minozzo",
+];
 
 export default {
   name: "dashboard",
@@ -192,41 +258,15 @@ export default {
     LineChart,
   },
   ///query the cities and visualize it on map as single items then add each to a DDL///
-  async asyncData({ $axios, $store }) {
+  async asyncData({ $axios }) {
     // console.log("asyncData running");
-    $store = (typeof $store !== 'undefined') ?  $store : "alessandria"
-    var cityName=$store
-    console.log(cityName);
-    
+    const cities = await $axios.get("/api/cities");
+    let activeCities = cities.data.cities;
 
-    const [cities, monthData] = await Promise.all([ // removed yearData
-      $axios.get("/api/cities"),
-      $axios.get(`/api/month/${cityName}`),
-      // $axios.get(`/api/year/${cityName}`),
-    ]);
-    let activeCities=cities.data.cities
-    // console.log(activeCities);
-    // console.log(missedCities)
-    activeCities = activeCities.filter(city => !missedCities.includes(city))
-    // console.log(activeCities);
-    
-    const monthRes = monthData.data.time_month;
-    // const yearRes = yearData.data.time_year;
-    // console.log(monthRes);
-    // console.log(monthRes[Object.keys(monthRes)[0]])
-    // console.log(yearRes);
-    // console.log(yearRes[Object.keys(yearRes)[0]])
-    bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
-    bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
-    bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
+    activeCities = activeCities.filter((city) => !missedCities.includes(city));
 
-    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
     return {
-      // data: monthData.data.time_month.co,
-      // city: cities.data,
       selectValues: activeCities,
     };
     // },
@@ -300,7 +340,6 @@ export default {
       this.$refs.monthBigChart.updateGradients(chartData);
       this.monthBigLineChart.chartData = chartData;
       this.monthBigLineChart.activeIndex = index;
-      
     },
 
     initYearChart(index) {
@@ -317,46 +356,53 @@ export default {
       this.yearBigLineChart.chartData = chartData;
       this.yearBigLineChart.activeIndex = index;
     },
-    async onChange(event){
-    console.log(event.target.value)
-    //this.$nuxt.refresh()
-   let cityName=event.target.value
-   let $axios=this.$axios
-   const [ monthData] = await Promise.all([ // removed yearData
-      $axios.get(`/api/month/${cityName}`),
-      // $axios.get(`/api/year/${cityName}`),
-    ]);
+    async getCharts(cityName){
 
-    // console.log(yearData.data);
-    
-    const monthRes = monthData.data.time_month;
-    // const yearRes = yearData.data.time_year;
+      let axios = this.$axios;
+      const [monthData] = await Promise.all([
+        // removed yearData
+        axios.get(`/api/month/${cityName}`),
+        // $axios.get(`/api/year/${cityName}`),
+      ]);
 
-  bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
-    bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
-    bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
+      // console.log(yearData.data);
 
-    // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-    // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-    // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+      const monthRes = monthData.data.time_month;
+      // const yearRes = yearData.data.time_year;
 
-    this.initMonthChart(0);
-    // this.initYearChart(0)
+      bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
+      bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
+      bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-//     this.showSomething = false
-// this.$nextTick(() => {
-//   // Okay, now that everything is destroyed, lets build it up again
-//   this.showSomething = true
-// });
-  }
+      // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+      // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+      // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+
+      this.initMonthChart(0);
+      // this.initYearChart(0)
+
+      //     this.showSomething = false
+      // this.$nextTick(() => {
+      //   // Okay, now that everything is destroyed, lets build it up again
+      //   this.showSomething = true
+      // });
+    },
+    async onChange(event) {
+      console.log(event.target.value);
+      //this.$nuxt.refresh()
+      let cityName = event.target.value;
+
+      this.getCharts(cityName)
+      
+    },
   },
   mounted() {
-    this.initMonthChart(0);
-    // this.initYearChart(0)
+    // city = typeof city !== "undefined" ? city : "alessandria";
+    var cityName = "alessandria";
+    console.log(cityName);
     
-    
+    this.getCharts(cityName)
   },
- 
 };
 </script>
 <style></style>
