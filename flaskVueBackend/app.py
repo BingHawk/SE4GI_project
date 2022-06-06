@@ -8,7 +8,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'postgres'
+MYPWRD = 'blod'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -324,10 +324,10 @@ def authenticate():
 # It should return the following JSON: {"user": {"username": <String>, userID: <Int>|<None>},"register": <Boleean>}
 # Where userID is the id of the user in the db generated when adding, and None if username allready exist. Access bolean is true if register is sucsessful, else false.
 # Feel free to change above scheme of the return, but tell the people working on the frontend if you do!
-# @app.route('/api/register', methods = ['POST'])
-# def register():
-#     print("Register recieved request")
-#     return "Register recieved"
+
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'123'
+
 @app.route('/api/register', methods= ['POST'])
 def register():
     if request.method == 'POST' :
@@ -347,20 +347,16 @@ def register():
         # if the password isn't inserted
         elif not password:
             error = 'Password is required.'
-        # if both are inserted
-        # Then checking wether he is already in the DB|registered
+        # if both password and username are inserted
+        # Then checking weather the user is already in the DB|registered
         else :
-<<<<<<< HEAD
             conn = psycopg2.connect(
             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
             )
-=======
-            conn = connect("dbname=SE4G user=postgres password=postgres") # LEOs Comment: This is wrong. Use the variables from top of the file. You will find the correct syntax in the getCityCoords() function above. 
->>>>>>> 75b973a9ae223fa59cc3193fe98f98c561143eae
             cur = conn.cursor()
             access= cur.execute(
             'SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password)) #LEOs comment: You dont need to check if the user exist, postgres will do that itsalf when you do insert since username field is configured as unique. 
-            # The user is aleardy registered
+            # The user is already registered
             if cur.fetchone() is not None:
                 # error = 'User {} is already registered.'.format(username)
                 error= {
@@ -370,7 +366,7 @@ def register():
                     },
                     'register': bool(access)
                 } #LEOs comment: JSON structure seems coorect. 
-                print('the user is aleardy in the database')
+                print('the user is already in the database')
                 cur.close()
                 # conn.close()
             else:
@@ -394,141 +390,36 @@ def register():
             conn.close()
     flash(error)
     return jsonify(error)    
-        # return "redirect to login"
 
+@app.route('/api/logout', methods= ['POST'])
+def logout():
+    #log info from /api/cities, får data fron front end med POST
+    data = request.get_json()
+    #expected to get these json-files from front end
+    username= data['username'] 
+    password = data['password'] 
+    lastsearch = data['lastsearch'] 
 
-            # = {} AND user_password= {}' .format(username, password ))
+    conn = psycopg2.connect(
+            database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+            )
+    cur = conn.cursor()
+    cur.execute(
+                'INSERT INTO users (last_search) VALUES (%s)',
+                (lastsearch))
+    id= cur.execute(
+                     'SELECT user_id FROM users WHERE users.user_name = %s AND users.user_password= %s', (username, password))
+    error= {
+            'user':{
+                'user_id': cur.fetchone()[0],
+                'username': username,
+                'saved': bool(id)
+                }}            
+    conn.commit()
+    conn.close()
 
-        # In case of not registerd so he will be, and the data will peremently be saved
-        # if error is None:
-        #     cur.execute(
-        #         'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
-        #         (username, password)
-        #     )
-        #     cur.close()
-        #     conn.commit()
-        #     conn.close()
-        #     return "redirect to login"
-        #     # return redirect(url_for('login'))
-
-        # flash(error)
-
-    # return render_template('auth/register.html')
-    # return "render template register"
-
-
-# Set the secret key to some random bytes. Keep this really secret!
-app.secret_key = b'123'
-
-# def get_dbConn():
-#     if 'dbConn' not in g:
-#         myConn = 'dbname=5432 user=postgres password=blod'
-#         connStr = myConn
-#         g.dbConn = psycopg2.connect(connStr)
-    
-#     return g.dbConn
-
-# def close_dbConn():
-#     if 'dbConn' in g:
-#         g.dbComm.close()
-        # g.pop('dbConn')
-
-# @app.route('/register', methods=('GET', 'POST')) # make POST request with curl (need front end data, the curl sends a request)
-# def register():
-#     if request.method == 'POST':
-#         username = request.form['user_name']
-#         password = request.form['user_password']
-#         error = None
-
-#         if not username:
-#             error = 'Username is required.'
-#         elif not password:
-#             error = 'Password is required.'
-#         else :
-#             conn = get_dbConn()
-#             cur = conn.cursor()
-#             cur.execute(
-#             'SELECT user_id FROM users WHERE user_name = %s', (username,)) ##  'SELECT user_id FROM blog_user WHERE user_name = %s', (username,))
-#             if cur.fetchone() is not None:
-#                 error = 'User {} is already registered.'.format(username)
-#                 cur.close()
-
-#         if error is None:
-#             conn = get_dbConn()
-#             cur = conn.cursor()
-#             cur.execute(
-#                 'INSERT INTO users (user_name, user_password) VALUES (%s, %s)',
-#                 (username, generate_password_hash(password))
-#             )
-#             response = cur.fetchall() #guess
-#             cur.close()
-#             conn.commit()
-#             return redirect(url_for('login'))
-
-#         flash(error)
-
-        
-#         return jsonify(response) #render_template('auth/register.html')
-
-# @app.route('/login', methods=('GET', 'POST'))
-# def login():
-#     if request.method == 'POST':
-#         #curl -X POST -H "Content-Type: application/json" \ -d '{"username": "user", "password": "pass"}' \ http://127.0.0.1:5000/register \
-#         #curl -X POST -F 'name=user' -F 'password=passw' http://127.0.0.1:5000/register
-#         #curl -X POST -d "userId=5&title=Hello World&body=Post body." http://127.0.0.1:5000/register
-#         #curl -i -X POST -H 'Content-Type: application/json' -d '{"name": "user", "password": "passw"}' http://127.0.0.1:5000/register
-
-#         username = request.form['username']
-#         password = request.form['password']
-#         conn = get_dbConn()
-#         cur = conn.cursor()
-#         error = None
-#         cur.execute(
-#             'SELECT * FROM users WHERE user_name = %s', (username,) 
-#         )
-#         user = cur.fetchone()
-#         cur.close()
-#         conn.commit()
-
-#         if user is None:
-#             error = 'Incorrect username.'
-#         elif not check_password_hash(user[2], password):
-#             error = 'Incorrect password.'
-
-#         if error is None:
-#             session.clear()
-#             session['user_id'] = user[0]
-#             return redirect(url_for('index'))
-
-#         flash(error)
-        
-#         response = cur.fetchall() #guess
-#         return jsonify(response) #render_template('auth/login.html')
-
-# @app.route('/logout') # Logout will not need any endpoint, it will be handled 100% on frontend /Leo
-# def logout():
-#     session.clear()
-#     return redirect(url_for('register'))
-
-
-# def load_logged_in_user():
-#     username = session.get('user_name')
-
-#     if username is None:
-#         g.user = None
-#     else:
-#         conn = get_dbConn()
-#         cur = conn.cursor()
-#         cur.execute(
-#             'SELECT * FROM users WHERE user_name = %s', (username,)
-#         )
-#         g.user = cur.fetchone()
-#         cur.close()
-#         conn.commit()
-#     if g.user is None:
-#         return False
-#     else: 
-#         return True
+    #returns boolean to see if operation was succesful (if the last search was stored in the database)
+    return jsonify(error)
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
