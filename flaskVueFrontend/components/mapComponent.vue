@@ -34,7 +34,6 @@ export default {
   props: {
     locations: {
       type: Array,
-      required: true,
     },
     latest: {
       type: Array,
