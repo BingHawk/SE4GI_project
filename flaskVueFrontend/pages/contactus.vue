@@ -1,7 +1,8 @@
-<template>
-  <card>
+<template >
+  <CardInfo :persons="persons">
+    
     <!-- :person="particles -->
-  </card>
+  </CardInfo>
 </template>
 
 <script>
@@ -18,6 +19,17 @@ export default {
     const { data } = await $axios.get("/api/contactus");
     console.log(data);
     console.log(data.contactus);
+    console.log(data.contactus[0]['first_name'])
+    console.log(data.contactus[0].first_name)
+      console.log(data.contactus[0]['last_name'])
+    console.log(data.contactus[0].last_name)
+      console.log(data.contactus[0]['nationality'])
+    console.log(data.contactus[0].nationality)
+      console.log(data.contactus[0]['nationality'])
+    console.log(data.contactus[0].nationality)
+    console.log(data.contactus[0])
+    console.log(data.contactus[0].first_name)
+    
     return {
       persons: data.contactus,
     };
