@@ -2,6 +2,8 @@ import psycopg2
 from osm import Osm
 import json
 
+import sys
+
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
 
@@ -15,7 +17,7 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer.
     MYUSER = 'postgres'
-    MYPWRD = 'postgres'
+    MYPWRD = 'qrC85Ba9Dpg'
     MYPORT = '5432'
 
     # Dictionary of the create statements for each table.
@@ -86,7 +88,13 @@ class Pg:
             cursor.execute(sql)
         conn.commit()
 
-        with open('flaskVueBackend/contacts.json') as f:
+        plattform = sys.platform
+        if plattform == 'darwin':
+            path = 'flaskVueBackend/db_initialization/contacts.json'
+        else:
+            path = 'flaskVueBackend\db_initialization\contacts.json'
+
+        with open(path) as f:
             contact = json.load(f)
         
         for person in contact.values():
