@@ -92,14 +92,14 @@ def get_locations():
                 'id': result['id'],
                 'cityName': result['name'], # Not correct, this is the name of the station. 
                 'coordinates': [result['coordinates']['longitude'],result['coordinates']['latitude']],
-                'particles': []
+                'particles': [],
                 }
             for parameter in result['parameters']:
                 particle = {
-                    'particleName': parameter['displayName'],
+                    'parameter': parameter['displayName'],
                     'value': parameter['lastValue'],
                     'unit': parameter['unit'],
-                    'lastUpdate': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
+                    'lastUpdated': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
                 }
                 location['particles'].append(particle)
         except KeyError:
