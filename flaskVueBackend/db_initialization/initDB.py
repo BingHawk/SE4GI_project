@@ -1,4 +1,3 @@
-import flask_cors
 import psycopg2
 
 from osm import Osm
