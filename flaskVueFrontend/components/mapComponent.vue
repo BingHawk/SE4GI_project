@@ -66,10 +66,10 @@ export default {
     this.mapbox = Mapbox;
   },
 
-  mounted() {
-    console.log("Latest:" + this.latest[0].coordinates);
+  // mounted() {
+  //   console.log("Latest:" + this.latest[0].coordinates);
 
-  },
+  // },
 };
 </script>
 <style lang="scss">

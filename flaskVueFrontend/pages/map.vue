@@ -12,7 +12,7 @@
           name="Cities"
           id="idCitiesDDL"
           :value="$store.state.lastCity"
-          @change="$store.commit('setCity',$event.target.value)"
+          @change="$store.commit('setCity', $event.target.value)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -51,7 +51,7 @@
 
 <script>
 import MapComponent from "../components/mapComponent.vue";
-var coords = {};
+
 export default {
   name: "MapPage",
   components: {
@@ -69,6 +69,7 @@ export default {
       var objectToArray = latest.data.locations;
       var arrayOfCities = [];
 
+      let coords = {}
       for (let index = 0; index < objectToArray.length; index++) {
         if (
           cities.data.cities.includes(
@@ -87,6 +88,7 @@ export default {
         latest: latest.data.locations,
         city: cities.data,
         selectValues: arrayOfCities,
+        coords
       };
     } catch (e) {
       console.log(e);
@@ -94,27 +96,35 @@ export default {
   },
   methods: {
     onChange(city) {
+      console.log("onchange running:", city);
       var chosenCity = city;
+      console.log("onchange running:", this.coords[chosenCity]);
+
       for (let index = 4; index < 8; index++) {
         this.$refs.map._data.zoom = index;
       }
 
-      this.$refs.map._data.center = coords[chosenCity];
+      if (!this.coords[chosenCity]){
+        console.log("in if:", this.coords[chosenCity]);
+      }
+
+      this.$refs.map._data.center = this.coords[chosenCity];
     },
   },
-    created(){
-    //Makes the page listen to the store and update charts when store changes
-    this.unsubscribe = this.$store.subscribe((setCity, state) => {  
-    console.log("from subscribe",state.lastCity)
-    this.onChange(state.lastCity)
+  created() {
+    console.log("created running");
 
-})
+    //Makes the page listen to the store and update charts when store changes
+    this.unsubscribe = this.$store.subscribe((setCity, state) => {
+      console.log("from subscribe", state.lastCity);
+      this.onChange(state.lastCity);
+    });
   },
-  beforeDestroy(){
-    console.log("in beforeDestroy")
-    // Stops listening to the store when page is left. 
-    this.unsubscribe()
-  }
+  beforeDestroy() {
+    console.log("in beforeDestroy");
+    // Stops listening to the store when page is left.
+    this.unsubscribe();
+  },
 };
 </script>
 
