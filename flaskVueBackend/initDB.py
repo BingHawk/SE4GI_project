@@ -1,6 +1,5 @@
 import psycopg2
 from osm import Osm
-import pandas as pd
 import json
 
 
@@ -87,40 +86,18 @@ class Pg:
             cursor.execute(sql)
         conn.commit()
 
-        # Closing the connection
-        conn.close()
-
-# our version:
-        conn = psycopg2.connect(
-            database="SE4G", user=user, password=password, host='localhost', port=port
-            )
-        # Creating a cursor object using the cursor() method
-        cursor = conn.cursor()
-
-        # Creates all the tables in the list of tables.
-        for table in self.create.keys():
-            # Doping table if already exists.
-            cursor.execute(self._drop(table))
-
-            cursor.execute(self.create[table])
-            print("Table created successfully........")
-            conn.commit()
-
-if __name__ == "__main__":
-    Pg = Pg()
-    contacts = pd.read_json("flaskVueBackend\contacts.json", typ="series")
-    conn = psycopg2.connect(
-                database="SE4G", user = 'postgres', password= 'postgres', host='localhost', port= '5432'
-            )
-    cur = conn.cursor()
-        # Adding the contact data
-    for person in contacts:
-            print(person['first_name'])
-            cur.execute( 'INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES(%s, %s, %s, %s, %s)', (person['first_name'], person['nationality'], person['description'], person['nationality'], person['email'])
+        with open('flaskVueBackend/contacts.json') as f:
+            contact = json.load(f)
+        
+        for person in contact.values():
+            # print(person['first_name'])
+            cursor.execute( "INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES('{}', '{}', '{}', '{}', '{}')".format(person['first_name'], person['last_name'], person['description'], person['nationality'], person['email'])
             )
             print(f"Contacts info inserted successfully for {person['first_name']}.......")
 
-    conn.commit()
-
         # Closing the connection
-    conn.close()
+        conn.commit()
+        conn.close()
+
+if __name__ == "__main__":
+    Pg = Pg()
