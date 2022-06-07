@@ -133,9 +133,9 @@ def serve_logoutResult():
 @app.route('/api/contact', methods=["GET"])
 def serve_contactsInfo():
     print("getting contact info")
-    info = get_contactsInfo(MYUSER, MYPWRD, MYPORT)
+    info = getContactInfo(MYUSER, MYPWRD, MYPORT)
     return jsonify(info)
-    
+
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":

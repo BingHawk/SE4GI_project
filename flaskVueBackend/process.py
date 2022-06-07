@@ -173,7 +173,7 @@ def getCityCoords(cityNames, *args):
         cityCoords[result[1]] = [result[2],result[3]]
     
     return cityCoords
-def get_contactsInfo(*args):
+def getContactInfo(*args):
         # with app.app_context():
         #test code
             contactus=[]
