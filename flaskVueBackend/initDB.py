@@ -74,21 +74,21 @@ class Pg:
             print("Table created successfully........")
             conn.commit()
 
-        # # Getting the coordinates for cities
-        # cityCoords = Osm.getCities()
+        # Getting the coordinates for cities
+        cityCoords = Osm.getCities()
 
-        # # Adding the city data
-        # for city in cityCoords:
-        #     city['name'] = city['name'].replace("'", "''") #using double tics to escape from postgres reserved character '.
-        #     sql = '''
-        #     INSERT INTO city (city_name, longitude, latitude)
-        #     VALUES('{}', {}, {});
-        #     '''.format(city['name'], city['coordinates'][0], city['coordinates'][1])
-        #     cursor.execute(sql)
-        # conn.commit()
+        # Adding the city data
+        for city in cityCoords:
+            city['name'] = city['name'].replace("'", "''") #using double tics to escape from postgres reserved character '.
+            sql = '''
+            INSERT INTO city (city_name, longitude, latitude)
+            VALUES('{}', {}, {});
+            '''.format(city['name'], city['coordinates'][0], city['coordinates'][1])
+            cursor.execute(sql)
+        conn.commit()
 
-        # # Closing the connection
-        # conn.close()
+        # Closing the connection
+        conn.close()
 
 # our version:
         conn = psycopg2.connect(
@@ -105,27 +105,6 @@ class Pg:
             cursor.execute(self.create[table])
             print("Table created successfully........")
             conn.commit()
-
-
-    # contacts = pd.read_json("flaskVueBackend\contacts.json", typ="series")
-    # conn = psycopg2.connect(
-    #             database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
-    #         )
-    # cur = conn.cursor()
-    #     # Adding the contact data
-    # for person in contacts:
-    #         print(person['first_name'])
-    #         cur.execute( 'INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES(%s, %s, %s, %s, %s)', (person['first_name'], person['nationality'], person['description'], person['nationality'], person['email'])
-    #             )
-    #         print(f"Table created successfully for {person['first_name']}.......")
-    #             # .format(person['first_name'], person['last_name'], person['description'], person['nationality'], person['email'])
-    #         # SELECT user_id FROM users WHERE user_name = %s AND user_password= %s', (username, password))
-    #         # cur.execute(sql)
-    # conn.commit()
-
-    #     # Closing the connection
-    # conn.close()
-
 
 if __name__ == "__main__":
     Pg = Pg()
