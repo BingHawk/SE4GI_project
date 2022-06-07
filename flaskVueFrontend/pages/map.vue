@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <div
         class="btn-group btn-group-toggle "
-             :class="false ? 'float-left' : 'float-right'"
+        :class="false ? 'float-left' : 'float-right'"
         data-toggle="buttons"
         style="zindex-dropdown:100"
       >
@@ -11,6 +11,7 @@
           class="custom-select m-1  text-white w-100"
           name="Cities"
           id="idCitiesDDL"
+          @change="onChange($event)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -40,9 +41,7 @@
         <h4 slot="header" class="card-title">MapBox Map</h4>
 
         <div id="regularMap" class="map">
-          <map-component
-            :latest="latest"
-          ></map-component>
+          <map-component :latest="latest" ref="map"></map-component>
         </div>
       </card>
     </div>
@@ -51,6 +50,7 @@
 
 <script>
 import MapComponent from "../components/mapComponent.vue";
+var coords = {};
 export default {
   name: "MapPage",
   components: {
@@ -60,22 +60,41 @@ export default {
     console.log("asyncData running");
     try {
       const [latest, cities] = await Promise.all([
-        $axios.get("/api/latest",{responseType: "json"}),
-        $axios.get("/api/cities",{responseType: "json"})
+        $axios.get("/api/latest", { responseType: "json" }),
+        $axios.get("/api/cities", { responseType: "json" }),
       ]);
-      
-      console.log(latest.data);
-      console.log(cities.data);
+
+      // console.log(cities.data);
+      var objectToArray = latest.data.locations;
+      var arrayOfCities = [];
+
+      for (let index = 0; index < objectToArray.length; index++) {
+        arrayOfCities[index] =
+          objectToArray[Object.keys(objectToArray)[index]].cityName;
+        coords[`${objectToArray[Object.keys(objectToArray)[index]].cityName}`] =
+          objectToArray[Object.keys(objectToArray)[index]].coordinates;
+      }
 
       return {
         latest: latest.data.locations,
         city: cities.data,
-        selectValues: cities.data.cities,
+        selectValues: arrayOfCities,
       };
     } catch (e) {
       console.log(e);
     }
   },
+  methods: {
+    onChange(event) {
+      var chosenCity = event.target.value;
+      for (let index = 4; index < 8; index++) {
+        this.$refs.map._data.zoom = index;
+      }
+
+      this.$refs.map._data.center = coords[chosenCity];
+    },
+  },
+  mounted() {},
 };
 </script>
 
