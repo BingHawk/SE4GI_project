@@ -7,7 +7,7 @@ from historical import getMonthData, getYearData
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'blod'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -118,9 +118,15 @@ def get_latest():
     
     #get values
     r = requests.get(latestEndpoint)
+
+    try: 
+        results = r.json()['results']
+    except KeyError:
+        print(r.json())
+        return "something went wrong", 500
     
     locations = {}
-    for result in r.json()['results']:
+    for result in results:
         if result['city'] == None:
             continue
         else:
@@ -277,16 +283,22 @@ def authenticate():
                                 "username": res[1],
                                 "userID": res[0],
                              },
-                    "access": True
-                        }
+                    "access": True,
+                    "lastSearch": res[3]
+                    }
                 print('the user is being verified to be registered, hence it has been authenticated')
                 print("Authenticate recieved")
                 cur.close()
             # If he is not registered then the authentication fails    
             else:
                 responde={
-                    "access": False
-                }
+                    "user": {
+                                "username": None,
+                                "userID": None,
+                             },
+                    "access": False,
+                    "lastSearch": None
+                    }
                 print('the user is not being verified to be registered, hence it has to register first')
                 print("Authenticate not being granted")
                 # cur.execute(
