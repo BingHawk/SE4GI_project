@@ -11,7 +11,8 @@
           class="custom-select m-1  text-white w-100"
           name="Cities"
           id="idCitiesDDL"
-          @change="onChange($event)"
+          :value="$store.state.lastCity"
+          @change="$store.commit('setCity',$event.target.value)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -92,8 +93,8 @@ export default {
     }
   },
   methods: {
-    onChange(event) {
-      var chosenCity = event.target.value;
+    onChange(city) {
+      var chosenCity = city;
       for (let index = 4; index < 8; index++) {
         this.$refs.map._data.zoom = index;
       }
@@ -101,7 +102,19 @@ export default {
       this.$refs.map._data.center = coords[chosenCity];
     },
   },
-  mounted() {},
+    created(){
+    //Makes the page listen to the store and update charts when store changes
+    this.unsubscribe = this.$store.subscribe((setCity, state) => {  
+    console.log("from subscribe",state.lastCity)
+    this.onChange(state.lastCity)
+
+})
+  },
+  beforeDestroy(){
+    console.log("in beforeDestroy")
+    // Stops listening to the store when page is left. 
+    this.unsubscribe()
+  }
 };
 </script>
 

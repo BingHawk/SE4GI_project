@@ -325,6 +325,7 @@ export default {
       this.account.loginModalVisible = true;
       this.account.registerModalVisible = false;
       this.account.missingLoginInfo = false;
+      this.account.wrongPassword = false
       // console.log("loginModalVisible:", this.loginModalVisible);
       // console.log("registerModalVisible", this.registerModalVisible);
     },
@@ -397,6 +398,7 @@ export default {
         this.account.registerFail = false;
         this.account.registerModalVisible = false;
         this.account.loginModalVisible = true;
+        this.account.wrongPassword = false;
 
         console.log(this.userCreatedModalVisible);
       } else {
