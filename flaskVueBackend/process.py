@@ -1,8 +1,10 @@
-from decimal import DivisionByZero
-from flask import jsonify
-import requests
 import datetime as dt
 import concurrent.futures
+import psycopg2
+
+
+from queries import queryByDay
+
 
 
 # t = dt.datetime.now()
@@ -17,7 +19,6 @@ import concurrent.futures
 
 def getMonthData(city):
     days = 30
-    print("querying moth data for {}".format(city))
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
@@ -66,7 +67,6 @@ def getMonthData(city):
 
 def getYearData(city):
     days = 365
-    print("querying year data for {}".format(city))
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
@@ -145,90 +145,34 @@ def getYearData(city):
 
         return {"time_year":time_year}
 
-def queryByDay(startDay, endDay, city):
-    inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
-    utcFormat = "%Y-%m-%dT%H:%M:%S+00:00" # Format recieved from openAQ 
+def getCityCoords(cityNames, *args):
 
-    d0 = startDay
-    d1 = d0 - dt.timedelta(days = 1) # The day before 
-    limit = 5000 # Number of results accepted per query. Fewer means better preformance but risk of missing data. 
+    cityString = ""
+    for city in cityNames:
+        city = city.replace("'","''")
+        cityString += "'{}',".format(city)
+    cityString += cityString[0:-1]
 
-    iter = 0
-    paramUnits= {}
-    res = {}
+    query = "SELECT * FROM city WHERE city_name in ({});".format(cityString)
 
-    maxPages = 10
-    while d0 != endDay: # Looping until every day of the month is done
-        # print("Querying day {}".format(iter+1),end="\r")
-        page = 1
-        getNextPage = True
-        while getNextPage: #Looping though paginations
-            d0String = d0.strftime(inFormat)+"%2B00%3A00"
-            d1String = d1.strftime(inFormat)+"%2B00%3A00"
-            url = f"https://api.openaq.org/v2/measurements?date_from={d1String}&date_to={d0String}&limit={limit}&page={page}&offset=0&sort=desc&radius=1000&city={city}&order_by=datetime"
-            # print(url)
+    
+    conn = psycopg2.connect(
+    database="SE4G", user = args[0], password= args[1], host='localhost', port= args[2]
+    )
 
-            r = requests.get(url)
-            resJson = r.json()
+    c = conn.cursor()
+    c.execute(query)
+    res = c.fetchall()
+    conn.commit()
+    conn.close()
 
-            # When an empty page is recieved, goes on to next day. 
-            if not resJson['results']:
-                break
-
-            if resJson['meta']['found'] < limit or page == maxPages:
-                getNextPage = False
-            else:
-                if page == 1:
-                    maxPages = resJson['meta']['found']// limit + 1
-                    print(maxPages)
-
-            page = page+1
-
-            # When an empty page is recieved, goes on to next day. 
-            if not resJson['results']:
-                break
-
-            # Target format: 
-            # res = {
-            #     dateTime: {
-            #         param1: {n: int, sum: float}
-            #         param2:{n: int, sum: float}
-            #         ...
-            #         },{
-            #         day2 = datetime,
-            #         param1: {n: int, sum: float}
-            #         param2:{n: int, sum: float}
-            #         ...
-            #        }, 
-            #    }
-            # }
-            for result in resJson['results']:
-                day = dt.datetime.strptime(result['date']['utc'],utcFormat).replace(hour=0,minute=0,second=0)
-
-                if day not in res.keys():
-                    res[day] = {}
-
-                param = result['parameter']
-                if param in res[day]:
-                    res[day][param]['n'] += 1
-                    res[day][param]['sum'] += result['value']
-                else:
-                    res[day][param] = {'n':1,'sum':result['value']}
-                
-                if param not in paramUnits:
-                    paramUnits[param] = result['unit']
-        
-        # Advance date counters
-        d0 = d1
-        d1 = d0 - dt.timedelta(days = 1)
-
-        # Safetybreak
-        iter += 1
-        if iter == 400:
-            print("Error: Infinite loop.")
-            break
-        
-    return res, paramUnits
+    # Format: cityCoords['city_name'] = [longitude, latitude]
+    # The format can be changed through the loop below
+    cityCoords = {} 
+    for result in res:
+        cityCoords[result[1]] = [result[2],result[3]]
+    
+    return cityCoords
 
 def test():
     cityDict = {
