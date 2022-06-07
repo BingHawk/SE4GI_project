@@ -187,7 +187,6 @@ def getContactInfo(*args):
             outcome=cur.fetchall()
             # print(outcome)
             for item in outcome:
-                print(item)
                 contact={ 'first_name': item[1].strip(), 'last_name':item[2].strip(), 'nationality':item[4].strip(), 'description':item[3].strip(), 'email':item[5].strip()}
                 contactus.append(contact)
             # print(contactus)
