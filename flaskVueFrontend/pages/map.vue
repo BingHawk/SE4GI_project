@@ -101,7 +101,7 @@ export default {
       var chosenCity = city;
       console.log("onchange running:", this.coords[chosenCity]);
 
-      for (let index = 4; index < 8; index++) {
+      for (let index = 4; index < 9; index++) {
         this.$refs.map._data.zoom = index;
       }
 
