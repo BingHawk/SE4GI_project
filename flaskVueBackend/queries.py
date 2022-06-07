@@ -54,7 +54,7 @@ def get_locations():
 
 def get_latest(cityCoords):
     #endpoint for latest values of meassuring stations in italy
-    latestEndpoint = 'https://api.openaq.org/v2/latest?limit=300&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
+    latestEndpoint = 'https://api.openaq.org/v2/latest?limit=1000&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
     
     #get values
     r = requests.get(latestEndpoint)
