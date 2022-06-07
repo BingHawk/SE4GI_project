@@ -129,6 +129,16 @@ def serve_logoutResult():
     except KeyError:
         return "Wrong input", 400
 
+# ROUTED FUNCTIONS FOR RETRIEVING THE DATA FOR THE CONTACT US PAGE
+@app.route('/api/contact', methods=["GET"])
+def serve_contactsInfo():
+    print("getting contact info")
+    info = getContactInfo(MYUSER, MYPWRD, MYPORT)
+    return jsonify(info)
+
+
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
+    # print(get_contactsInfo())
+    # print(get_locations())

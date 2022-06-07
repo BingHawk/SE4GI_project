@@ -16,14 +16,14 @@
           }"
         >
         </sidebar-item> -->
-        <!-- <sidebar-item
+        <sidebar-item
           :link="{
             name: $t('sidebar.icons'),
             icon: 'tim-icons icon-atom',
             path: '/icons'
           }"
         >
-        </sidebar-item> -->
+        </sidebar-item>
         <sidebar-item
           :link="{
             name: $t('sidebar.maps'),
@@ -44,9 +44,9 @@
 
         <sidebar-item
           :link="{
-            name: $t('sidebar.about'),
+            name: $t('sidebar.contact'),
             icon: 'tim-icons icon-heart-2',
-            path: '/about'
+            path: '/contactus'
           }"
         >
         </sidebar-item>
