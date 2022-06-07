@@ -253,8 +253,30 @@ def register():
     print("Register recieved request")
     return "Register recieved"
 
+# ROUTED FUNCTIONS FOR RETRIEVING THE DATA FOR THE CONTACT US PAGE
+@app.route('/api/contactus', methods=["GET"])
+def get_contactsInfo():
+        # with app.app_context():
+        #test code
+            contactus=[]
+            conn = psycopg2.connect(
+                database="SE4G", user = MYUSER, password= MYPWRD, host='localhost', port= MYPORT
+                )
+            cur = conn.cursor()
+            cur.execute('SELECT * FROM contacts')
+            outcome=cur.fetchall()
+            # print(outcome)
+            for item in outcome:
+                contact={ 'first_name': item[1].strip(), 'last_name':item[2].strip(), 'nationality':item[3].strip(), 'description':item[4].strip(), 'email':item[5].strip()}
+                contactus.append(contact)
+            # print(contactus)
+            info={"contactus":contactus}
+            print(info)
+            # outcome2=jsonify(info)
+            return info
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
     app.run(debug=True,  use_reloader=False)
+    # print(get_contactsInfo())
     # print(get_locations())
