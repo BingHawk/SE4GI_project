@@ -1,5 +1,5 @@
 export const state = () => ({
-    lastCity: "Roma",
+    lastCity: "Choose City",
 });
 
 export const mutations = {

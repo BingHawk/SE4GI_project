@@ -33,7 +33,7 @@
           <option
             v-for="selectValue in selectValues"
             :value="selectValue"
-            v-bind:key="option"
+            v-bind:key="selectValue"
             >{{ selectValue }}</option
           >
         </select>
@@ -69,7 +69,7 @@ export default {
       var objectToArray = latest.data.locations;
       var arrayOfCities = [];
 
-      let coords = {}
+      let coords = {};
       for (let index = 0; index < objectToArray.length; index++) {
         if (
           cities.data.cities.includes(
@@ -83,12 +83,13 @@ export default {
           ] = objectToArray[Object.keys(objectToArray)[index]].coordinates;
         }
       }
+      arrayOfCities.sort().push("Choose City")
 
       return {
         latest: latest.data.locations,
         city: cities.data,
         selectValues: arrayOfCities,
-        coords
+        coords,
       };
     } catch (e) {
       console.log(e);
@@ -104,7 +105,7 @@ export default {
         this.$refs.map._data.zoom = index;
       }
 
-      if (!this.coords[chosenCity]){
+      if (!this.coords[chosenCity]) {
         console.log("in if:", this.coords[chosenCity]);
       }
 
@@ -119,6 +120,11 @@ export default {
       console.log("from subscribe", state.lastCity);
       this.onChange(state.lastCity);
     });
+  },
+  mounted(){
+    if (this.$store.state.lastCity != "Choose City"){
+      this.onChange(this.$store.state.lastCity)
+    }
   },
   beforeDestroy() {
     console.log("in beforeDestroy");

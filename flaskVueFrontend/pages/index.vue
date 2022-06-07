@@ -33,7 +33,7 @@
           <option
             v-for="selectValue in selectValues"
             :value="selectValue"
-            v-bind:key="option"
+            v-bind:key="selectValue"
             >{{ selectValue }}</option
           >
         </select>
@@ -164,7 +164,6 @@ let yearChartLabels = [
   "APR",
   "MAY",
   "JUN",
-  
 ];
 let monthChartLabels = [
   1,
@@ -267,6 +266,8 @@ export default {
     let activeCities = cities.data.cities;
 
     activeCities = activeCities.filter((city) => !missedCities.includes(city));
+
+    activeCities.sort().push("Choose City")
 
     return {
       selectValues: activeCities,
@@ -383,9 +384,12 @@ export default {
   },
   mounted() {
     // Gets the city from the store and creates charts
-    console.log("in mounted", this.$store.state.lastCity);
-    this.getYearChart(this.$store.state.lastCity);
-    this.getMonthChart(this.$store.state.lastCity);
+    if (this.$store.state.lastCity != "Choose City") {
+      console.log("in mounted", this.$store.state.lastCity);
+      this.getYearChart(this.$store.state.lastCity);
+      this.getMonthChart(this.$store.state.lastCity);
+    }
+
   },
   created() {
     //Makes the page listen to the store and update charts when store changes
