@@ -152,18 +152,19 @@ import { mapState } from "vuex";
 let bigChartMonthData = [[], [], []];
 let bigChartYearData = [[], [], []];
 let yearChartLabels = [
-  "JAN",
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
   "JUL",
   "AUG",
   "SEP",
   "OCT",
   "NOV",
   "DEC",
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  
 ];
 let monthChartLabels = [
   1,
