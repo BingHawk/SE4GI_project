@@ -13,6 +13,8 @@
 
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
+ 
+
 export default {
   mode: "universal",
   /*
@@ -47,7 +49,20 @@ export default {
     },
   },
   router: {
-    linkExactActiveClass: "active",
+    linkExactActiveClass: "Active",
+    base: '/',
+    extendRoutes: (routesIn) => {
+      routesIn.forEach((r) => {
+        if (r.path==='/map') {
+          r.path = r.path.replace('/map', '/');
+        }
+         else if(r.path==='/') {
+           r.path = r.path.replace('/', '/dashboard');
+         }
+        
+      });
+      return routesIn;
+    },
   },
   /*
    ** Customize the progress-bar color

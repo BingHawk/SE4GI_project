@@ -1,4 +1,6 @@
+import flask_cors
 import psycopg2
+
 from osm import Osm
 import json
 
@@ -17,13 +19,13 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer.
     MYUSER = 'postgres'
-    MYPWRD = 'qrC85Ba9Dpg'
-    MYPORT = '5432'
+    MYPWRD = '123456'
+    MYPORT = '5433'
 
     # Dictionary of the create statements for each table.
-    #   There has to be one key equal to every item int tables.
-    #   The name of the created table must be the same as the name of the table in the tables list
-    create = {
+    #   There has to be one key equal to every item int tables. 
+    #   The name of the created table must be the same as the name of the table in the tables list 
+    tables = {
         "city": '''CREATE TABLE city(
             city_id SMALLINT GENERATED ALWAYS AS IDENTITY,
             city_name VARCHAR NOT NULL,
@@ -66,12 +68,12 @@ class Pg:
         # Creating a cursor object using the cursor() method
         cursor = conn.cursor()
 
-        # Creates all the tables in the list of tables.
-        for table in self.create.keys():
-            # Doping table if already exists.
+        # Creates all the tables in the list of tables. 
+        for table in self.tables.keys():
+            #Doping table if already exists.
             cursor.execute(self._drop(table))
 
-            cursor.execute(self.create[table])
+            cursor.execute(self.tables[table])
             print("Table created successfully........")
             conn.commit()
 
