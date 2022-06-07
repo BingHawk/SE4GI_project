@@ -277,7 +277,7 @@ export default {
       const { path } = this.$route;
       let parts = path.split("/");
       if (parts == ",") {
-        return "Dashboard";
+        return "Map";
       }
       return parts.map((p) => this.capitalizeFirstLetter(p)).join(" ");
     },
