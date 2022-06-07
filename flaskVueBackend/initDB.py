@@ -15,13 +15,13 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
     MYUSER = 'postgres'
-    MYPWRD = 'postgres'
-    MYPORT = '5432'
+    MYPWRD = '123456'
+    MYPORT = '5433'
 
     # Dictionary of the create statements for each table.
     #   There has to be one key equal to every item int tables. 
     #   The name of the created table must be the same as the name of the table in the tables list 
-    create = {
+    tables = {
         "city": '''CREATE TABLE city(
             city_id SMALLINT GENERATED ALWAYS AS IDENTITY,
             city_name VARCHAR NOT NULL,
@@ -65,11 +65,11 @@ class Pg:
         cursor = conn.cursor()
 
         # Creates all the tables in the list of tables. 
-        for table in self.create.keys():
+        for table in self.tables.keys():
             #Doping table if already exists.
             cursor.execute(self._drop(table))
 
-            cursor.execute(self.create[table])
+            cursor.execute(self.tables[table])
             print("Table created successfully........")
             conn.commit()
 
