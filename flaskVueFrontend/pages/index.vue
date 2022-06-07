@@ -12,7 +12,7 @@
           name="Cities"
           id="idCitiesDDL"
           :value="$store.state.lastCity"
-          @change="$store.commit('setCity',$event.target.value)"
+          @change="$store.commit('setCity', $event.target.value)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -147,8 +147,7 @@ import * as chartConfigs from "@/components/Charts/config";
 import TaskList from "@/components/Dashboard/TaskList";
 import config from "@/config";
 import { Table, TableColumn } from "element-ui";
-import { mapState } from 'vuex';
-
+import { mapState } from "vuex";
 
 let bigChartMonthData = [[], [], []];
 let bigChartYearData = [[], [], []];
@@ -318,11 +317,11 @@ export default {
     },
     bigLineChartCategories() {
       return [
-        { name: "Co",},
+        { name: "Co" },
         {
           name: "So2",
         },
-        { name: "O3",},
+        { name: "O3" },
       ];
     },
   },
@@ -356,50 +355,50 @@ export default {
       this.yearBigLineChart.chartData = chartData;
       this.yearBigLineChart.activeIndex = index;
     },
-    //Queries data and creates charts. 
-    async getCharts(cityName) {
+    //Queries data and creates charts.
+    async getYearChart(cityName) {
       let axios = this.$axios;
-      const [monthData, yearData] = await Promise.all([
-        axios.get(`/api/month/${cityName}`),
-        axios.get(`/api/year/${cityName}`),
-      ]);
-
-      // console.log(yearData.data);
-
-      const monthRes = monthData.data.time_month;
+      const yearData = await axios.get(`/api/year/${cityName}`);
       const yearRes = yearData.data.time_year;
-
-      bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
-      bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
-      bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
       bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
       bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
       bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
-      this.initMonthChart(0);
-      this.initYearChart(0)
+      this.initYearChart(0);
     },
-    unsubscribe(){}, //Waiting to be assigned unsubscribe from created()
+    async getMonthChart(cityName) {
+      let axios = this.$axios;
+      const monthData = await axios.get(`/api/month/${cityName}`);
+      const monthRes = monthData.data.time_month;
+
+      bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
+      bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
+      bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
+
+      this.initMonthChart(0);
+    },
+    unsubscribe() {}, //Waiting to be assigned unsubscribe from created()
   },
   mounted() {
     // Gets the city from the store and creates charts
-    console.log("in mounted", this.$store.state.lastCity)
-    this.getCharts(this.$store.state.lastCity);
+    console.log("in mounted", this.$store.state.lastCity);
+    this.getYearChart(this.$store.state.lastCity);
+    this.getMonthChart(this.$store.state.lastCity);
   },
-  created(){
+  created() {
     //Makes the page listen to the store and update charts when store changes
-    this.unsubscribe = this.$store.subscribe((setCity, state) => {  
-    console.log("from subscribe",state.lastCity)
-    this.getCharts(state.lastCity)
-
-})
+    this.unsubscribe = this.$store.subscribe((setCity, state) => {
+      console.log("from subscribe", state.lastCity);
+      this.getYearChart(state.lastCity);
+      this.getMonthChart(state.lastCity);
+    });
   },
-  beforeDestroy(){
-    console.log("in beforeDestroy")
-    // Stops listening to the store when page is left. 
-    this.unsubscribe()
-  }
+  beforeDestroy() {
+    console.log("in beforeDestroy");
+    // Stops listening to the store when page is left.
+    this.unsubscribe();
+  },
 };
 </script>
 <style></style>
