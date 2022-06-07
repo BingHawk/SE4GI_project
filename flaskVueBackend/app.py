@@ -114,7 +114,7 @@ def get_locations():
 @app.route('/api/latest', methods=["GET"])
 def get_latest():
     #endpoint for latest values of meassuring stations in italy
-    latestEndpoint = 'https://api.openaq.org/v2/latest?limit=1000&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
+    latestEndpoint = 'https://api.openaq.org/v2/latest?limit=300&page=1&offset=0&sort=desc&radius=1000&country_id=IT&order_by=lastUpdated&dumpRaw=false'
     
     #get values
     r = requests.get(latestEndpoint)
@@ -225,10 +225,10 @@ def get_cities(cityname):
             average= round(sum(item)/len(item),2)       
         except ZeroDivisionError:
             average= None
-        parametr = {'particleName': key,  'unit': 	"µg/m³" , 'value': average}
+        parametr = {'parameter': key,  'unit': 	"µg/m³" , 'value': average}
         parameters.append(parametr)
-    city={'id':id,'city':cityName , 'lastUpdate':lastUpdate,'Measurements':parameters }
-    response = jsonify({'cities': city})
+    city={'id':id,'cityName':cityName , 'lastUpdated':lastUpdate,'Measurements':parameters }
+    response = jsonify({'city': city})
     return response  
 
 @app.route('/api/month/<city>', methods = ['GET'])
@@ -381,9 +381,9 @@ def logout():
     error = {
             'user':{
                 'user_id': cur.fetchone()[0],
-                'username': username,
-                'saved': bool(id)
-                }}  
+                'username': username
+                },
+            'saved': bool(id)}  
     print(error)         
     conn.commit()
     conn.close()
