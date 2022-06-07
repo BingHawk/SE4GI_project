@@ -173,7 +173,24 @@ def getCityCoords(cityNames, *args):
         cityCoords[result[1]] = [result[2],result[3]]
     
     return cityCoords
-
+def get_contactsInfo(*args):
+        # with app.app_context():
+        #test code
+            contactus=[]
+            conn = psycopg2.connect(
+                database="SE4G", user = args[0], password= args[1], host='localhost', port= args[2]
+                )
+            cur = conn.cursor()
+            cur.execute('SELECT * FROM contacts')
+            outcome=cur.fetchall()
+            # print(outcome)
+            for item in outcome:
+                contact={ 'first_name': item[1].strip(), 'last_name':item[2].strip(), 'nationality':item[3].strip(), 'description':item[4].strip(), 'email':item[5].strip()}
+                contactus.append(contact)
+            # print(contactus)
+            info={"contactus":contactus}
+            # outcome2=jsonify(info)
+            return info
 def test():
     cityDict = {
         'Alessandria': ['Alessandria'],
