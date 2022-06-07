@@ -53,7 +53,7 @@ export default {
       accessToken:
         "pk.eyJ1IjoiYmluZ2hhd2siLCJhIjoiY2wzMzB5OHd1MDNnYjNmcXNzZDNtbDhlMCJ9.3tvN62AljWjE75-vCY3qOQ",
       mapStyle: "mapbox://styles/mapbox/streets-v11",
-      center: [9.18, 45.4],
+      center: [10, 43],
       zoom: 4,
     };
   },
