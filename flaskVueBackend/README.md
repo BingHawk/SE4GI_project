@@ -2,12 +2,25 @@
 
 This is the backend of the project. This will contain all python code.
 
-## Terminology
+## files
 
-The project will deal with two REST API:s:
+The app.py file is the main file and here are all the endpoints implemented with flask. Here
+you will also find the variables for managing the database connection when running the program
 
-- OPEN AQ which stores the data and is queried from this folder. This will be called "the AQ API" or "the API
-- The API that this project implements. This will be called "the backend" or "flask"
+
+The queries.py file contains all the calls to the openAQ API and some parsing of the recieved
+data
+
+
+The process.py file contains all processing functions that handle information to be sent from
+flask
+
+
+The user.py file contains all functions dealing with the user functionalities of the app.
+
+
+The db_initalization folder contains the code needed to initialize the database. It should only
+ne run once and then be left alone. 
 
 ## Role
 
