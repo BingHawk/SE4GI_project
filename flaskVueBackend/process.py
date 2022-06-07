@@ -173,6 +173,8 @@ def getCityCoords(cityNames, *args):
         cityCoords[result[1]] = [result[2],result[3]]
     
     return cityCoords
+
+
 def getContactInfo(*args):
         # with app.app_context():
         #test code
@@ -185,7 +187,8 @@ def getContactInfo(*args):
             outcome=cur.fetchall()
             # print(outcome)
             for item in outcome:
-                contact={ 'first_name': item[1].strip(), 'last_name':item[2].strip(), 'nationality':item[3].strip(), 'description':item[4].strip(), 'email':item[5].strip()}
+                print(item)
+                contact={ 'first_name': item[1].strip(), 'last_name':item[2].strip(), 'nationality':item[4].strip(), 'description':item[3].strip(), 'email':item[5].strip()}
                 contactus.append(contact)
             # print(contactus)
             info={"contactus":contactus}
