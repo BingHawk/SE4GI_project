@@ -16,7 +16,7 @@ export default {
   },
   async asyncData({ $axios }) {
     console.log("asyncData running");
-    const { data } = await $axios.get("/api/contactus");
+    const { data } = await $axios.get("/api/contact");
     console.log(data);
     console.log(data.contactus);
     console.log(data.contactus[0]['first_name'])

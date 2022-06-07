@@ -7,7 +7,7 @@ from user import *
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = 'postgres'
+MYPWRD = 'qrC85Ba9Dpg'
 MYPORT = '5432'
 
 #### FLASK CONFIGURATION
@@ -130,7 +130,7 @@ def serve_logoutResult():
         return "Wrong input", 400
 
 # ROUTED FUNCTIONS FOR RETRIEVING THE DATA FOR THE CONTACT US PAGE
-@app.route('/api/contactus', methods=["GET"])
+@app.route('/api/contact', methods=["GET"])
 def get_contactsInfo():
         # with app.app_context():
         #test code

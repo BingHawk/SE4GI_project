@@ -44,9 +44,9 @@
 
         <sidebar-item
           :link="{
-            name: $t('sidebar.about'),
+            name: $t('sidebar.contact'),
             icon: 'tim-icons icon-heart-2',
-            path: '/about'
+            path: '/contactus'
           }"
         >
         </sidebar-item>
