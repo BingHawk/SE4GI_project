@@ -19,7 +19,6 @@ from queries import queryByDay
 
 def getMonthData(city):
     days = 30
-    print("querying moth data for {}".format(city))
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
@@ -68,7 +67,6 @@ def getMonthData(city):
 
 def getYearData(city):
     days = 365
-    print("querying year data for {}".format(city))
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 

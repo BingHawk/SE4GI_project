@@ -31,12 +31,14 @@ print("Setup complete")
 #### ROUTED FUNCTIONS THAT SEND COORDINATES
 @app.route('/api/locations', methods=["GET"])
 def serve_locations():
+    print("getting locations")
     response = get_locations()
     return jsonify(response)
 
 
 @app.route('/api/latest', methods=["GET"])
 def serve_latest():
+    print("getting latest")
     response = get_latest(Cache.cityCoords)
     return jsonify(response)
 
@@ -44,6 +46,7 @@ def serve_latest():
 #### ROUTED FUNCTIONS THAT DOES NOT SEND COORDINATES
 @app.route('/api/cities', methods = ['GET']) # Moved the actual API call to another function to be able to reuse getCityNames() elsewhere. 
 def serve_cityNames():
+    print("getting cityNames")
     return jsonify({'cities':Cache.cityNames})
 
 
@@ -52,7 +55,8 @@ def serve_cities(cityname):
     cityName = cityname.title()
     if cityName not in Cache.cityNames:
         return "City {} does not exist in database".format(cityName), 400
-    
+    print("getting data for",cityName)
+
     response = get_cities(cityName)
     return jsonify(response) 
 
@@ -60,6 +64,7 @@ def serve_cities(cityname):
 @app.route('/api/month/<city>', methods = ['GET'])
 def serveMonthData(city):
     if city.title() in Cache.cityNames:
+        print("Querying month data for",city.title())
         res = getMonthData(city.title())
         return jsonify(res)
     else:
@@ -68,6 +73,7 @@ def serveMonthData(city):
 @app.route('/api/year/<city>', methods = ['GET'])
 def serveYearData(city):
     if city.title() in Cache.cityNames:
+        print("Querying year data for",city.title())
         res = getYearData(city.title())
         return jsonify(res)
     else:
@@ -87,6 +93,7 @@ def serve_authResult():
     try:
         username= data['username']
         password = data['password']
+        print("Handling authenticate request for",username)
         result = authenticate(username, password, MYUSER, MYPWRD, MYPORT)
         return jsonify(result)
     except KeyError:
@@ -104,6 +111,7 @@ def serve_regResult():
     try:
         username= data['username']
         password = data['password']
+        print("Handling register request for",username)
         result = register(username, password, MYUSER, MYPWRD, MYPORT)
         return jsonify(result)
     except KeyError:
@@ -115,6 +123,7 @@ def serve_logoutResult():
     try:
         username= data['username']
         lastsearch = data['lastsearch']
+        print("Handling logout request for",username)
         result = logout(username, lastsearch, MYUSER, MYPWRD, MYPORT)
         return jsonify(result)
     except KeyError:
