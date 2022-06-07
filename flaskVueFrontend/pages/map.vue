@@ -69,10 +69,17 @@ export default {
       var arrayOfCities = [];
 
       for (let index = 0; index < objectToArray.length; index++) {
-        arrayOfCities[index] =
-          objectToArray[Object.keys(objectToArray)[index]].cityName;
-        coords[`${objectToArray[Object.keys(objectToArray)[index]].cityName}`] =
-          objectToArray[Object.keys(objectToArray)[index]].coordinates;
+        if (
+          cities.data.cities.includes(
+            objectToArray[Object.keys(objectToArray)[index]].cityName
+          )
+        ) {
+          arrayOfCities[index] =
+            objectToArray[Object.keys(objectToArray)[index]].cityName;
+          coords[
+            `${objectToArray[Object.keys(objectToArray)[index]].cityName}`
+          ] = objectToArray[Object.keys(objectToArray)[index]].coordinates;
+        }
       }
 
       return {
