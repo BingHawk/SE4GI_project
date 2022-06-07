@@ -355,13 +355,15 @@ export default {
         password: hashedPassword,
       });
 
-      console.log(loginResponse.data.access);
+      console.log(loginResponse.data);
 
       if (loginResponse.data.access) {
         console.log("authentication success");
         this.account.loggedIn = true;
         this.account.wrongPassword = false;
         this.account.loginModalVisible = false;
+        this.$store.commit('setCity',loginResponse.data.lastSearch)
+        console.log(this.$store.state.lastCity)
       } else {
         this.account.wrongPassword = true;
         this.account.userCreatedMessage = false;
@@ -406,7 +408,8 @@ export default {
       this.account.loggedIn = false;
 
 
-      const lastsearch = "Firenze";
+      const lastsearch = this.$store.state.lastCity;
+      console.log(lastsearch);
 
       const logoutResponse = await this.$axios.post("/api/logout", {
         username: this.account.username,
