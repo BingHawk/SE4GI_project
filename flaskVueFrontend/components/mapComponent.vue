@@ -9,9 +9,10 @@
       v-for="location in latest"
       :key="location.cityName"
       :coordinates="location.coordinates"
+      style="padding:0pt"
     >
-      <MglPopup>
-        <Popup :message="location.cityName" :particles="location.particles">
+      <MglPopup style="background:#27293d !important">
+        <Popup :city="location.cityName" :particles="location.particles">
         </Popup>
       </MglPopup>
     </MglMarker>
@@ -34,7 +35,6 @@ export default {
   props: {
     locations: {
       type: Array,
-      required: true,
     },
     latest: {
       type: Array,
@@ -76,6 +76,17 @@ export default {
     width: 100%;
   }
 }
+.mapboxgl-popup-content {
+  padding: 0px;
+}
+.mapboxgl-popup-close-button{
+  color: white;
+}
+.mapboxgl-popup-tip{
+  border-bottom-color:#27293d !important;
+  border-top-color:#27293d !important;
+}
+
 </style>
 
 <!-- <style scoped>

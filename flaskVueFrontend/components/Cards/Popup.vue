@@ -1,18 +1,31 @@
 <template>
   <div style="text-align: center;" id="home">
     <!-- Rendering data to DOM -->
-    
-    <h2 class="text-muted">{{ message }}</h2> 
-    <p class="text-muted">{{"Here are the most recent measurements for"}}</p>   
-    <p class="text-muted" v-for="particle in particles" :key="particle.parameter">{{ particle.parameter }} {{ particle.value.toFixed(2) }} {{particle.unit}}</p>
-    <p class="text-muted">{{ particles[0].lastUpdated.substring(0, 10)}}</p>
+    <card :title="city" style="margin: 0px;">
+      <div>
+        <ul style="padding-left:8px; text-align:left;">
+          <li
+            class="text"
+            v-for="particle in particles"
+            :key="particle.parameter"
+          >
+            {{ particle.parameter }}: {{ particle.value.toFixed(2) }}
+            {{ particle.unit }}
+          </li>
+        </ul>
+      </div>
+      <div slot="footer">
+        <span class="text-muted">Last updated: {{particles[0].lastUpdated.substring(0, 10)}}</span>
+      </div>
+    </card>
   </div>
 </template>
 
 <script>
+import Card from "./Card.vue";
 export default {
+  components: { Card },
   name: "Popup",
-  props: { message: {}, particles: {} },
+  props: { city: {}, particles: {} },
 };
-
 </script>
