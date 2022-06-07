@@ -2,18 +2,22 @@ import flask_cors
 import psycopg2
 
 from osm import Osm
+import json
+
+import sys
+
 
 # Class that creates all tables in postgres database when initialized. Your installation of postgres has to have a database called "SE4G"
 
-# Import to other files and initialize by typing: 
+# Import to other files and initialize by typing:
 # from initDB import Pg
 # Pg = Pg(user = "my username", password = "my password", port = "my port")
-# if no keywords are inputed, default MYUSER, MYPWRD and MYPORT below will be used. 
+# if no keywords are inputed, default MYUSER, MYPWRD and MYPORT below will be used.
 
 
 class Pg:
 
-    # Configuration information. Adjust so it matches you postgres installation before running on you computer. 
+    # Configuration information. Adjust so it matches you postgres installation before running on you computer.
     MYUSER = 'postgres'
     MYPWRD = '123456'
     MYPORT = '5433'
@@ -48,19 +52,19 @@ class Pg:
     def _drop(self, table):
         return "DROP TABLE IF EXISTS {}".format(table)
 
-    #create the database table
-    def __init__(self, user = None, password = None, port = None):
+    # create the database table
+    def __init__(self, user=None, password=None, port=None):
 
-        if user is None: 
+        if user is None:
             user = self.MYUSER
-        if password is None: 
+        if password is None:
             password = self.MYPWRD
-        if port is None: 
+        if port is None:
             port = self.MYPORT
 
         conn = psycopg2.connect(
-    database="SE4G", user = user, password= password, host='localhost', port= port
-    )
+            database="SE4G", user=user, password=password, host='localhost', port=port
+            )
         # Creating a cursor object using the cursor() method
         cursor = conn.cursor()
 
@@ -78,7 +82,7 @@ class Pg:
 
         # Adding the city data
         for city in cityCoords:
-            city['name'] = city['name'].replace("'", "''") #using double tics to escape from postgres reserved character '. 
+            city['name'] = city['name'].replace("'", "''") #using double tics to escape from postgres reserved character '.
             sql = '''
             INSERT INTO city (city_name, longitude, latitude)
             VALUES('{}', {}, {});
@@ -86,7 +90,23 @@ class Pg:
             cursor.execute(sql)
         conn.commit()
 
+        plattform = sys.platform
+        if plattform == 'darwin':
+            path = 'flaskVueBackend/db_initialization/contacts.json'
+        else:
+            path = 'flaskVueBackend\db_initialization\contacts.json'
+
+        with open(path) as f:
+            contact = json.load(f)
+        
+        for person in contact.values():
+            # print(person['first_name'])
+            cursor.execute( "INSERT INTO contacts (first_name, last_name, description, nationality, email) VALUES('{}', '{}', '{}', '{}', '{}')".format(person['first_name'], person['last_name'], person['description'], person['nationality'], person['email'])
+            )
+            print(f"Contacts info inserted successfully for {person['first_name']}.......")
+
         # Closing the connection
+        conn.commit()
         conn.close()
 
 if __name__ == "__main__":
