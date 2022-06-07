@@ -11,7 +11,8 @@
           class="custom-select m-1  text-white w-100"
           name="Cities"
           id="idCitiesDDL"
-          @change="onChange($event)"
+          :value="$store.state.lastCity"
+          @change="$store.commit('setCity',$event.target.value)"
           data-toggle="tooltip"
           title="Your destination city"
           style="
@@ -88,7 +89,7 @@
       </card>
     </div>
 
-    <!-- <div class="col-12">
+    <div class="col-12">
       <card type="chart">
         <template slot="header">
           <div class="row">
@@ -136,7 +137,7 @@
           </line-chart>
         </div>
       </card>
-    </div> -->
+    </div>
   </div>
 </template>
 <script>
@@ -146,6 +147,8 @@ import * as chartConfigs from "@/components/Charts/config";
 import TaskList from "@/components/Dashboard/TaskList";
 import config from "@/config";
 import { Table, TableColumn } from "element-ui";
+import { mapState } from 'vuex';
+
 
 let bigChartMonthData = [[], [], []];
 let bigChartYearData = [[], [], []];
@@ -265,11 +268,9 @@ export default {
 
     activeCities = activeCities.filter((city) => !missedCities.includes(city));
 
-
     return {
       selectValues: activeCities,
     };
-    // },
   },
   creatCitiesDDL() {},
   data() {
@@ -290,22 +291,22 @@ export default {
         gradientStops: [1, 0.4, 0],
         categories: [],
       },
-      // yearBigLineChart: {
-      //   activeIndex: 0,
-      //   chartData: {
-      //     datasets: [
-      //       {
-      //         ...bigChartDatasetOptions,
-      //         data: bigChartYearData[0],
-      //       },
-      //     ],
-      //     labels: yearChartLabels,
-      //   },
-      //   extraOptions: chartConfigs.purpleChartOptions,
-      //   gradientColors: config.colors.primaryGradient,
-      //   gradientStops: [1, 0.4, 0],
-      //   categories: [],
-      // },
+      yearBigLineChart: {
+        activeIndex: 0,
+        chartData: {
+          datasets: [
+            {
+              ...bigChartDatasetOptions,
+              data: bigChartYearData[0],
+            },
+          ],
+          labels: yearChartLabels,
+        },
+        extraOptions: chartConfigs.purpleChartOptions,
+        gradientColors: config.colors.primaryGradient,
+        gradientStops: [1, 0.4, 0],
+        categories: [],
+      },
     };
   },
   computed: {
@@ -317,12 +318,11 @@ export default {
     },
     bigLineChartCategories() {
       return [
-        { name: "Co", icon: "tim-icons icon-single-02" },
+        { name: "Co",},
         {
           name: "So2",
-          icon: "tim-icons icon-gift-2",
         },
-        { name: "O3", icon: "tim-icons icon-tap-02" },
+        { name: "O3",},
       ];
     },
   },
@@ -356,53 +356,50 @@ export default {
       this.yearBigLineChart.chartData = chartData;
       this.yearBigLineChart.activeIndex = index;
     },
-    async getCharts(cityName){
-
+    //Queries data and creates charts. 
+    async getCharts(cityName) {
       let axios = this.$axios;
-      const [monthData] = await Promise.all([
-        // removed yearData
+      const [monthData, yearData] = await Promise.all([
         axios.get(`/api/month/${cityName}`),
-        // $axios.get(`/api/year/${cityName}`),
+        axios.get(`/api/year/${cityName}`),
       ]);
 
       // console.log(yearData.data);
 
       const monthRes = monthData.data.time_month;
-      // const yearRes = yearData.data.time_year;
+      const yearRes = yearData.data.time_year;
 
       bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
       bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
       bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
 
-      // bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-      // bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-      // bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+      bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
+      bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
+      bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
 
       this.initMonthChart(0);
-      // this.initYearChart(0)
-
-      //     this.showSomething = false
-      // this.$nextTick(() => {
-      //   // Okay, now that everything is destroyed, lets build it up again
-      //   this.showSomething = true
-      // });
+      this.initYearChart(0)
     },
-    async onChange(event) {
-      console.log(event.target.value);
-      //this.$nuxt.refresh()
-      let cityName = event.target.value;
-
-      this.getCharts(cityName)
-      
-    },
+    unsubscribe(){}, //Waiting to be assigned unsubscribe from created()
   },
   mounted() {
-    // city = typeof city !== "undefined" ? city : "alessandria";
-    var cityName = "alessandria";
-    console.log(cityName);
-    
-    this.getCharts(cityName)
+    // Gets the city from the store and creates charts
+    console.log("in mounted", this.$store.state.lastCity)
+    this.getCharts(this.$store.state.lastCity);
   },
+  created(){
+    //Makes the page listen to the store and update charts when store changes
+    this.unsubscribe = this.$store.subscribe((setCity, state) => {  
+    console.log("from subscribe",state.lastCity)
+    this.getCharts(state.lastCity)
+
+})
+  },
+  beforeDestroy(){
+    console.log("in beforeDestroy")
+    // Stops listening to the store when page is left. 
+    this.unsubscribe()
+  }
 };
 </script>
 <style></style>
