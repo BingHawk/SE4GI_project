@@ -149,8 +149,8 @@ import config from "@/config";
 import { Table, TableColumn } from "element-ui";
 import { mapState } from "vuex";
 
-let bigChartMonthData = [[], [], []];
-let bigChartYearData = [[], [], []];
+let bigChartMonthData = [[], [], [], []];
+let bigChartYearData = [[], [], [], []];
 let yearChartLabels = [
   "53 weeks ago",
   "52 weeks ago",
@@ -360,11 +360,12 @@ export default {
     },
     bigLineChartCategories() {
       return [
-        { name: "Co" },
+        { name: "CO" },
         {
-          name: "So2",
+          name: "SO2",
         },
         { name: "O3" },
+        { name: "NO2" },
       ];
     },
   },
@@ -403,10 +404,16 @@ export default {
       let axios = this.$axios;
       const yearData = await axios.get(`/api/year/${cityName}`);
       const yearRes = yearData.data.time_year;
+      console.log("year:",yearRes)
 
-      bigChartYearData[0] = yearRes[Object.keys(yearRes)[0]].data;
-      bigChartYearData[1] = yearRes[Object.keys(yearRes)[1]].data;
-      bigChartYearData[2] = yearRes[Object.keys(yearRes)[2]].data;
+      const params = ['co','so2','o3','no2']
+      for(let i = 0; i<5;i++){
+        try{
+          bigChartYearData[i] = yearRes[params[i]].data
+        } catch {
+          bigChartYearData[i] = []
+        }
+      }
 
       this.initYearChart(0);
     },
@@ -414,10 +421,17 @@ export default {
       let axios = this.$axios;
       const monthData = await axios.get(`/api/month/${cityName}`);
       const monthRes = monthData.data.time_month;
+      console.log("month:",monthRes)
 
-      bigChartMonthData[0] = monthRes[Object.keys(monthRes)[0]].data;
-      bigChartMonthData[1] = monthRes[Object.keys(monthRes)[1]].data;
-      bigChartMonthData[2] = monthRes[Object.keys(monthRes)[2]].data;
+      const params = ['co','so2','o3','no2']
+      for(let i = 0; i<5;i++){
+        try{
+          bigChartMonthData[i] = monthRes[params[i]].data
+        } catch {
+          bigChartMonthData[i] = []
+        }
+      }
+
 
       this.initMonthChart(0);
     },
