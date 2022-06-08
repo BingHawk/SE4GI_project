@@ -7,8 +7,8 @@ from user import *
 
 #### GLOBAL VARIABLES
 MYUSER = 'postgres'
-MYPWRD = '123456'
-MYPORT = '5433'
+MYPWRD = 'blod'
+MYPORT = '5432'
 
 #### FLASK CONFIGURATION
 app = Flask(__name__)
@@ -16,16 +16,12 @@ app.config["DEBUG"] = True
 app.config["APPLICATION_ROOT"] = "/"
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-#### PRE FLASK CODE (code that needs to run before flask server starts)
+#### CACHE CLASS
 class Cache:
     def __init__(self):
 
         self.cityNames = getCityNames()
         self.cityCoords = getCityCoords(self.cityNames, MYUSER, MYPWRD, MYPORT)
-
-print("Starting setup")
-Cache = Cache()
-print("Setup complete")
 
 
 #### ROUTED FUNCTIONS THAT SEND COORDINATES
@@ -139,6 +135,10 @@ def serve_contactsInfo():
 
 #### RUNNING FLASK IN DEV MODE
 if __name__ == "__main__":
+
+    print("Starting setup")
+    Cache = Cache()
+    print("Setup complete")
     app.run(debug=True,  use_reloader=False)
     # print(get_contactsInfo())
     # print(get_locations())
