@@ -22,7 +22,7 @@ def getMonthData(city):
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
-    with concurrent.futures.ThreadPoolExecutor() as executor: # Execute queries asyncronously
+    with concurrent.futures.ProcessPoolExecutor() as executor: # Execute queries asyncronously
         futures = []
         for _ in range(days):
             endDay = startDay - dt.timedelta(days = 1)
@@ -70,7 +70,7 @@ def getYearData(city):
     t = dt.datetime.now()
     startDay = t.replace(second = 59, minute = 59, hour=23) # end of today the starting day of query
 
-    with concurrent.futures.ThreadPoolExecutor() as executor: #Run queries asyncronously
+    with concurrent.futures.ProcessPoolExecutor() as executor: #Run queries asyncronously
         futures = []
         for _ in range(days):
             endDay = startDay - dt.timedelta(days = 1)
