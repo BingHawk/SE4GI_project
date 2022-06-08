@@ -2,7 +2,7 @@
 
 Repo for project in POLIMI course
 
-Documents can be found on the in the "DocumentFiles" folder
+Documents can be found on the in the "DocumentationFiles" folder
 
 # Guide to run the project:
 
