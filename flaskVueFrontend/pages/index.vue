@@ -306,8 +306,6 @@ export default {
     const cities = await $axios.get("/api/cities");
     let activeCities = cities.data.cities;
 
-    activeCities = activeCities.filter((city) => !missedCities.includes(city));
-
     activeCities.sort().push("Choose City");
 
     return {
