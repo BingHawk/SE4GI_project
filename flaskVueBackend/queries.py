@@ -238,7 +238,7 @@ def queryByDay(startDay, endDay, city):
     return res, paramUnits
 
 #Timed version of above for performance testing
-def queryByDayTimed(startDay, endDay, city):
+def queryByDayTimed1(startDay, endDay, city):
     inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
     utcFormat = "%Y-%m-%dT%H:%M:%S+00:00" # Format recieved from openAQ 
 
@@ -276,7 +276,7 @@ def queryByDayTimed(startDay, endDay, city):
         except ZeroDivisionError:
             aTime = None
 
-        return res, paramUnits
+        return res, paramUnits, qTime, aTime
 
     aTic = time.perf_counter()
     # Target format: 

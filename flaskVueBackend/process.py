@@ -6,6 +6,7 @@ import time
 
 from queries import queryByDay
 
+
 def getMonthData(city):
     days = 30
     t = dt.datetime.now()
@@ -408,7 +409,7 @@ def speedTest():
     "Vicenza", 
     "Viterbo"
   ]
-    parts = 1
+    parts = 10
 
     qTimes1 = []
     aTimes1 = []
@@ -420,11 +421,11 @@ def speedTest():
     for i in range(len(cities)):
         print("Running code with city = {:21}".format(cities[i]), end="\r")
         if i % (parts*2) == 0:
-            _, qTime1, aTime1 = getYearDataS1(cities[i])
-            _, qTime2, aTime2 = getYearDataS2(cities[i])
+            _, qTime1, aTime1 = getMonthDataS1(cities[i])
+            _, qTime2, aTime2 = getMonthDataS2(cities[i])
         elif i % (parts*2) == 1: 
-            _, qTime2, aTime2 = getYearDataS2(cities[i])
-            _, qTime1, aTime1 = getYearDataS1(cities[i])
+            _, qTime2, aTime2 = getMonthDataS2(cities[i])
+            _, qTime1, aTime1 = getMonthDataS1(cities[i])
         
 
         qTimes1.append(qTime1)
