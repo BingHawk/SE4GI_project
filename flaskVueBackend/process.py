@@ -1,21 +1,10 @@
 import datetime as dt
 import concurrent.futures
 import psycopg2
+import time
 
 
 from queries import queryByDay
-
-
-
-# t = dt.datetime.now()
-# now = t.replace(second = 0, minute = 0)
-# oneMonthAgo = now - dt.timedelta(days = 30)
-# oneYearAgo  = now - dt.timedelta(days = 365)
-
-# dateformat = "%Y-%m-%dT%H:%M:%S"
-# print(now.strftime(dateformat)+"+00:00")
-# print(oneMonthAgo.strftime(dateformat)+"+00:00")
-# print(now.strftime(dateformat)+"+00:00")
 
 def getMonthData(city):
     days = 30
@@ -65,6 +54,7 @@ def getMonthData(city):
         
         return {"time_month":time_month}
 
+
 def getYearData(city):
     days = 365
     t = dt.datetime.now()
@@ -97,6 +87,7 @@ def getYearData(city):
     #         "unit": unit
     #         }
     # }
+
         time_year = {}
         for param in paramUnits.keys():
             time_year[param] = {"data": [], "unit": paramUnits[param]}
@@ -144,6 +135,7 @@ def getYearData(city):
             
 
         return {"time_year":time_year}
+
 
 def getCityCoords(cityNames, *args):
 
@@ -193,6 +185,8 @@ def getContactInfo(*args):
             info={"contactus":contactus}
             # outcome2=jsonify(info)
             return info
+
+
 def test():
     cityDict = {
         'Alessandria': ['Alessandria'],
@@ -329,6 +323,129 @@ def test():
     print(missedCities)
     print(len(missedCities))
 
+
+def speedTest():
+    print("running performance test 1")
+    cities = [
+    "Alessandria", 
+    "Ancona", 
+    "Arezzo", 
+    "Ascoli Piceno", 
+    "Asti", 
+    "Avellino", 
+    "Bari", 
+    "Barletta-Andria-Trani", 
+    "Belluno", 
+    "Benevento", 
+    "Biella", 
+    "Bologna", 
+    "Bolzano/Bozen", 
+    "Brindisi", 
+    "Cagliari", 
+    "Campobasso", 
+    "Carbonia-Iglesias", 
+    "Caserta", 
+    "Catanzaro", 
+    "Chiesanuova", 
+    "Cosenza", 
+    "Crotone", 
+    "Cuneo", 
+    "Ferrara", 
+    "Firenze", 
+    "Foggia", 
+    "Forli'-Cesena", 
+    "Frosinone", 
+    "Genova", 
+    "Grosseto", 
+    "Imperia", 
+    "L'Aquila", 
+    "La Spezia", 
+    "Latina", 
+    "Lecce", 
+    "Livorno", 
+    "Lucca", 
+    "Macerata", 
+    "Massa-Carrara", 
+    "Matera", 
+    "Modena", 
+    "Napoli", 
+    "Novara", 
+    "Nuoro", 
+    "Olbia-Tempio", 
+    "Oristano", 
+    "Padova", 
+    "Parma", 
+    "Perugia", 
+    "Pesaro E Urbino", 
+    "Pescara", 
+    "Piacenza", 
+    "Pisa", 
+    "Pistoia", 
+    "Potenza", 
+    "Prato", 
+    "Ravenna", 
+    "Reggio Di Calabria", 
+    "Reggio Nell'Emilia", 
+    "Rieti", 
+    "Rimini", 
+    "Roma", 
+    "Rovigo", 
+    "Salerno", 
+    "Sassari", 
+    "Savona", 
+    "Siena", 
+    "Taranto", 
+    "Teramo", 
+    "Terni", 
+    "Torino", 
+    "Trento", 
+    "Treviso", 
+    "Venezia", 
+    "Verbano-Cusio-Ossola", 
+    "Vercelli", 
+    "Verona", 
+    "Vibo Valentia", 
+    "Vicenza", 
+    "Viterbo"
+  ]
+    parts = 1
+
+    qTimes1 = []
+    aTimes1 = []
+    qTimes2 = []
+    aTimes2 = []
+    totTimes1 = []
+    totTimes2 = []
+
+    for i in range(len(cities)):
+        print("Running code with city = {:21}".format(cities[i]), end="\r")
+        if i % (parts*2) == 0:
+            _, qTime1, aTime1 = getYearDataS1(cities[i])
+            _, qTime2, aTime2 = getYearDataS2(cities[i])
+        elif i % (parts*2) == 1: 
+            _, qTime2, aTime2 = getYearDataS2(cities[i])
+            _, qTime1, aTime1 = getYearDataS1(cities[i])
+        
+
+        qTimes1.append(qTime1)
+        aTimes1.append(aTime1)
+        qTimes2.append(qTime2)
+        aTimes2.append(aTime2)
+        totTimes1.append(aTime1+qTime1)
+        totTimes2.append(aTime2+qTime2)
+    
+    aAvg1 = sum(aTimes1)/len(aTimes1)
+    qAvg1 = sum(qTimes1)/len(qTimes1)
+    aAvg2 = sum(aTimes2)/len(aTimes2)
+    qAvg2 = sum(qTimes2)/len(qTimes2)
+    totAvg2 = sum(totTimes2)/len(totTimes2)
+    totAvg1 = sum(totTimes1)/len(totTimes1)
+
+
+    print("Average s1 times are:\n\tQuery: {}\n\tAggregation: {}\n\tTotal: {}".format(qAvg1,aAvg1,totAvg1))
+    print("Average s2 times are:\n\tQuery: {}\n\tAggregation: {}\n\tTotal: {}".format(qAvg2,aAvg2,totAvg2))
+
+
 if __name__ == "__main__":
     # cities = ['Roma', 'MILANO', 'Firenze']
     # resMonth = getMonthData('Roma')
@@ -336,4 +453,7 @@ if __name__ == "__main__":
     # print(resMonth)
     # resYear = getYearData('Firenze')
     # print(resYear)
-    test()
+    speedTest()
+
+    # res = getMonthDataS2("Roma")
+    # print(res[0])
