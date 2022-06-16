@@ -1,6 +1,7 @@
 import requests
 import datetime as dt
 
+import time
 
 def getCityNames():
 
@@ -150,7 +151,25 @@ def get_cities(cityname):
                 parpm4.append(value['lastValue'])
             else:
                 print('new parameter')
-    d={"no2":parNO2, "o3":paro3, "co":parco, "so2":parso2, "pm10":parpm10, "pm25":parpm25, "bc":parbc, "pm1":parpm1, "nox":parnox , "ch4":parch4, "ufp":parufp , "no":parno, "co2":parco2 , "um010":parum010 , "um025":parum025 , "um100":parum100 , "pm4":parpm4}
+    d={
+        "no2":parNO2, 
+        "o3":paro3, 
+        "co":parco, 
+        "so2":parso2, 
+        "pm10":parpm10, 
+        "pm25":parpm25, 
+        "bc":parbc, 
+        "pm1":parpm1,
+        "nox":parnox,
+        "ch4":parch4, 
+        "ufp":parufp, 
+        "no":parno, 
+        "co2":parco2, 
+        "um010":parum010, 
+        "um025":parum025,
+        "um100":parum100, 
+        "pm4":parpm4
+        }
     for key, item in d.items():
         try:
             average= round(sum(item)/len(item),2)       
@@ -162,94 +181,144 @@ def get_cities(cityname):
     
     return {'city': city} 
 
-
 def queryByDay(startDay, endDay, city):
     inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
     utcFormat = "%Y-%m-%dT%H:%M:%S+00:00" # Format recieved from openAQ 
 
-    d0 = startDay
-    d1 = d0 - dt.timedelta(days = 1) # The day before 
-    limit = 5000 # Number of results accepted per query. Fewer means better preformance but risk of missing data. 
-
-    iter = 0
     paramUnits= {}
     res = {}
 
-    maxPages = 10
-    while d0 != endDay: # Looping until every day of the month is done
-        # print("Querying day {}".format(iter+1),end="\r")
-        page = 1
-        getNextPage = True
-        while getNextPage: #Looping though paginations
-            d0String = d0.strftime(inFormat)+"%2B00%3A00"
-            d1String = d1.strftime(inFormat)+"%2B00%3A00"
-            url = f"https://api.openaq.org/v2/measurements?date_from={d1String}&date_to={d0String}&limit={limit}&page={page}&offset=0&sort=desc&radius=1000&city={city}&order_by=datetime"
-            # print(url)
+    qTimes = []
+    aTimes = []
+    # print("Querying day {}".format(iter+1),end="\r")
 
-            r = requests.get(url)
-            resJson = r.json()
+    startDayString = startDay.strftime(inFormat)+"%2B00%3A00"
+    endDayString = endDay.strftime(inFormat)+"%2B00%3A00"
+    url = f"https://api.openaq.org/v2/measurements?date_from={endDayString}&date_to={startDayString}&limit=5000&page=1&offset=0&sort=desc&radius=1000&city={city}&order_by=datetime"
+    # print(url)
 
-            # When an empty page is recieved, goes on to next day. 
-            # try : 
-            #     if not resJson['results']:
-            #         break
-            # except KeyError:
-            #     break
+    r = requests.get(url)
+    resJson = r.json()
+
+
+    # If an empty page is recieved, goes on to next day. 
+    if not resJson['results']:
+        return res, paramUnits
+
+    # Target format: 
+    # res = {
+    #     dateTime: {
+    #         param1: {n: int, sum: float}
+    #         param2:{n: int, sum: float}
+    #         ...
+    #         },{
+    #         day2 = datetime,
+    #         param1: {n: int, sum: float}
+    #         param2:{n: int, sum: float}
+    #         ...
+    #        }, 
+    #    }
+    # }
+    for result in resJson['results']:
+        day = dt.datetime.strptime(result['date']['utc'],utcFormat).replace(hour=0,minute=0,second=0)
+
+        if day not in res.keys():
+            res[day] = {}
+
+        param = result['parameter']
+        if param in res[day]:
+            res[day][param]['n'] += 1
+            res[day][param]['sum'] += result['value']
+        else:
+            res[day][param] = {'n':1,'sum':result['value']}
         
-            if not resJson['results']:
-                break
+        if param not in paramUnits:
+            paramUnits[param] = result['unit']
 
-            if resJson['meta']['found'] < limit or page == maxPages:
-                getNextPage = False
-            else:
-                if page == 1:
-                    maxPages = resJson['meta']['found']// limit + 1
-                    print(maxPages)
-
-            page = page+1
-
-            # When an empty page is recieved, goes on to next day. 
-            if not resJson['results']:
-                break
-
-            # Target format: 
-            # res = {
-            #     dateTime: {
-            #         param1: {n: int, sum: float}
-            #         param2:{n: int, sum: float}
-            #         ...
-            #         },{
-            #         day2 = datetime,
-            #         param1: {n: int, sum: float}
-            #         param2:{n: int, sum: float}
-            #         ...
-            #        }, 
-            #    }
-            # }
-            for result in resJson['results']:
-                day = dt.datetime.strptime(result['date']['utc'],utcFormat).replace(hour=0,minute=0,second=0)
-
-                if day not in res.keys():
-                    res[day] = {}
-
-                param = result['parameter']
-                if param in res[day]:
-                    res[day][param]['n'] += 1
-                    res[day][param]['sum'] += result['value']
-                else:
-                    res[day][param] = {'n':1,'sum':result['value']}
-                
-                if param not in paramUnits:
-                    paramUnits[param] = result['unit']
-        
-        # Advance date counters
-        d0 = d1
-        d1 = d0 - dt.timedelta(days = 1)
-
-        # Safetybreak
-        iter += 1
-        if iter == 400:
-            print("Error: Infinite loop.")
-            break
-        
     return res, paramUnits
+
+#Timed version of above for performance testing
+def queryByDayTimed(startDay, endDay, city):
+    inFormat = "%Y-%m-%dT%H%%3A%M%%3A%S" # Format to build query string
+    utcFormat = "%Y-%m-%dT%H:%M:%S+00:00" # Format recieved from openAQ 
+
+    paramUnits= {}
+    res = {}
+
+    qTimes = []
+    aTimes = []
+    # print("Querying day {}".format(iter+1),end="\r")
+    qTic = time.perf_counter()
+    startDayString = startDay.strftime(inFormat)+"%2B00%3A00"
+    endDayString = endDay.strftime(inFormat)+"%2B00%3A00"
+    url = f"https://api.openaq.org/v2/measurements?date_from={endDayString}&date_to={startDayString}&limit=5000&page=1&offset=0&sort=desc&radius=1000&city={city}&order_by=datetime"
+    # print(url)
+
+    r = requests.get(url)
+    resJson = r.json()
+
+    # When an empty page is recieved, goes on to next day. 
+    # try : 
+    #     if not resJson['results']:
+    #         break
+    # except KeyError:
+    #     break
+
+    qToc = time.perf_counter()
+    qTime = qToc-qTic
+    qTimes.append(qTime)
+
+    # When an empty page is recieved, goes on to next day. 
+    if not resJson['results']:
+        qTime = sum(qTimes)/len(qTimes)
+        try: 
+            aTime = sum(aTimes)/len(aTimes)
+        except ZeroDivisionError:
+            aTime = None
+
+        return res, paramUnits
+
+    aTic = time.perf_counter()
+    # Target format: 
+    # res = {
+    #     dateTime: {
+    #         param1: {n: int, sum: float}
+    #         param2:{n: int, sum: float}
+    #         ...
+    #         },{
+    #         day2 = datetime,
+    #         param1: {n: int, sum: float}
+    #         param2:{n: int, sum: float}
+    #         ...
+    #        }, 
+    #    }
+    # }
+    for result in resJson['results']:
+        day = dt.datetime.strptime(result['date']['utc'],utcFormat).replace(hour=0,minute=0,second=0)
+
+        if day not in res.keys():
+            res[day] = {}
+
+        param = result['parameter']
+        if param in res[day]:
+            res[day][param]['n'] += 1
+            res[day][param]['sum'] += result['value']
+        else:
+            res[day][param] = {'n':1,'sum':result['value']}
+        
+        if param not in paramUnits:
+            paramUnits[param] = result['unit']
+    
+    aToc = time.perf_counter()
+    aTime = aToc-aTic
+    aTimes.append(aTime)
+
+
+    qTime = sum(qTimes)/len(qTimes)
+    try: 
+        aTime = sum(aTimes)/len(aTimes)
+    except ZeroDivisionError:
+        aTime = None
+        
+
+    return res, paramUnits, qTime, aTime
