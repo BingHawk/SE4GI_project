@@ -4,7 +4,8 @@ import datetime as dt
 
 def getCityNames():
 
-    r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
+    # r=requests.get("https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/cities?limit=1000&page=1&offset=0&sort=asc&country=IT&order_by=city")
+    r=requests.get("https://api.openaq.org/v2/cities?limit=1000&page=1&offset=0&sort=asc&country_id=IT&order_by=city")
 
     cityNames=[]
     # print(r.json()['results'][0])
@@ -25,23 +26,25 @@ def getCityNames():
 
 def get_locations():
     # the endpoint of meassuring stations in italy
-    italyEndpoint = "https://u50g7n0cbj.execute-api.us-east-1.amazonaws.com/v2/locations?limit=10000&page=1&offset=0&sort=desc&radius=10000&country_id=it&order_by=lastUpdated&dumpRaw=false"
+    italyEndpoint = "https://api.openaq.org/v2/latest?limit=10000&page=1&offset=0&sort=desc&radius=1000&country_id=it&order_by=lastUpdated&dumpRaw=false"
     
     # Get the stations
     r = requests.get(italyEndpoint)
     locations = []
     for result in r.json()['results']:
         try:
+            if result['coordinates'] is None:
+                continue
             location = {
-                'id': result['id'],
-                'cityName': result['name'], # Not correct, this is the name of the station. 
+                'location': result['location'],
+                'cityName': result['city'], # Not correct, this is the name of the station. 
                 'coordinates': [result['coordinates']['longitude'],result['coordinates']['latitude']],
                 'particles': [],
                 }
-            for parameter in result['parameters']:
+            for parameter in result['measurements']:
                 particle = {
-                    'parameter': parameter['displayName'],
-                    'value': parameter['lastValue'],
+                    'parameter': parameter['parameter'],
+                    'value': parameter['value'],
                     'unit': parameter['unit'],
                     'lastUpdated': parameter['lastUpdated'], # string with datetime format from openAQ. ex: '2022-05-25T12:02:59+00:00'
                 }
@@ -63,7 +66,7 @@ def get_latest(cityCoords):
         results = r.json()['results']
     except KeyError:
         print(r.json())
-        return "something went wrong", 500
+        return "something went wrong"
     
     locations = {}
     for result in results:
@@ -187,6 +190,12 @@ def queryByDay(startDay, endDay, city):
             resJson = r.json()
 
             # When an empty page is recieved, goes on to next day. 
+            # try : 
+            #     if not resJson['results']:
+            #         break
+            # except KeyError:
+            #     break
+        
             if not resJson['results']:
                 break
 
