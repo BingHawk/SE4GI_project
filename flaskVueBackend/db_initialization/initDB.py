@@ -18,8 +18,8 @@ class Pg:
 
     # Configuration information. Adjust so it matches you postgres installation before running on you computer.
     MYUSER = 'postgres'
-    MYPWRD = 'postgres'
-    MYPORT = '5432'
+    MYPWRD = '123456'
+    MYPORT = '5433'
 
     # Dictionary of the create statements for each table.
     #   There has to be one key equal to every item int tables. 
@@ -93,7 +93,7 @@ class Pg:
         if plattform == 'darwin':
             path = 'flaskVueBackend/db_initialization/contacts.json'
         else:
-            path = 'flaskVueBackend\db_initialization\contacts.json'
+            path = 'db_initialization\\contacts.json'
 
         with open(path) as f:
             contact = json.load(f)
